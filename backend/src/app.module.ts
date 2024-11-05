@@ -5,7 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './core/database/database.module';
 import { LoggerModule } from './core/logger/logger.module';
 import appConfig from './core/config/app.config';
-import { LoggerService } from './core/logger/logger.service';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -16,8 +17,10 @@ import { LoggerService } from './core/logger/logger.service';
     }),
     DatabaseModule,
     LoggerModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, LoggerService],
+  providers: [AppService],
 })
 export class AppModule {}
