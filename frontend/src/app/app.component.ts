@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -8,12 +8,14 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'frontend';
-
+export class AppComponent implements OnInit {
+  title = 'Book meting room';
   constructor() {
+    document.title = this.title;
   }
 
-  ngOnInit(): void {
+
+
+  ngOnInit() {
   }
 }
