@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host=0.0.0.0 --port=4500",
+    "start": "ng serve --port=4500",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -36,6 +36,7 @@
     "rxjs": "~7.8.0",
     "simplebar-angular": "^3.2.6",
     "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.14.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"
   },

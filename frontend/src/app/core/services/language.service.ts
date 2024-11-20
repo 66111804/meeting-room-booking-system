@@ -15,7 +15,6 @@ export class LanguageService {
      * cookie Language Get
      */
     this.translate.addLangs(this.languages);
-    debugger;
     if (this.cookieService.check('lang')) {
       browserLang = this.cookieService.get('lang');
     }

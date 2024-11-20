@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {HttpClient} from '@angular/common/http';
@@ -21,8 +21,23 @@ import {LanguageService} from './core/services/language.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'AOI file management';
+export class AppComponent implements OnInit
+{
+  title = 'Booking meeting room';
   lang = 'en';
 
+  token: string = '';
+  username: string = '';
+  employeeId: string = '';
+  userId: string = '';
+  role: string = '';
+
+
+  constructor(private translate: TranslateService, private languageService: LanguageService) {
+    this.translate.setDefaultLang('en');
+  }
+
+  ngOnInit() {
+    this.languageService.setLanguage(this.lang);
+  }
 }

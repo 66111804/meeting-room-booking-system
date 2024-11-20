@@ -13,7 +13,6 @@ import {provideTranslateService, TranslateLoader, TranslateModule} from '@ngx-tr
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 export function HttpLoaderFactory(http:HttpClient){
-  debugger;
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
@@ -36,7 +35,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     provideMockStore(),
-    provideTranslateService(),
     provideStore(rootReducer),
     provideStoreDevtools({
       maxAge: 25, // Retains last 25 states
@@ -44,3 +42,5 @@ export const appConfig: ApplicationConfig = {
     })
   ],
 };
+
+// provideTranslateService(),

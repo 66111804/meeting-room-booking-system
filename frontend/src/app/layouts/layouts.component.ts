@@ -57,9 +57,7 @@ export class LayoutsComponent implements OnInit
       data.LAYOUT == "vertical" || data.LAYOUT == "twocolumn" ? document.documentElement.setAttribute('data-layout-style', data.SIDEBAR_VIEW) : '';
       document.documentElement.setAttribute('data-preloader', data.DATA_PRELOADER)
       document.documentElement.setAttribute('data-sidebar-visibility', data.SIDEBAR_VISIBILITY);
-
     })
-
   }
 
   /**

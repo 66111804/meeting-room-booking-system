@@ -15,33 +15,33 @@ import { ApikeyReducer, ApikeyState } from "./APIKey/apikey_reducer";
 
 export interface RootReducerState {
   layout: LayoutState;
-  Ecommerce: EcommerceState;
-  Project: ProjectState;
-  Task: TaskState;
-  CRM: CRMState;
-  Crypto: CryptoState;
-  Invoice: InvoiceState;
-  Ticket: TicketState;
-  FileManager: FileManagerState;
-  Todo: TodoState;
-  Jobs: ApplicationState;
-  APIKey: ApikeyState;
+  // Ecommerce: EcommerceState;
+  // Project: ProjectState;
+  // Task: TaskState;
+  // CRM: CRMState;
+  // Crypto: CryptoState;
+  // Invoice: InvoiceState;
+  // Ticket: TicketState;
+  // FileManager: FileManagerState;
+  // Todo: TodoState;
+  // Jobs: ApplicationState;
+  // APIKey: ApikeyState;
   // authentication: AuthenticationState;
 }
 
 export const rootReducer: ActionReducerMap<RootReducerState> = {
   layout: layoutReducer,
-  Ecommerce: ecommercerReducer,
-  Project: ProjectReducer,
-  Task: TaskReducer,
-  CRM: CRMReducer,
-  Crypto: CryptoReducer,
-  Invoice: InvoiceReducer,
-  Ticket: TicketReducer,
-  FileManager: FileManagerReducer,
-  Todo: TodoReducer,
-  Jobs: ApplicationReducer,
-  APIKey: ApikeyReducer,
+  // Ecommerce: ecommercerReducer,
+  // Project: ProjectReducer,
+  // Task: TaskReducer,
+  // CRM: CRMReducer,
+  // Crypto: CryptoReducer,
+  // Invoice: InvoiceReducer,
+  // Ticket: TicketReducer,
+  // FileManager: FileManagerReducer,
+  // Todo: TodoReducer,
+  // Jobs: ApplicationReducer,
+  // APIKey: ApikeyReducer,
   // authentication: authenticationReducer,
 
 }
