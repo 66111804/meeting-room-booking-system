@@ -1,0 +1,49 @@
+{
+  "HEADER": {
+    "MORE": {
+      "TEXT": "เพิ่มเติม"
+    }
+  },
+  "MENUITEMS": {
+    "MENU": {
+      "TEXT": "เมนู"
+    },
+    "DASHBOARD": {
+      "TEXT": "แดชบอร์ด",
+      "BADGE": "New",
+      "LIST": {
+        "ANALYTICS": "Analytics",
+        "CRM": "CRM",
+        "ECOMMERCE": "Ecommerce",
+        "CRYPTO": "Crypto",
+        "PROJECTS": "Projects",
+        "NFT": "NFT",
+        "JOB": "Job"
+      }
+    },
+    "HOME": {
+      "TEXT": "หน้าหลัก"
+
+    },
+    "BOOKING-ROOM": {
+      "TEXT": "จองห้องประชุม"
+    },
+    "MY-BOOKING": {
+      "TEXT": "การจองของฉัน"
+    },
+    "SETTING": {
+      "TEXT": "ตั้งค่า"
+    },
+    "ADMIN": {
+      "TEXT": "ผู้ดูแลระบบ",
+      "LIST": {
+        "ROOM": "ห้องประชุม",
+        "USER": "ผู้ใช้งาน",
+        "PERMISSION": "สิทธิ์การใช้งาน"
+      }
+    },
+    "LOGOUT": {
+      "TEXT": "ออกจากระบบ"
+    }
+  }
+}
