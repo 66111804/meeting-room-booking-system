@@ -25,6 +25,12 @@ import {LanguageService} from '../core/services/language.service';
   imports: [
     CommonModule,
     RouterModule,
+    NgbDropdownModule,
+    NgbNavModule,
+    SimplebarAngularModule,
+    TranslateModule,
+    NgbCollapseModule,
+    FormsModule, ReactiveFormsModule,
 
     VerticalComponent, HorizontalComponent, TwoColumnComponent
   ],
@@ -44,7 +50,6 @@ export class LayoutsComponent implements OnInit
   ngOnInit(): void {
 
     this.store.select('layout').subscribe((data) => {
-      console.log(data);
       this.layoutType = data.LAYOUT;
       document.documentElement.setAttribute('data-layout', data.LAYOUT);
       document.documentElement.setAttribute('data-bs-theme', data.LAYOUT_MODE);

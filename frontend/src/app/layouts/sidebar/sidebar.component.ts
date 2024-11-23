@@ -4,7 +4,7 @@ import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@a
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from '../../../environments/environment';
-import {NavigationEnd, Router, RouterLink} from '@angular/router';
+import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
 import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,8 @@ import {SimplebarAngularModule} from 'simplebar-angular';
     NgClass,
     NgbCollapse,
     SimplebarAngularModule,
-    RouterLink
+    RouterLink,
+    RouterLinkActive
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'

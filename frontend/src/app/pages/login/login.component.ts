@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {NgClass} from '@angular/common';
 import Swal from 'sweetalert2';
@@ -24,9 +24,10 @@ export class LoginComponent {
   // set the current year
   year: number = new Date().getFullYear();
 
-  constructor(private formBuilder: UntypedFormBuilder) { }
+  constructor(private formBuilder: UntypedFormBuilder, private router: Router) { }
 
   ngOnInit(): void {
+
     /**
      * Form Validatyion
      */
@@ -44,6 +45,10 @@ export class LoginComponent {
    */
   onSubmit() {
     this.submitted = true;
+    Swal.fire('Success!', 'Logged in successfully!', 'success')
+      .then(() => {
+        this.router.navigateByUrl('app').then();
+      });
 
     // stop here if form is invalid
     if (this.loginForm.invalid) {
@@ -51,7 +56,6 @@ export class LoginComponent {
     }
 
     // display form values on success
-    Swal.fire('Success!', 'Logged in successfully!', 'success');
   }
 
   /**

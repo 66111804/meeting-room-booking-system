@@ -15,5 +15,19 @@
   </div>
 </div>
 <!-- Right Side Bar -->
-<app-rightsidebar (settingsButtonClicked)="onSettingsButtonClicked()"></app-rightsidebar>
+<!--<app-rightsidebar (settingsButtonClicked)="onSettingsButtonClicked()"></app-rightsidebar>-->
 <!-- /Right-bar -->
+
+<button (click)="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+  <i class="ri-arrow-up-line"></i>
+</button>
+
+<!--preloader-->
+<div id="preloader">
+  <div id="status">
+    <div class="spinner-border text-primary avatar-sm" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+

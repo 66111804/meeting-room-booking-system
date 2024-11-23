@@ -9,8 +9,9 @@ import {provideStore} from '@ngrx/store';
 import {rootReducer} from './store';
 import {provideStoreDevtools} from '@ngrx/store-devtools';
 import {environment} from '../environments/environment';
-import {provideTranslateService, TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {provideClientHydration} from '@angular/platform-browser';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -30,16 +31,16 @@ export const appConfig: ApplicationConfig = {
       })
     ]),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
-    // provideClientHydration(),
-    provideHttpClient(),
+    // provideHttpClient(),
     provideAnimations(),
     provideMockStore(),
     provideStore(rootReducer),
     provideStoreDevtools({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode
-    })
+    }),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideClientHydration(),
   ],
 };
 

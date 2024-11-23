@@ -7,7 +7,7 @@ import {CookieService} from 'ngx-cookie-service';
 })
 export class LanguageService {
 
-  public languages: string[] = ['en', 'es', 'de', 'it', 'ru'];
+  public languages: string[] = ['en', 'th'];
   constructor(public translate: TranslateService, private cookieService: CookieService) {
 
     let browserLang: any;
@@ -21,7 +21,7 @@ export class LanguageService {
     else {
       browserLang = translate.getBrowserLang();
     }
-    translate.use(browserLang.match(/en|es|de|it|ru/) ? browserLang : 'en');
+    translate.use(browserLang.match(/en|th/) ? browserLang : 'th');
   }
 
   /**

@@ -19,7 +19,6 @@ const httpOptions = {
  * Auth-service Component
  */
 export class AuthenticationService {
-
     user!: User;
     currentUserValue: any;
 
@@ -36,29 +35,29 @@ export class AuthenticationService {
      * @param email email
      * @param password password
      */
-    register(email: string, first_name: string, password: string) {
-        // return getFirebaseBackend()!.registerUser(email, password).then((response: any) => {
-        //     const user = response;
-        //     return user;
-        // });
-
-        // Register Api
-        return this.http.post(AUTH_API + 'signup', {
-            email,
-            first_name,
-            password,
-          }, httpOptions).pipe(
-            map((response: any) => {
-                const user = response;
-                return user;
-            }),
-            catchError((error: any) => {
-                const errorMessage = 'Login failed'; // Customize the error message as needed
-                this.store.dispatch(loginFailure({ error: errorMessage }));
-                return throwError(errorMessage);
-            })
-        );
-    }
+    // register(email: string, first_name: string, password: string) {
+    //     // return getFirebaseBackend()!.registerUser(email, password).then((response: any) => {
+    //     //     const user = response;
+    //     //     return user;
+    //     // });
+    //
+    //     // Register Api
+    //     return this.http.post(AUTH_API + 'signup', {
+    //         email,
+    //         first_name,
+    //         password,
+    //       }, httpOptions).pipe(
+    //         map((response: any) => {
+    //             const user = response;
+    //             return user;
+    //         }),
+    //         catchError((error: any) => {
+    //             const errorMessage = 'Login failed'; // Customize the error message as needed
+    //             this.store.dispatch(loginFailure({ error: errorMessage }));
+    //             return throwError(errorMessage);
+    //         })
+    //     );
+    // }
 
     /**
      * Performs the auth

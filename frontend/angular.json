@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "service_image_api_file_management": {
+    "booking-meeting-room": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/service_image_api_file_management",
+            "outputPath": "dist/booking-meeting-room",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -108,10 +108,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "service_image_api_file_management:build:production"
+              "buildTarget": "booking-meeting-room:build:production"
             },
             "development": {
-              "buildTarget": "service_image_api_file_management:build:development"
+              "buildTarget": "booking-meeting-room:build:development"
             }
           },
           "defaultConfiguration": "development"

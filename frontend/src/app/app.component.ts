@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {HttpClient} from '@angular/common/http';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
+import { TranslateModule, TranslateService} from '@ngx-translate/core';
 import {LanguageService} from './core/services/language.service';
 
 @Component({
@@ -24,7 +22,7 @@ import {LanguageService} from './core/services/language.service';
 export class AppComponent implements OnInit
 {
   title = 'Booking meeting room';
-  lang = 'en';
+  lang = 'th';
 
   token: string = '';
   username: string = '';
@@ -32,9 +30,8 @@ export class AppComponent implements OnInit
   userId: string = '';
   role: string = '';
 
-
   constructor(private translate: TranslateService, private languageService: LanguageService) {
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang(this.lang);
   }
 
   ngOnInit() {

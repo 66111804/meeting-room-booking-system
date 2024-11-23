@@ -5,7 +5,7 @@ import { EventService } from '../../core/services/event.service';
 import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../core/services/auth.service';
 import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { TokenStorageService } from '../../core/services/token-storage.service';
 
 // Language
@@ -14,7 +14,15 @@ import { LanguageService } from '../../core/services/language.service';
 import { allNotification, messages } from './data'
 import { CartModel } from './topbar.model';
 import { cartData } from './data';
-import {NgbDropdown, NgbDropdownMenu, NgbModal, NgbNav, NgbNavItem, NgbNavOutlet} from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdown,
+  NgbDropdownMenu, NgbDropdownToggle,
+  NgbModal,
+  NgbNav, NgbNavContent,
+  NgbNavItem,
+  NgbNavLink,
+  NgbNavOutlet
+} from '@ng-bootstrap/ng-bootstrap';
 import {TranslateService} from '@ngx-translate/core';
 import {SimplebarAngularModule} from 'simplebar-angular';
 import {FormsModule} from '@angular/forms';
@@ -32,7 +40,11 @@ import {FormsModule} from '@angular/forms';
     NgClass,
     NgbNav,
     FormsModule,
-    NgbNavOutlet
+    NgbNavOutlet,
+    NgbNavLink,
+    NgbNavContent,
+    NgbDropdownToggle,
+    RouterLink
   ],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'
@@ -48,7 +60,6 @@ export class TopbarComponent implements OnInit  {
   countryName: any;
   cookieValue: any;
   userData: any;
-  cartData!: CartModel[];
   total = 0;
   cart_length: any = 0;
   totalNotify: number = 0;
@@ -80,13 +91,9 @@ export class TopbarComponent implements OnInit  {
     // Fetch Data
     this.allnotifications = allNotification;
 
-    this.messages = messages;
-    this.cartData = cartData;
-    this.cart_length = this.cartData.length;
-    this.cartData.forEach((item) => {
-      var item_price = item.quantity * item.price
-      this.total += item_price
-    });
+    // Set mode
+    this.mode = sessionStorage.getItem('data-bs-theme') || 'light';
+    this.changeMode(this.mode);
   }
 
 
@@ -161,8 +168,11 @@ export class TopbarComponent implements OnInit  {
         break;
       default:
         document.documentElement.setAttribute('data-bs-theme', "light");
+        mode = 'light';
         break;
     }
+
+    sessionStorage.setItem('data-bs-theme', mode);
   }
 
 
@@ -171,13 +181,14 @@ export class TopbarComponent implements OnInit  {
    */
   listLang = [
     { text: 'English', flag: 'assets/images/flags/us.svg', lang: 'en' },
-    { text: 'Española', flag: 'assets/images/flags/spain.svg', lang: 'es' },
-    { text: 'Deutsche', flag: 'assets/images/flags/germany.svg', lang: 'de' },
-    { text: 'Italiana', flag: 'assets/images/flags/italy.svg', lang: 'it' },
-    { text: 'русский', flag: 'assets/images/flags/russia.svg', lang: 'ru' },
-    { text: '中国人', flag: 'assets/images/flags/china.svg', lang: 'ch' },
-    { text: 'français', flag: 'assets/images/flags/french.svg', lang: 'fr' },
-    { text: 'Arabic', flag: 'assets/images/flags/ar.svg', lang: 'ar' },
+    { text: 'Thai', flag: 'assets/images/flags/th.svg', lang: 'th' },
+    // { text: 'Española', flag: 'assets/images/flags/spain.svg', lang: 'es' },
+    // { text: 'Deutsche', flag: 'assets/images/flags/germany.svg', lang: 'de' 1},
+    // { text: 'Italiana', flag: 'assets/images/flags/italy.svg', lang: 'it' },
+    // { text: 'русский', flag: 'assets/images/flags/russia.svg', lang: 'ru' },
+    // { text: '中国人', flag: 'assets/images/flags/china.svg', lang: 'ch' },
+    // { text: 'français', flag: 'assets/images/flags/french.svg', lang: 'fr' },
+    // { text: 'Arabic', flag: 'assets/images/flags/ar.svg', lang: 'ar' },
   ];
 
   /***
@@ -195,7 +206,7 @@ export class TopbarComponent implements OnInit  {
    */
   logout() {
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.router.navigateByUrl('login');
   }
 
   windowScroll() {

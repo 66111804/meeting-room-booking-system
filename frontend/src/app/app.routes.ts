@@ -14,6 +14,6 @@ export const routes: Routes = [
   {
     path: 'app',
     component: LayoutsComponent,
-    // loadChildren: ()=> import('./pages/routes').then(m => m.Routing)
+    loadChildren: ()=> import('./pages/routes').then(m => m.Routing)
   }
 ];
