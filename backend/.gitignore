@@ -174,4 +174,6 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-prisma/*
+prisma/.env
+prisma/.env.local
+prisma/migrations/
