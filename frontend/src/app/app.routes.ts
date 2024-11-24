@@ -12,7 +12,7 @@ export const routes: Routes = [
     component: LoginComponent
   },
   {
-    path: 'app',
+    path: '',
     component: LayoutsComponent,
     loadChildren: ()=> import('./pages/routes').then(m => m.Routing)
   }

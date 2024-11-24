@@ -23,7 +23,7 @@ import {
   NgbNavLink,
   NgbNavOutlet
 } from '@ng-bootstrap/ng-bootstrap';
-import {TranslateService} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {SimplebarAngularModule} from 'simplebar-angular';
 import {FormsModule} from '@angular/forms';
 
@@ -44,7 +44,8 @@ import {FormsModule} from '@angular/forms';
     NgbNavLink,
     NgbNavContent,
     NgbDropdownToggle,
-    RouterLink
+    RouterLink,
+    TranslatePipe
   ],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'

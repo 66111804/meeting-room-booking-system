@@ -60,30 +60,22 @@
         <!-- User profile -->
         <div class="dropdown ms-sm-3 header-item topbar-user" ngbDropdown>
           <div class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                        <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
-                            <span class="text-start ms-xl-2">
-                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{userData.first_name}}
-                                  {{userData.last_name}}</span>
-                                <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">{{userData.role
-                                == 0 ? 'Admin':'User'}}</span>
-                            </span>
-                        </span>
+              <span class="d-flex align-items-center">
+                  <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                  <span class="text-start ms-xl-2">
+                      <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{userData.first_name}}
+                        {{userData.last_name}}</span>
+                      <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">{{userData.role  == 0 ? 'Admin':'User'}}</span>
+                  </span>
+              </span>
           </div>
           <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
             <!-- item-->
             <h6 class="dropdown-header">Welcome Anna!</h6>
-            <a class="dropdown-item" routerLink="/pages/profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
+            <a class="dropdown-item" routerLink="/setting"><i class="ri-settings-3-line text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'MENUITEMS.SETTING.TEXT' | translate}}</span></a>
 
-            <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+            <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">{{'MENUITEMS.LOGOUT.TEXT' | translate}}</span></a>
           </div>
-        </div>
-
-        <!-- Logout button -->
-        <div class="ms-1 header-item d-none d-sm-flex">
-          <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="modal" data-bs-target="#logoutModal" (click)="logout()">
-            <i class='bx bx-log-out fs-22'></i>
-          </button>
         </div>
 
         <!-- Logout Modal -->

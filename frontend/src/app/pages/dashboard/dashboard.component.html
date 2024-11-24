@@ -1,1 +1,59 @@
-<p>dashboard works!</p>
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="Dashboards" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+<div class="row">
+  @for ( stat of statData; track $index) {
+    <div class="col-lg-4">
+      <app-stat [title]="stat.title" [value]="stat.value" [icon]="stat.icon" [persantage]="stat.persantage" [profit]="stat.profit" [month]="stat.month"></app-stat>
+    </div><!-- end col -->
+  }
+</div><!-- end row -->
+
+<div class="row">
+  <div class="col-12">
+    <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
+      <h5 class="mb-0 pb-1 text-decoration-underline">{{ "MEETING-ROOMS-NEW" | translate }}</h5>
+    </div>
+
+    <div class="row">
+      <div class="col-xxl-6">
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img class="rounded-start img-fluid h-100 object-fit-cover" src="assets/images/small/img-12.jpg" alt="Card image">
+            </div>
+            <div class="col-md-8">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Give your text a good structure</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text mb-2">For that very reason, I went on a quest and spoke to many different professional graphic designers and asked them what graphic design tips they live.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+              </div>
+            </div>
+          </div>
+        </div><!-- end card -->
+      </div><!-- end col -->
+
+      <div class="col-xxl-6">
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-md-8">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Manage white space in responsive layouts ?</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text mb-2">For that very reason, I went on a quest and spoke to many different professional graphic designers and asked them what graphic design tips they live.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <img class="rounded-end img-fluid h-100 object-fit-cover" src="assets/images/small/img-4.jpg" alt="Card image">
+            </div>
+          </div>
+        </div><!-- end card -->
+      </div><!-- end col -->
+
+    </div><!-- end row -->
+  </div><!-- end col -->
+</div><!-- end row -->

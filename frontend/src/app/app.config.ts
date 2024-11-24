@@ -12,6 +12,8 @@ import {environment} from '../environments/environment';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {provideClientHydration} from '@angular/platform-browser';
+import {FeatherModule} from 'angular-feather';
+import {allIcons} from 'angular-feather/icons';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -28,7 +30,8 @@ export const appConfig: ApplicationConfig = {
           deps: [HttpClient],
         },
         defaultLanguage: 'en',
-      })
+      }),
+      FeatherModule.pick(allIcons),
     ]),
     provideRouter(routes),
     // provideHttpClient(),
@@ -41,6 +44,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptorsFromDi()),
     provideClientHydration(),
+
   ],
 };
 

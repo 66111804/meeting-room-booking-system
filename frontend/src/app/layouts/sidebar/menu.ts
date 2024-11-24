@@ -16,40 +16,40 @@ export const MENU: MenuItem[] = [
     id: 3,
     label: 'MENUITEMS.BOOKING-ROOM.TEXT',
     icon: 'ri-dashboard-2-line',
-    link: '/app/booking-room'
+    link: '/booking-room'
   },{
     id: 4,
     label: 'MENUITEMS.MY-BOOKING.TEXT',
     icon: 'ri-dashboard-2-line',
-    link: '/app/my-booking'
+    link: '/my-booking'
   },
   {
     id: 5,
     label: 'MENUITEMS.SETTING.TEXT',
     icon: 'ri-settings-3-line',
-    link: '/app/setting'
+    link: '/setting'
   },
   {
     id: 6,
     label: 'MENUITEMS.ADMIN.TEXT',
     icon: 'ri-profile-line',
-    link: '/app/admin',
+    link: '/admin',
     subItems: [
       {
         id: 7,
         label: 'MENUITEMS.ADMIN.LIST.USER',
-        link: '/app/admin/user',
+        link: '/admin/user',
         parentId: 6
       },
       {
         id: 8,
         label: 'MENUITEMS.ADMIN.LIST.ROOM',
-        link: '/app/admin/room',
+        link: '/admin/meeting-room',
         parentId: 6
       },{
         id: 9,
-        label: 'MENUITEMS.ADMIN.LIST.PERMISSION',
-        link: '/app/admin/permission',
+        label: 'MENUITEMS.ADMIN.LIST.ROLE-PERMISSION',
+        link: '/admin/role-permission',
         parentId: 6
       }
     ]
