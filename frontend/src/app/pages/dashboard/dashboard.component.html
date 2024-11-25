@@ -16,11 +16,12 @@
     </div>
 
     <div class="row">
+      @for ( room of content; track $index) {
       <div class="col-xxl-6">
         <div class="card">
           <div class="row g-0">
             <div class="col-md-4">
-              <img class="rounded-start img-fluid h-100 object-fit-cover" src="assets/images/small/img-12.jpg" alt="Card image">
+              <img class="rounded-start img-fluid h-100 object-fit-cover img-hover" src="assets/images/small/img-12.jpg" alt="Card image">
             </div>
             <div class="col-md-8">
               <div class="card-header">
@@ -48,12 +49,32 @@
               </div>
             </div>
             <div class="col-md-4">
-              <img class="rounded-end img-fluid h-100 object-fit-cover" src="assets/images/small/img-4.jpg" alt="Card image">
+              <img class="rounded-end img-fluid h-100 object-fit-cover img-hover" src="assets/images/small/img-4.jpg" alt="Card image">
             </div>
           </div>
         </div><!-- end card -->
       </div><!-- end col -->
+      }
+
 
     </div><!-- end row -->
+    <div class="row justify-content-md-end align-items-md-center mt-3">
+      <!-- Pagination -->
+      <div class="col col-sm-6">
+        <div class="text-sm-right float-sm-end listjs-pagination">
+          <ngb-pagination
+            [collectionSize]="100"
+            [(page)]="page"
+            [pageSize]="limit"
+            (pageChange)="changePage()"
+            [maxSize]="5"
+            [boundaryLinks]="true"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+      <!-- End Pagination -->
+    </div>
+
   </div><!-- end col -->
 </div><!-- end row -->
