@@ -9,72 +9,173 @@
   }
 </div><!-- end row -->
 
+<!--<div class="row">-->
+<!--  <div class="col-12">-->
+<!--    <div class="justify-content-between d-flex align-items-center mt-3 mb-4">-->
+<!--      <h5 class="mb-0 pb-1 text-decoration-underline">{{ "MEETING-ROOMS-NEW" | translate }}</h5>-->
+<!--    </div>-->
+
+<!--    <div class="row">-->
+<!--      @for ( room of content; track $index) {-->
+<!--      <div class="col-xxl-6">-->
+<!--        <div class="card">-->
+<!--          <div class="row g-0">-->
+<!--            <div class="col-md-4">-->
+<!--              <img class="rounded-start img-fluid h-100 object-fit-cover img-hover" src="assets/images/small/img-12.jpg" alt="Card image">-->
+<!--            </div>-->
+<!--            <div class="col-md-8">-->
+<!--              <div class="card-header">-->
+<!--                <h5 class="card-title mb-0">Give your text a good structure</h5>-->
+<!--              </div>-->
+<!--              <div class="card-body">-->
+<!--                <p class="card-text mb-2">For that very reason, I went on a quest and spoke to many different professional graphic designers and asked them what graphic design tips they live.</p>-->
+<!--                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; end card &ndash;&gt;-->
+<!--      </div>&lt;!&ndash; end col &ndash;&gt;-->
+
+<!--      <div class="col-xxl-6">-->
+<!--        <div class="card">-->
+<!--          <div class="row g-0">-->
+<!--            <div class="col-md-8">-->
+<!--              <div class="card-header">-->
+<!--                <h5 class="card-title mb-0">Manage white space in responsive layouts ?</h5>-->
+<!--              </div>-->
+<!--              <div class="card-body">-->
+<!--                <p class="card-text mb-2">For that very reason, I went on a quest and spoke to many different professional graphic designers and asked them what graphic design tips they live.</p>-->
+<!--                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--              <img class="rounded-end img-fluid h-100 object-fit-cover img-hover" src="assets/images/small/img-4.jpg" alt="Card image">-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; end card &ndash;&gt;-->
+<!--      </div>&lt;!&ndash; end col &ndash;&gt;-->
+<!--      }-->
+
+<!--    </div>&lt;!&ndash; end row &ndash;&gt;-->
+<!--    &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--    <div class="row justify-content-md-end align-items-md-center mt-3">-->
+<!--      &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--      <div class="col col-sm-6">-->
+<!--        <div class="text-sm-right float-sm-end listjs-pagination">-->
+<!--          <ngb-pagination-->
+<!--            [collectionSize]="100"-->
+<!--            [(page)]="page"-->
+<!--            [pageSize]="limit"-->
+<!--            (pageChange)="changePage()"-->
+<!--            [maxSize]="5"-->
+<!--            [boundaryLinks]="true"-->
+<!--          >-->
+<!--          </ngb-pagination>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      &lt;!&ndash; End Pagination &ndash;&gt;-->
+<!--    </div>-->
+<!--    &lt;!&ndash; End Pagination &ndash;&gt;-->
+
+<!--  </div>&lt;!&ndash; end col &ndash;&gt;-->
+<!--</div>-->
+<!--&lt;!&ndash; end row &ndash;&gt;-->
+
 <div class="row">
-  <div class="col-12">
-    <div class="justify-content-between d-flex align-items-center mt-3 mb-4">
-      <h5 class="mb-0 pb-1 text-decoration-underline">{{ "MEETING-ROOMS-NEW" | translate }}</h5>
-    </div>
-
-    <div class="row">
-      @for ( room of content; track $index) {
-      <div class="col-xxl-6">
-        <div class="card">
-          <div class="row g-0">
-            <div class="col-md-4">
-              <img class="rounded-start img-fluid h-100 object-fit-cover img-hover" src="assets/images/small/img-12.jpg" alt="Card image">
-            </div>
-            <div class="col-md-8">
-              <div class="card-header">
-                <h5 class="card-title mb-0">Give your text a good structure</h5>
-              </div>
-              <div class="card-body">
-                <p class="card-text mb-2">For that very reason, I went on a quest and spoke to many different professional graphic designers and asked them what graphic design tips they live.</p>
-                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-              </div>
-            </div>
-          </div>
-        </div><!-- end card -->
-      </div><!-- end col -->
-
-      <div class="col-xxl-6">
-        <div class="card">
-          <div class="row g-0">
-            <div class="col-md-8">
-              <div class="card-header">
-                <h5 class="card-title mb-0">Manage white space in responsive layouts ?</h5>
-              </div>
-              <div class="card-body">
-                <p class="card-text mb-2">For that very reason, I went on a quest and spoke to many different professional graphic designers and asked them what graphic design tips they live.</p>
-                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <img class="rounded-end img-fluid h-100 object-fit-cover img-hover" src="assets/images/small/img-4.jpg" alt="Card image">
-            </div>
-          </div>
-        </div><!-- end card -->
-      </div><!-- end col -->
-      }
-
-
-    </div><!-- end row -->
-    <div class="row justify-content-md-end align-items-md-center mt-3">
-      <!-- Pagination -->
-      <div class="col col-sm-6">
-        <div class="text-sm-right float-sm-end listjs-pagination">
-          <ngb-pagination
-            [collectionSize]="100"
-            [(page)]="page"
-            [pageSize]="limit"
-            (pageChange)="changePage()"
-            [maxSize]="5"
-            [boundaryLinks]="true"
-          >
-          </ngb-pagination>
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header border-0 p-4 pb-0">
+        <div class="justify-content-between d-flex align-items-center m-0">
+          <h3 class="mb-0 pb-1 text-decoration-underline">{{ "MEETING-ROOMS-NEW" | translate }}</h3>
         </div>
       </div>
-      <!-- End Pagination -->
-    </div>
 
-  </div><!-- end col -->
-</div><!-- end row -->
+      <div class="card-body p-4">
+        <div class="text-muted">
+
+          <div class="show" id="news" role="tabpanel">
+            <div class="row">
+              @for ( room of content; track $index) {
+              <div class="col-lg-6">
+                <div class="card border">
+                  <div class="card-body">
+                    <div class="d-sm-flex">
+                      <div class="flex-shrink-0">
+                        <img src="assets/images/small/img-1.jpg" alt="" width="115" class="rounded-1 img-hover">
+                      </div>
+                      <div class="flex-grow-1 ms-sm-4 mt-3 mt-sm-0">
+                        <ul class="list-inline mb-2">
+                          <li class="list-inline-item"><span class="badge bg-success-subtle text-success fs-11">Business</span></li>
+                        </ul>
+                        <h5><a href="javascript:void(0);">A mix of friends and strangers heading off to find an adventure</a></h5>
+                        <ul class="list-inline mb-0">
+                          <li class="list-inline-item"><i class="ri-user-3-fill text-success align-middle me-1"></i> James Ballard</li>
+                          <li class="list-inline-item"><i class="ri-calendar-2-fill text-success align-middle me-1"></i> 23 Nov, 2021</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--end card-->
+              </div>
+              <!--end col-->
+
+              <div class="col-lg-6">
+                <div class="card border">
+                  <div class="card-body">
+                    <div class="d-sm-flex">
+                      <div class="flex-shrink-0">
+                        <img src="assets/images/small/img-2.jpg" alt="" width="115" class="rounded-1 img-hover">
+                      </div>
+                      <div class="flex-grow-1 ms-sm-4 mt-3 mt-sm-0">
+                        <ul class="list-inline mb-2">
+                          <li class="list-inline-item"><span class="badge bg-warning-subtle text-warning fs-11">Development</span></li>
+                        </ul>
+                        <h5><a href="javascript:void(0);">How to get creative in your work ?</a></h5>
+                        <ul class="list-inline mb-0">
+                          <li class="list-inline-item"><i class="ri-user-3-fill text-success align-middle me-1"></i> Ruby Griffin</li>
+                          <li class="list-inline-item"><i class="ri-calendar-2-fill text-success align-middle me-1"></i> 23 Nov, 2021</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--end card-->
+              </div>
+
+              }<!--end for-->
+              <!--end col-->
+            </div>
+            <!--end row-->
+
+            <!-- Pagination -->
+            <div class="row justify-content-md-end align-items-md-center mt-3">
+              <!-- Pagination -->
+              <div class="col col-sm-6">
+                <div class="text-sm-right float-sm-end listjs-pagination">
+                  <ngb-pagination
+                    [collectionSize]="100"
+                    [(page)]="page"
+                    [pageSize]="limit"
+                    (pageChange)="changePage()"
+                    [maxSize]="2"
+                    [boundaryLinks]="true"
+                  >
+                  </ngb-pagination>
+                </div>
+              </div>
+              <!-- End Pagination -->
+            </div>
+            <!-- End Pagination -->
+          </div>
+          <!--end tab-pane-->
+        </div>
+        <!--end tab-content-->
+      </div>
+      <!--end card-body-->
+    </div>
+    <!--end card -->
+  </div>
+  <!--end card -->
+</div>
+<!--end row-->

@@ -14,6 +14,11 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {provideClientHydration} from '@angular/platform-browser';
 import {FeatherModule} from 'angular-feather';
 import {allIcons} from 'angular-feather/icons';
+import {provideFlatpickrDefaults} from 'angularx-flatpickr';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {provideNativeDateAdapter} from '@angular/material/core';
+import {MatInputModule} from '@angular/material/input';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -33,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       }),
       FeatherModule.pick(allIcons),
     ]),
+    provideNativeDateAdapter(),
     provideRouter(routes),
     // provideHttpClient(),
     provideAnimations(),
@@ -44,7 +50,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptorsFromDi()),
     provideClientHydration(),
-
+    provideFlatpickrDefaults(), provideAnimationsAsync(), provideAnimationsAsync(), provideAnimationsAsync(),
   ],
 };
 
