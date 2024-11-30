@@ -15,9 +15,6 @@ import {provideClientHydration} from '@angular/platform-browser';
 import {FeatherModule} from 'angular-feather';
 import {allIcons} from 'angular-feather/icons';
 import {provideFlatpickrDefaults} from 'angularx-flatpickr';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {provideNativeDateAdapter} from '@angular/material/core';
-import {MatInputModule} from '@angular/material/input';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export function HttpLoaderFactory(http:HttpClient){
@@ -38,7 +35,6 @@ export const appConfig: ApplicationConfig = {
       }),
       FeatherModule.pick(allIcons),
     ]),
-    provideNativeDateAdapter(),
     provideRouter(routes),
     // provideHttpClient(),
     provideAnimations(),

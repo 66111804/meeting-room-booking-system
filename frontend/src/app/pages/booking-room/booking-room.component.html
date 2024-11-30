@@ -84,35 +84,55 @@
   </div>
   <div class="col-xl-4">
     <div class="card">
-      <div class="card-header">
-        <h5 class="card-title mb-0">เวลาการจอง</h5>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">เลือกเวลาการจอง</h5>
+        <p class="text-muted mb-0">{{totalHours}} ชั่วโมง</p>
       </div>
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
-          <h6 class="mb-0">เวลาเริ่มต้น</h6>
-          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="flatpickrOptions"  placeholder="Select Date">
+          <h6 class="mb-0">เริ่ม</h6>
+          <select class="form-select mb-3  m-3" aria-label="Default select example" [ngModel]="timeStartSlotSelected" (ngModelChange)="onTimeStartSlotSelectChange($event)">
+            <option selected>เลือกเวลา เริ่มต้น</option>
+            <option *ngFor="let timeStartSlot of timeStartSlotSelectList" [value]="timeStartSlot">
+              {{ timeStartSlot }}
+            </option>
+          </select>
         </div>
         <div class="d-flex justify-content-between align-items-center mt-3">
-          <h6 class="mb-0">เวลาสิ้นสุด</h6>
-          <input class="form-control flatpickr-input" type="text" mwlFlatpickr [noCalendar]="true" [enableTime]="true" [dateFormat]="'H:i'" placeholder="Select Date">
-        </div>
-        <div class="24hr-example">
-          <input
-            aria-label="24hr format"
-            placeholder="24hr format"
-            readonly
-            [format]="24"
-            [ngxTimepicker]="fullTime"
-          />
-          <ngx-material-timepicker #fullTime></ngx-material-timepicker>
-        </div>
-        <div>
-
+          <h6 class="mb-0">ถึง</h6>
+          <select class="form-select mb-3 m-3" aria-label="Default select example" [ngModel]="timeEndSlotSelected" (ngModelChange)="onTimeEndSlotSelectChange($event)">
+            <option selected>เลือกเวลา สิ้นสุด</option>
+            <option *ngFor="let timeEndSlot of timeEndSlotSelectList" [value]="timeEndSlot">
+              {{ timeEndSlot }}
+            </option>
+          </select>
         </div>
 
         <div class="mt-4">
           <button type="button" class="btn btn-success w-100">ตกลง</button>
         </div>
+
+
+        <!-- รายการที่ จองแล้ว -->
+        <div class="mt-4">
+
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">รายการที่จองแล้ว</h6>
+            <button type="button" class="btn btn-danger">ยกเลิก</button>
+          </div>
+          <div class="mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">เริ่ม</h6>
+              <p class="mb-0">09:00</p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <h6 class="mb-0">ถึง</h6>
+              <p class="mb-0">10:00</p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
   </div>
