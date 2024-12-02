@@ -21,7 +21,8 @@
           </div>
           <div class="col-xxl-3 col-sm-6">
             <div>
-              <input class="form-control flatpickr-input" type="text" mwlFlatpickr [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
+              <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
+
             </div>
           </div>
           <!--end col-->

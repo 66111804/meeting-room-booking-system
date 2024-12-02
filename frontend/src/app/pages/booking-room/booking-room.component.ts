@@ -2,12 +2,10 @@ import {ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,} fro
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe, NgForOf, SlicePipe} from '@angular/common';
-import {FlatpickrDirective} from 'angularx-flatpickr';
+import {FlatpickrDefaultsInterface, FlatpickrDirective} from 'angularx-flatpickr';
 import {FormsModule} from '@angular/forms';
 import {RoomInfo} from './room.module';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-
-
 
 
 @Component({
@@ -40,6 +38,11 @@ export class BookingRoomComponent implements OnInit
     '20:00', '20:30', '21:00', '21:30', '22:00', '23:30',
   ];
 
+  datePickerOptions: FlatpickrDefaultsInterface = {
+    minDate: new Date(),
+    maxDate: this.getMaxDate(),
+    dateFormat: 'Y-m-d',
+  };
 
   timeStartSlotSelected = '08:00';
   timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
@@ -221,5 +224,11 @@ export class BookingRoomComponent implements OnInit
   }
   changePage() {
     console.log('Page changed');
+  }
+
+  private getMaxDate(): Date {
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() + 3);
+    return currentDate;
   }
 }
