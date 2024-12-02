@@ -45,7 +45,7 @@ export const appConfig: ApplicationConfig = {
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
     provideHttpClient(withInterceptorsFromDi()),
-    provideClientHydration(),
+    // provideClientHydration(),
     provideFlatpickrDefaults(), provideAnimationsAsync(), provideAnimationsAsync(), provideAnimationsAsync(),
   ],
 };

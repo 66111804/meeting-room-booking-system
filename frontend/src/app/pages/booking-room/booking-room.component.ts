@@ -6,6 +6,7 @@ import {FlatpickrDefaultsInterface, FlatpickrDirective} from 'angularx-flatpickr
 import {FormsModule} from '@angular/forms';
 import {RoomInfo} from './room.module';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
+import {Subject} from 'rxjs';
 
 
 @Component({
@@ -130,6 +131,8 @@ export class BookingRoomComponent implements OnInit
 
   page:number = 1;
   limit:number = 5;
+
+  searchSubject: Subject<string> = new Subject<string>();
   constructor() {
     this.breadCrumbItems = [
       { label: 'Dashboard' },

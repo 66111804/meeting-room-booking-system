@@ -31,7 +31,6 @@ export class VerticalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.router.events.subscribe((event: any) => {
       if (document.documentElement.getAttribute('data-preloader') == 'enable') {
         if (event instanceof NavigationEnd) {
@@ -75,6 +74,9 @@ export class VerticalComponent implements OnInit {
       })
     }
   }
+
+  ngAfterViewInit() {}
+
   private handlePreloader(route: any) {
     if (route !== '/disabled-route') {
       (document.getElementById("preloader") as HTMLElement).style.opacity = "1";

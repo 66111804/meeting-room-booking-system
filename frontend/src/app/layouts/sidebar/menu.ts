@@ -58,7 +58,7 @@ export const MENU: MenuItem[] = [
     id: 7,
     label: 'MENUITEMS.LOGOUT.TEXT',
     icon: 'ri-logout-box-line',
-    link: '/login'
+    link: '/logout'
   }
 
 ];

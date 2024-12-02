@@ -7,6 +7,7 @@ import {UserComponent} from './administrator/user/user.component';
 import {MeetingRoomComponent} from './administrator/meeting-room/meeting-room.component';
 import {RolePermissionComponent} from './administrator/role-permission/role-permission.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {LogoutComponent} from './auth/logout/logout.component';
 
 const Routing: Routes = [
   {
@@ -42,6 +43,10 @@ const Routing: Routes = [
         component: RolePermissionComponent
       }
     ]
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent,
   }
 ];
 export {Routing}

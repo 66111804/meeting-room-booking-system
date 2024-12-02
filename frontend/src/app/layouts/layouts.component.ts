@@ -3,7 +3,7 @@ import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import { RootReducerState } from '../store';
 import {Store} from '@ngrx/store';
 import {CommonModule} from '@angular/common';
-import {RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {NgbCollapseModule, NgbDropdownModule, NgbNavModule} from '@ng-bootstrap/ng-bootstrap';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import {HorizontalComponent} from './horizontal/horizontal.component';
@@ -17,6 +17,7 @@ import {SidebarComponent} from './sidebar/sidebar.component';
 import {FooterComponent} from './footer/footer.component';
 import {TwoColumnSidebarComponent} from './two-column-sidebar/two-column-sidebar.component';
 import {LanguageService} from '../core/services/language.service';
+import {AuthenticationService} from '../core/services/auth.service';
 
 
 @Component({
@@ -45,10 +46,9 @@ export class LayoutsComponent implements OnInit
 {
   layoutType!: string;
 
-  constructor(private store: Store<RootReducerState>) { }
+  constructor(private store: Store<RootReducerState>, private service: AuthenticationService, private router: Router) { }
 
   ngOnInit(): void {
-
     this.store.select('layout').subscribe((data) => {
       this.layoutType = data.LAYOUT;
       document.documentElement.setAttribute('data-layout', data.LAYOUT);
@@ -63,6 +63,18 @@ export class LayoutsComponent implements OnInit
       document.documentElement.setAttribute('data-preloader', data.DATA_PRELOADER)
       document.documentElement.setAttribute('data-sidebar-visibility', data.SIDEBAR_VISIBILITY);
     })
+
+    this.service.isAuthenticated().subscribe(
+      {
+        next: (response) => {
+          // console.log(response);
+        },
+        error: (error) => {
+          // console.log(error);
+          this.router.navigateByUrl('login').then();
+        }
+      }
+    );
   }
 
   /**
@@ -70,27 +82,6 @@ export class LayoutsComponent implements OnInit
    */
   isVerticalLayoutRequested() {
     return this.layoutType === 'vertical';
-  }
-
-  /**
-   * Check if the semibox layout is requested
-   */
-  isSemiboxLayoutRequested() {
-    return this.layoutType === 'semibox';
-  }
-
-  /**
-   * Check if the horizontal layout is requested
-   */
-  isHorizontalLayoutRequested() {
-    return this.layoutType === 'horizontal';
-  }
-
-  /**
-   * Check if the horizontal layout is requested
-   */
-  isTwoColumnLayoutRequested() {
-    return this.layoutType === 'twocolumn';
   }
 
 }

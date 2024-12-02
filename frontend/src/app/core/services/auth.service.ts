@@ -7,9 +7,9 @@ import {Store} from '@ngrx/store';
 import {loginFailure, logout} from '../../store/Authentication/authentication.actions';
 import {getFirebaseBackend} from '../../authUtils';
 
-const AUTH_API = GlobalComponent.AUTH_API;
+export const AUTH_API = GlobalComponent.AUTH_API;
 
-const httpOptions = {
+export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 }
 
@@ -31,58 +31,17 @@ export class AuthenticationService {
      }
 
     /**
-     * Performs the register
-     * @param email email
-     * @param password password
-     */
-    // register(email: string, first_name: string, password: string) {
-    //     // return getFirebaseBackend()!.registerUser(email, password).then((response: any) => {
-    //     //     const user = response;
-    //     //     return user;
-    //     // });
-    //
-    //     // Register Api
-    //     return this.http.post(AUTH_API + 'signup', {
-    //         email,
-    //         first_name,
-    //         password,
-    //       }, httpOptions).pipe(
-    //         map((response: any) => {
-    //             const user = response;
-    //             return user;
-    //         }),
-    //         catchError((error: any) => {
-    //             const errorMessage = 'Login failed'; // Customize the error message as needed
-    //             this.store.dispatch(loginFailure({ error: errorMessage }));
-    //             return throwError(errorMessage);
-    //         })
-    //     );
-    // }
-
-    /**
      * Performs the auth
-     * @param email email of user
+     * @param employeeId email of user
      * @param password password of user
      */
-    login(email: string, password: string) {
-        // return getFirebaseBackend()!.loginUser(email, password).then((response: any) => {
-        //     const user = response;
-        //     return user;
-        // });
 
-        return this.http.post(AUTH_API + 'signin', {
-            email,
-            password
-          }, httpOptions).pipe(
-              map((response: any) => {
-                const user = response;
-                return user;
-            }),
-            catchError((error: any) => {
-                const errorMessage = 'Login failed'; // Customize the error message as needed
-                return throwError(errorMessage);
-            })
-        );
+    login(employeeId: string, password: string) {
+      // Login Api
+      return this.http.post(AUTH_API + 'sign-in', {
+              employeeId,
+              password
+            }, httpOptions);
     }
 
     /**
@@ -96,29 +55,24 @@ export class AuthenticationService {
      * Logout the user
      */
     logout() {
+        const headerToken = { 'Authorization': `Bearer ` + sessionStorage.getItem('token') };
         this.store.dispatch(logout());
         // logout the user
         // return getFirebaseBackend()!.logout();
         sessionStorage.removeItem('currentUser');
         sessionStorage.removeItem('token');
+        this.http.post(AUTH_API + 'sign-out', {}, { headers: headerToken }).subscribe();
         this.currentUserSubject.next(null!);
-
-        return of(undefined).pipe(
-
-        );
-
+        return of(undefined).pipe();
     }
 
     /**
-     * Reset password
-     * @param email email
+     * Check if the user is authenticated
      */
-    resetPassword(email: string) {
-        return getFirebaseBackend()!.forgetPassword(email).then((response: any) => {
-            const message = response.data;
-            return message;
-        });
-    }
+    isAuthenticated() {
 
+      const headerToken = { 'Authorization': `Bearer ` + sessionStorage.getItem('token') };
+      return this.http.get(GlobalComponent.AUTH_API + 'is-login', { headers: headerToken });
+    }
 }
 
