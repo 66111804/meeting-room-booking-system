@@ -7,4 +7,4 @@
 *.yml eol=lf
 *.yaml eol=lf
 *.md eol=lf
-*.txt eol=lf
+*.txt eol=lf* text=auto

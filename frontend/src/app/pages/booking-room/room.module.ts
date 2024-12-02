@@ -1,5 +1,6 @@
-export interface RoomModule {
+export interface RoomInfo {
   id: number;
-  name: string;
-  roomNumber: string;
+  name: string; // Meeting Room 1 or room number
+  imageUrl: string;
+  description: string;
 }

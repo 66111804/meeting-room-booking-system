@@ -1,9 +1,14 @@
 import {ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,} from '@angular/core';
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
-import {NgForOf} from '@angular/common';
+import {DatePipe, NgForOf, SlicePipe} from '@angular/common';
 import {FlatpickrDirective} from 'angularx-flatpickr';
 import {FormsModule} from '@angular/forms';
+import {RoomInfo} from './room.module';
+import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
+
+
+
 
 @Component({
   selector: 'app-booking-room',
@@ -14,6 +19,9 @@ import {FormsModule} from '@angular/forms';
     FlatpickrDirective,
     NgForOf,
     FormsModule,
+    DatePipe,
+    SlicePipe,
+    NgbPagination,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './booking-room.component.html',
@@ -32,7 +40,6 @@ export class BookingRoomComponent implements OnInit
     '20:00', '20:30', '21:00', '21:30', '22:00', '23:30',
   ];
 
-  roomData = []
 
   timeStartSlotSelected = '08:00';
   timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
@@ -40,6 +47,86 @@ export class BookingRoomComponent implements OnInit
   timeEndSlotSelectList = this.timeSlots.slice(1);
   totalHours = 0;
 
+  dateSelected!:Date;
+
+  // Room list example 12 rooms
+  roomList: Array<RoomInfo> = [
+    {
+      id: 1,
+      name: '101',
+      imageUrl: 'assets/images/room1.jpg',
+      description: 'This is a meeting room 1'
+    },
+    {
+      id: 2,
+      name: '102',
+      imageUrl: 'assets/images/room2.jpg',
+      description: 'This is a meeting room 2'
+    },
+    {
+      id: 3,
+      name: '103',
+      imageUrl: 'assets/images/room3.jpg',
+      description: 'This is a meeting'
+    },
+    {
+      id: 4,
+      name: '104',
+      imageUrl: 'assets/images/room4.jpg',
+      description: 'This is a meeting room 4'
+    },
+    {
+      id: 5,
+      name: '105',
+      imageUrl: 'assets/images/room5.jpg',
+      description: 'This is a meeting room 5'
+    },
+    {
+      id: 6,
+      name: '106',
+      imageUrl: 'assets/images/room6.jpg',
+      description: 'This is a meeting room 6'
+    },
+    {
+      id: 7,
+      name: '107',
+      imageUrl: 'assets/images/room7.jpg',
+      description: 'This is a meeting room 7'
+    },
+    {
+      id: 8,
+      name: '108',
+      imageUrl: 'assets/images/room8.jpg',
+      description: 'This is a meeting room 8'
+    },
+    {
+      id: 9,
+      name: '109',
+      imageUrl: 'assets/images/room9.jpg',
+      description: 'This is a meeting room 9'
+    },
+    {
+      id: 10,
+      name: '110',
+      imageUrl: 'assets/images/room10.jpg',
+      description: 'This is a meeting room 10'
+    },
+    {
+      id: 11,
+      name: '111',
+      imageUrl: 'assets/images/room11.jpg',
+      description: 'This is a meeting room 11'
+    },
+    {
+      id: 12,
+      name: '112',
+      imageUrl: 'assets/images/room12.jpg',
+      description: 'This is a meeting room 12'
+    }
+  ]
+
+  page:number = 1;
+  limit:number = 5;
   constructor() {
     this.breadCrumbItems = [
       { label: 'Dashboard' },
@@ -52,6 +139,8 @@ export class BookingRoomComponent implements OnInit
       '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
       '17:00', '17:30', '18:00'
     ];
+
+    this.dateSelected = new Date();
   }
   ngOnInit() {
     const now = new Date();
@@ -122,6 +211,15 @@ export class BookingRoomComponent implements OnInit
 
   onSubmit() {
     console.log('Submit');
+  }
 
+  onDateSelectChange(date: any) {
+    // this.dateSelected = date;
+
+    console.log('Date:', date);
+
+  }
+  changePage() {
+    console.log('Page changed');
   }
 }
