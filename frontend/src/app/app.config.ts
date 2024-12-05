@@ -2,7 +2,7 @@ import {ApplicationConfig, importProvidersFrom, provideZoneChangeDetection} from
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import {HttpClient, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {provideMockStore} from '@ngrx/store/testing';
 import {provideStore} from '@ngrx/store';
@@ -16,6 +16,7 @@ import {FeatherModule} from 'angular-feather';
 import {allIcons} from 'angular-feather/icons';
 import {provideFlatpickrDefaults} from 'angularx-flatpickr';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {authInterceptorProviders} from './core/helpers/auth.interceptor';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
       FeatherModule.pick(allIcons),
     ]),
     provideRouter(routes),
+    authInterceptorProviders,
     // provideHttpClient(),
     provideAnimations(),
     provideMockStore(),

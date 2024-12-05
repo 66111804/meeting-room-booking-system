@@ -50,5 +50,14 @@
     }
   },
   "MEETING-ROOMS-NEW": "ข้อมูลห้องประชุม และข่าวสาร",
-  "LIST-ROOM": "รายการห้องประชุม"
+  "LIST-ROOM": "รายการห้องประชุม",
+  "USER": "ผู้ใช้งาน",
+  "MANAGE-USERS": "จัดการผู้ใช้งาน",
+  "USER-ROLE": "บทบาทผู้ใช้งาน",
+  "USER-INFORMATION-LIST": "รายการข้อมูลผู้ใช้งาน",
+  "MANAGE-MEETING-ROOMS": "จัดการห้องประชุม",
+  "MEETING-ROOMS": "ห้องประชุม",
+  "MEETING-ROOMS-BOOKING": "จองห้องประชุม",
+  "MEETING-ROOMS-LIST": "รายการการร้องประชุม",
+  "ADD-USER": "เพิ่มผู้ใช้งาน"
 }

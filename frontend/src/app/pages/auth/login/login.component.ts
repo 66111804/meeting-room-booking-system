@@ -3,7 +3,10 @@ import {Router, RouterLink} from '@angular/router';
 import {ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {NgClass} from '@angular/common';
 import Swal from 'sweetalert2';
-import {AuthenticationService} from '../../../core/services/auth.service';
+import {AuthenticationService, LogInResponse} from '../../../core/services/auth.service';
+import {loginFailure, loginSuccess} from '../../../store/Authentication/authentication.actions';
+import {Store} from '@ngrx/store';
+import {TokenStorageService} from '../../../core/services/token-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +21,7 @@ import {AuthenticationService} from '../../../core/services/auth.service';
 })
 export class LoginComponent implements OnInit,AfterViewInit
 {
-// Login Form
+  // Login Form
   loginForm!: UntypedFormGroup;
   submitted = false;
   fieldTextType!: boolean;
@@ -27,7 +30,7 @@ export class LoginComponent implements OnInit,AfterViewInit
   // set the current year
   year: number = new Date().getFullYear();
 
-  constructor(private formBuilder: UntypedFormBuilder, private router: Router, private service: AuthenticationService) { }
+  constructor(private formBuilder: UntypedFormBuilder, private router: Router, private service: AuthenticationService,private store: Store,private tokenStorageService:TokenStorageService) { }
 
   ngOnInit(): void {
 
@@ -39,16 +42,21 @@ export class LoginComponent implements OnInit,AfterViewInit
       password: ['', Validators.required],
     });
 
-    this.service.isAuthenticated().subscribe(
-      {
-        next: (response) => {
-          this.router.navigateByUrl('app').then();
-        },
-        error: (error) => {
-          console.log(error);
+    try {
+      this.service.isAuthenticated().subscribe(
+        {
+          next: (response) => {
+            this.router.navigateByUrl('app').then();
+          },
+          error: (error) => {
+            console.log(error);
+          }
         }
-      }
-    );
+      );
+
+    }catch (error) {
+      console.error(error);
+    }
   }
 
   ngAfterViewInit(){
@@ -62,35 +70,32 @@ export class LoginComponent implements OnInit,AfterViewInit
    */
   onSubmit() {
     this.submitted = true;
-    // Swal.fire('Success!', 'Logged in successfully!', 'success')
-    //   .then(() => {
-    //     this.router.navigateByUrl('app').then();
-    //   });
-
     // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
 
     console.log(this.loginForm.value);
-    this.service.login(this.loginForm.value.employeeId, this.loginForm.value.password).subscribe({
-        next: (res:any) => {
-            console.log(res);
-            const { token, user } = res;
-            sessionStorage.setItem('token', token);
-            sessionStorage.setItem('currentUser', JSON.stringify(user));
 
-            Swal.fire(
-              {
-                icon: 'success',
-                title: 'Success!',
-                text: 'Logged in successfully!',
-                timer: 1500,
-                showConfirmButton: true
-              }
-            )
+
+    this.service.login(this.loginForm.value.employeeId, this.loginForm.value.password)
+      .subscribe({
+        next: (res:LogInResponse) => {
+          this.store.dispatch(loginSuccess({ user: res.user }));
+          // this.currentUserSubject.next(res);
+          this.tokenStorageService.saveToken(res.token);
+          this.tokenStorageService.saveUser(res);
+          Swal.fire(
+            {
+              icon: 'success',
+              title: 'Success!',
+              text: 'Logged in successfully!',
+              timer: 1500,
+              showConfirmButton: true
+            }
+          )
             .then(() => {
-                this.router.navigateByUrl('app').then();
+              this.router.navigateByUrl('app').then();
             });
         },
         error: error => {
@@ -99,14 +104,13 @@ export class LoginComponent implements OnInit,AfterViewInit
             title: 'Oops...',
             text: `Invalid Credentials! ${error.error.message}`,
           }).then(()=>{
-            // reset the password field
-            this.loginForm.get('password')?.reset();
+            return this.store.dispatch(loginFailure({ error: error.error.message }));
           });
         },
         complete: () => {
           console.log('complete');
         }
-    });
+      });
 
     // display form values on success
   }

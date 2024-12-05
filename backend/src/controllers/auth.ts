@@ -5,7 +5,6 @@ import { JWT_SECRET } from "../core/config";
 
 const prisma = new PrismaClient();
 
-
 export const singIn = async (req: any, res: any) => {
   const { employeeId, password } = req.body;
   const user = await prisma.user.findUnique({
@@ -13,11 +12,9 @@ export const singIn = async (req: any, res: any) => {
       employeeId: employeeId
     }
   });
-
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
-
   let isPasswordValid = await bcrypt.compare(password, user.password ?? "");
   if (!isPasswordValid) {
     return res.status(401).json({ message: "Password is not valid" });

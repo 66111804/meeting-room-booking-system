@@ -6,6 +6,8 @@ import { createServer } from "http";
 import auth from "./routes/auth";
 import { PrismaClient } from "@prisma/client";
 import cron from "node-cron";
+import administrator from "./routes/administrator";
+import { authMiddleware } from "./middlewares/auth";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -15,9 +17,17 @@ const httpServer = createServer(app);
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-access-token");
     next();
 });
+
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-access-token");
+    res.sendStatus(200);
+});
+
 const prisma = new PrismaClient();
 
 app.use(express.json());
@@ -38,29 +48,14 @@ app.get("/api", (req, res) => {
 
 // ----------------- Routes -----------------
 app.use('/api/auth',auth);
-
-app.get('/api/sessions', async (req, res) => {
-    const sessions = await prisma.session.findMany();
-    res.json(sessions);
-});
+app.use('/api/admin',authMiddleware,administrator);
 // List all routes
 console.table(routes(app));
 
-
 // Task to delete expired sessions
-const task = cron.schedule('0 * * * *', async () => {
-    const now = new Date();
-
-    const sessions = await prisma.session.deleteMany({
-        where: {
-            expires: {
-                lt: now
-            }
-        }
-    })
-
-    console.log(`Deleted ${sessions.count} sessions, expired sessions at ${now.toString()}`);
-});
+// const task = cron.schedule('0 * * * *', async () => {
+//     console.log(`Deleted ${sessions.count} sessions, expired sessions at ${now.toString()}`);
+// });
 
 
 // Start server

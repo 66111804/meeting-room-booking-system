@@ -177,4 +177,4 @@ dist
 
 prisma/.env
 prisma/.env.local
-prisma/migrations/
+prisma/migrations/*
