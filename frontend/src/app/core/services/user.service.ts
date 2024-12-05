@@ -7,6 +7,7 @@ export interface UserList {
   users:      User[];
   total:      number;
   totalPages: number;
+  current:    number;
 }
 export interface User {
   id:             number;

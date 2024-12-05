@@ -49,6 +49,8 @@ model UserRole {
 
   User User @relation(fields: [userId], references: [id])
   Role Role @relation(fields: [roleId], references: [id])
+
+  @@index([userId, roleId]) // add index for userId and roleId to make it unique
 }
 
 model Permission {
@@ -69,7 +71,41 @@ model RolePermission {
   Role       Role       @relation(fields: [roleId], references: [id])
   Permission Permission @relation(fields: [permissionId], references: [id])
 
-  @@index([userId, roleId])
-  @@index([roleId, permissionId])
 
+  @@index([roleId, permissionId]) // add index for roleId and permissionId to make it unique
+}
+
+// Meeting room model
+model MeetingRoom {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // name of the meeting room
+  description String? // description of the meeting room
+  capacity    Int? // number of people
+  imageUrl    String? // image url of the meeting room
+  status      String?  @default("active") // active, inactive, deleted
+  features    MeetingRoomFeatures[] // relation to features
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Features {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // name of the feature
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  meetingRooms MeetingRoomFeatures[] // relation to meeting rooms
+}
+
+model MeetingRoomFeatures {
+  id            Int      @id @default(autoincrement())
+  meetingRoom   MeetingRoom @relation(fields: [meetingRoomId], references: [id])
+  meetingRoomId Int
+
+  feature       Features @relation(fields: [featureId], references: [id])
+  featureId     Int
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([meetingRoomId, featureId]) // add index for meetingRoomId and featureId to make it unique
 }

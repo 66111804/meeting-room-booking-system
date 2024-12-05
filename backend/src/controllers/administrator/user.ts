@@ -57,9 +57,56 @@ export const getUsers = async (req: any, res: any) => {
       ],
     }));
 
-    return res.status(200).json({ users:formattedUsers, total, totalPages });
+    return res.status(200).json({ users:formattedUsers, total, totalPages,current:page });
   } catch (error) {
     console.error("Error fetching users:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getUser = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      include: {
+        roles: {
+          include: {
+            Role: {
+              include: {
+                permissions: {
+                  include: {
+                    Permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userWithoutPassword = { ...user, password: undefined };
+    const formattedUser = {
+      ...userWithoutPassword,
+      permissions: [
+        ...new Set(
+          user.roles.flatMap((role) =>
+            role.Role.permissions.map((perm) => perm.Permission.name)
+          )
+        ),
+      ],
+    };
+
+    return res.status(200).json({ user: formattedUser });
+  } catch (error) {
+    console.error("Error fetching user:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

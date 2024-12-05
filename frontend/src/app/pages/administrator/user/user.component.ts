@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {User, UserList, UserProfileService} from '../../../core/services/user.service';
 import {of} from 'rxjs';
+import {formatDateGlobal} from '../../../shared/utils/date-utils';
 
 @Component({
   selector: 'app-user',
@@ -54,8 +55,9 @@ export class UserComponent implements OnInit {
   }
 
   formatDate(date: string) {
-    return new Date(date).toLocaleDateString();
+    return formatDateGlobal(date);
   }
+
   addUser() {}
 
   searchUser(){}

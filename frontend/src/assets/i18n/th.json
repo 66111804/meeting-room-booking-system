@@ -59,5 +59,6 @@
   "MEETING-ROOMS": "ห้องประชุม",
   "MEETING-ROOMS-BOOKING": "จองห้องประชุม",
   "MEETING-ROOMS-LIST": "รายการการร้องประชุม",
-  "ADD-USER": "เพิ่มผู้ใช้งาน"
+  "ADD-USER": "เพิ่มผู้ใช้งาน",
+  "ADD-ROOM": "เพิ่มห้องประชุม"
 }
