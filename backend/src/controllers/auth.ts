@@ -30,10 +30,7 @@ export const singIn = async (req: any, res: any) => {
     lastName: user.lastName,
     dateEmployment: user.dateEmployment,
     avatar: user.avatar
-  }, JWT_SECRET, { expiresIn: "24h" , algorithm: "HS256"});
-
-  // Save token in session
-  req.session.token = token;
+  }, JWT_SECRET, { expiresIn: "2h" , algorithm: "HS256"});
 
   return res.status(200).json({
     message: "Sign in success", user: {
@@ -74,7 +71,6 @@ export const register = async (req: any, res: any) => {
       dateEmployment: dateEmployment
     }
   });
-
   // Token
   const token = jwt.sign({
     id: user.id,
@@ -84,8 +80,7 @@ export const register = async (req: any, res: any) => {
     lastName: user.lastName,
     dateEmployment: user.dateEmployment,
     avatar: user.avatar
-
-  }, JWT_SECRET, { expiresIn: "24h" , algorithm: "HS256"});
+  }, JWT_SECRET, { expiresIn: "2h" , algorithm: "HS256"});
   // Save token in session
   return res.json({ message: "Register success", user: user, token: token });
 };
@@ -111,7 +106,6 @@ export const refreshToken = async (req: any, res: any) => {
   } catch (error) {
     return res.status(401).json({ message: "Access denied. Invalid token" });
   }
-
 };
 
 export const logout = async (req: any, res: any) => {

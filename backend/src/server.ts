@@ -1,11 +1,9 @@
-import express from "express";
+// import express from "express";
+import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import routes from "express-list-endpoints";
 import { createServer } from "http";
-import session from "express-session";
 import auth from "./routes/auth";
-import PrismaSessionStore from "./core/PrismaSessionStore";
-import { APP_SECRET } from "./core/config";
 import { PrismaClient } from "@prisma/client";
 import cron from "node-cron";
 
@@ -21,16 +19,6 @@ app.use((req, res, next) => {
     next();
 });
 const prisma = new PrismaClient();
-app.use(session({
-    store: new PrismaSessionStore(prisma),
-    secret: APP_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-        httpOnly: false, // allow client-side JavaScript to access the cookie
-    }
-}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,21 +28,15 @@ app.use((req, res, next) =>{
     next();
 });
 
-app.get("/", (req, res) => {
-    const session = req.session;
-
-    if ((req.session as any).views) {
-        (req.session as any).views++;
-    } else {
-        (req.session as any).views = 1;
-    }
-
-    res.json({ status: "server is running..." , session});
+app.get("/", (req:Request, res:Response) => {
+    res.json({ status: "server is running..."});
 });
+
 app.get("/api", (req, res) => {
     res.json({ status: "server is running96" });
 });
 
+// ----------------- Routes -----------------
 app.use('/api/auth',auth);
 
 app.get('/api/sessions', async (req, res) => {
