@@ -8,6 +8,8 @@ import { PrismaClient } from "@prisma/client";
 import cron from "node-cron";
 import administrator from "./routes/administrator";
 import { authMiddleware } from "./middlewares/auth";
+import fs from "fs";
+import { uploadDir } from "./shared/uploadDir";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +32,9 @@ app.options("*", (req, res) => {
 
 const prisma = new PrismaClient();
 
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

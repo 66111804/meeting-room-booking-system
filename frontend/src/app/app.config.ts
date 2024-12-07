@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptorsFromDi()),
     // provideClientHydration(),
-    provideFlatpickrDefaults(), provideAnimationsAsync(), provideAnimationsAsync(), provideAnimationsAsync(),
+    provideFlatpickrDefaults(),
   ],
 };
 

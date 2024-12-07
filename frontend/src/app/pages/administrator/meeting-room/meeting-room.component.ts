@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {BreadcrumbsComponent} from "../../../shared/breadcrumbs/breadcrumbs.component";
-import {NgbPagination} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
+import {FeaturesComponent} from './features/features.component';
 
 @Component({
   selector: 'app-meeting-room',
@@ -12,7 +13,8 @@ import {TranslatePipe} from "@ngx-translate/core";
     NgbPagination,
     ReactiveFormsModule,
     TranslatePipe,
-    FormsModule
+    FormsModule,
+    FeaturesComponent
   ],
   templateUrl: './meeting-room.component.html',
   styleUrl: './meeting-room.component.scss'
@@ -23,11 +25,14 @@ export class MeetingRoomComponent implements OnInit
   searchTerm: string = '';
   page = 1;
   pageSize = 10;
-  constructor() {
+  isFeatures!: boolean;
+
+  constructor(private modalService: NgbModal) {
     this.breadCrumbItems = [
       { label: 'Meeting Room' },
       { label: 'Meeting Room', active: true },
     ];
+    this.isFeatures = true;
   }
 
   ngOnInit() {
@@ -40,4 +45,18 @@ export class MeetingRoomComponent implements OnInit
   onSort(name: string) {}
 
   changePage() {}
+
+  showFeatures(){
+    this.isFeatures = !this.isFeatures
+  }
+
+
+  /**
+   * Open modal
+   * @param content modal content
+   */
+  openModal(content: any) {
+    this.modalService.open(content, { size: 'md', centered: true });
+  }
+
 }

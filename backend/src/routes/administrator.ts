@@ -2,9 +2,18 @@ import { Router } from "express";
 import { getUsers } from "../controllers/administrator/user";
 import {
     createFeature,
-    createMeetingRoom, deleteFeature, deleteMeetingRoom, getFeature, getFeatures,
+    createMeetingRoom,
+    deleteFeature,
+    deleteMeetingRoom,
+    getFeature,
+    getFeatures,
     getMeetingRoom,
-    getMeetingRooms, isFeatureExist, isFeatureExistWithId, isMeetingRoomExist, isMeetingRoomExistWithId, updateFeature,
+    getMeetingRooms,
+    isValidateMeetingRoomWithId,
+    isValidateMeetingRoom,
+    isValidateFeature,
+    isValidateFeatureWithId,
+    updateFeature,
     updateMeetingRoom
 } from "../controllers/administrator/meeting-room";
 
@@ -37,41 +46,43 @@ router.delete('/meeting-room/:id/delete', async (req, res) => {
     await deleteMeetingRoom(req, res);
 });
 
-router.get('/meeting-room/is-exist', async (req, res) => {
-    await isMeetingRoomExist(req, res);
+router.get('/meeting-room/validate', async (req, res) => {
+    await isValidateMeetingRoom(req, res);
 });
 
-router.get('/meeting-room/:id/is-exist', async (req, res) => {
-    await isMeetingRoomExistWithId(req, res);
+router.get('/meeting-room/:id/validate', async (req, res) => {
+    await isValidateMeetingRoomWithId(req, res);
 });
 
 //---------- Features ------------
+
 router.get('/features', async (req, res) => {
     await getFeatures(req, res);
 });
 
-router.get('/feature/:id', async (req, res) => {
+router.get('/feature-get/:id', async (req, res) => {
     await getFeature(req, res);
 });
 
-router.post('/feature', async (req, res) => {
+router.post('/feature-create', async (req, res) => {
     await createFeature(req, res);
 });
 
-router.put('/feature/:id/update', async (req, res) => {
+router.put('/feature-update/:id', async (req, res) => {
     await updateFeature(req, res);
 });
 
-router.delete('/feature/:id/delete', async (req, res) => {
+router.delete('/feature-delete/:id', async (req, res) => {
     await deleteFeature(req, res);
 });
 
-router.get('/feature/is-exist', async (req, res) => {
-    await isFeatureExist(req, res);
+router.get('/feature-validate', async (req, res) => {
+    await isValidateFeature(req, res);
 });
 
-router.get('/feature/:id/is-exist', async (req, res) => {
-    await isFeatureExistWithId(req, res);
+router.get('/feature/:id/validate', async (req, res) => {
+    await isValidateFeatureWithId(req, res);
 });
+
 
 export default router;

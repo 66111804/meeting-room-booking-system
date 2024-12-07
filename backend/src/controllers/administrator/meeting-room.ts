@@ -2,6 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import { validationResult } from "express-validator";
 import path from "node:path";
 import fs from "fs";
+import formidable, { IncomingForm,File } from "formidable";
+import { uploadDir } from "../../shared/uploadDir";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -105,20 +108,41 @@ export const createMeetingRoom = async (req: any, res: any) => {
 
     // image upload
     const image = req.file;
-    if (!image) {
-      return res.status(400).json({ message: "Missing image" });
-    }
+    let fileName: string | undefined ='';
 
-    // save image to file system
-    const fileName = `${Date.now()}-${image.originalname}`;
-    const filePath = path.join(__dirname, `../../public/images/${fileName}`);
-    fs.writeFileSync(filePath, image.buffer);
+    if (image) {
+        const form = new formidable.IncomingForm({
+          uploadDir,
+          keepExtensions: true,
+          maxFileSize: 5 * 1024 * 1024, // 5MB
+          filter: ({ mimetype }) => !!mimetype && mimetype.startsWith("image/"), // image only
+        });
+
+        form.on("fileBegin", (name, file: File) => {
+          const extension = path.extname(file.originalFilename || ""); // ดึงนามสกุลไฟล์
+          const randomName = crypto.randomBytes(16).toString("hex"); // สร้างชื่อแบบสุ่ม
+          file.filepath = path.join(uploadDir, `${randomName}${extension}`); // กำหนดเส้นทางไฟล์ใหม่
+        });
+
+        form.parse(req, async (err, fields, files) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+
+          const file = Array.isArray(files.file) ? files.file[0] : files.file;
+
+          if (!file) {
+            return res.status(400).json({ message: "Missing image" });
+          }
+          fileName = file.filepath.split("/").pop();
+        });
+      }
 
     const meetingRoom = await prisma.meetingRoom.create({
       data: {
         name,
         description,
-        imageUrl: fileName,
+        imageUrl: fileName || '',
         features: {
           create: features.map((featureId: number) => ({
             featureId,
@@ -199,7 +223,7 @@ export const deleteMeetingRoom = async (req: any, res: any) => {
 };
 
 // ------------------- Check room is-exist by name -------------------
-export const isMeetingRoomExist = async (req: any, res: any) => {
+export const isValidateMeetingRoom = async (req: any, res: any) => {
   try {
     const { name } = req.query;
     if (!name) {
@@ -217,7 +241,7 @@ export const isMeetingRoomExist = async (req: any, res: any) => {
 };
 
 // ------------------- Check room is-exist by name with id -------------------
-export const isMeetingRoomExistWithId = async (req: any, res: any) => {
+export const isValidateMeetingRoomWithId = async (req: any, res: any) => {
   try {
     const { name } = req.query;
     const { id } = req.params;
@@ -260,6 +284,9 @@ export const getFeatures = async (req: any, res: any) => {
       where,
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     const total = await prisma.features.count({ where });
@@ -275,7 +302,6 @@ export const getFeatures = async (req: any, res: any) => {
 export const getFeature = async (req: any, res: any) => {
   try {
     const { id } = req.params;
-
     if (!id) {
       return res.status(400).json({ message: "Missing feature id" });
     }
@@ -396,37 +422,42 @@ export const deleteFeature = async (req: any, res: any) => {
 };
 
 // ------------------- Check feature is-exist by name -------------------
-export const isFeatureExist = async (req: any, res: any) => {
+export const isValidateFeature = async (req: any, res: any) => {
   try {
     const { name } = req.query;
     if (!name) {
       return res.status(400).json({ message: "Missing feature name" });
     }
+
     const feature = await prisma.features.findFirst({
       where: {
-        name: name,
+        name: name.trimEnd(),
       },
     });
-    return res.status(200).json({ isExist: !!feature });
+    return res.status(200).json({ valid: !feature });
+
   } catch (error:any) {
+    console.log(error);
+
     return res.status(500).json({ message: error.message });
   }
 };
 
 // ------------------- Check feature is-exist by name with id -------------------
-export const isFeatureExistWithId = async (req: any, res: any) => {
+export const isValidateFeatureWithId = async (req: any, res: any) => {
   try {
     const { id, name } = req.query;
     if (!id || !name) {
       return res.status(400).json({ message: "Missing feature id or name" });
     }
+
     const feature = await prisma.features.findFirst({
       where: {
         id: parseInt(id),
         name: name,
       },
     });
-    return res.status(200).json({ isExist: !!feature });
+    return res.status(200).json({ valid: !feature });
   } catch (error:any) {
     return res.status(500).json({ message: error.message });
   }

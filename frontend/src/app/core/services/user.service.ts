@@ -35,7 +35,7 @@ export class UserProfileService {
     //  */
     getAll(page = 1, size = 10,searchTerm = '') {
       const token = this.tokenStorageService.getToken();
-        return this.http.get<UserList>(`${GlobalComponent.API_URL}admin/users?page=${page}&limit=${size}&search=${searchTerm}`)
+        return this.http.get<UserList>(`${GlobalComponent.API_URL}/admin/users?page=${page}&limit=${size}&search=${searchTerm}`)
           // ,
           // {
           //   headers: {

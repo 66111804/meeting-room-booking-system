@@ -36,8 +36,7 @@ export class UserComponent implements OnInit {
 
   ngOnInit() {
     document.getElementById('elmLoader')?.classList.add('d-none');
-
-   this.fetchUsers();
+    this.fetchUsers();
   }
 
   fetchUsers() {

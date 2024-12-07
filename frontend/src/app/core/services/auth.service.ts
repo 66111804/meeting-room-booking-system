@@ -56,44 +56,10 @@ export class AuthenticationService {
 
     login(employeeId: string, password: string) {
       // Login Api
-      return this.http.post<LogInResponse>(GlobalComponent.AUTH_API + 'sign-in', {
+      return this.http.post<LogInResponse>(GlobalComponent.AUTH_API + '/sign-in', {
               employeeId,
               password
             }, httpOptions);
-
-      //
-      //   .subscribe({
-      //     next: (res:LogInResponse) => {
-      //     this.store.dispatch(loginSuccess({ user: res.user }));
-      //     // this.currentUserSubject.next(res);
-      //     this.tokenStorageService.saveToken(res.token);
-      //     this.tokenStorageService.saveUser(res);
-      //     Swal.fire(
-      //       {
-      //         icon: 'success',
-      //         title: 'Success!',
-      //         text: 'Logged in successfully!',
-      //         timer: 1500,
-      //         showConfirmButton: true
-      //       }
-      //     )
-      //       .then(() => {
-      //         this.router.navigateByUrl('app').then();
-      //       });
-      //   },
-      //   error: error => {
-      //     Swal.fire({
-      //       icon: 'error',
-      //       title: 'Oops...',
-      //       text: `Invalid Credentials! ${error.error.message}`,
-      //     }).then(()=>{
-      //       return this.store.dispatch(loginFailure({ error: error.error.message }));
-      //     });
-      //   },
-      //   complete: () => {
-      //     console.log('complete');
-      //   }
-      // });
     }
 
     /**
@@ -111,7 +77,7 @@ export class AuthenticationService {
         this.store.dispatch(logout());
 
         this.tokenStorageService.sigOut();
-        this.http.post(GlobalComponent.AUTH_API + 'sign-out', {}, { headers: headerToken }).subscribe();
+        this.http.post(GlobalComponent.AUTH_API + '/sign-out', {}, { headers: headerToken }).subscribe();
         this.currentUserSubject.next(null!);
         return of(undefined).pipe();
     }
@@ -121,7 +87,7 @@ export class AuthenticationService {
      */
     isAuthenticated() {
       const headerToken = { 'Authorization': `Bearer ` + this.tokenStorageService.getToken() };
-      return this.http.get(GlobalComponent.AUTH_API + 'is-login');
+      return this.http.get(GlobalComponent.AUTH_API + '/is-login');
     }
 }
 

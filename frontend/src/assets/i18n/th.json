@@ -60,5 +60,21 @@
   "MEETING-ROOMS-BOOKING": "จองห้องประชุม",
   "MEETING-ROOMS-LIST": "รายการการร้องประชุม",
   "ADD-USER": "เพิ่มผู้ใช้งาน",
-  "ADD-ROOM": "เพิ่มห้องประชุม"
+  "ADD-ROOM": "เพิ่มห้องประชุม",
+  "ROOM-FEATURES": "คุณสมบัติของห้อง",
+  "FEATURES": "คุณสมบัติ",
+  "ADD-FEATURE": "เพิ่มคุณสมบัติ",
+  "FEATURE-NAME": "ชื่อคุณสมบัติ",
+  "EDIT-FEATURE": "แก้ไขคุณสมบัติ",
+  "SAVE": "บันทึก",
+  "CANCEL": "ยกเลิก",
+  "EDIT": "แก้ไข",
+  "DELETE": "ลบ",
+  "Yes, Delete It!": "ใช่ ลบ",
+  "Close": "ปิด",
+  "You are about to delete a": "คุณกำลังจะลบ",
+  "Are you sure?": "คุณแน่ใจหรือไม่?",
+  "Success": "สำเร็จ",
+  "Error": "ผิดพลาด",
+  "Feature deleted successfully!": "ลบคุณสมบัติสำเร็จ"
 }

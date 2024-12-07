@@ -8,6 +8,7 @@ import {MeetingRoomComponent} from './administrator/meeting-room/meeting-room.co
 import {RolePermissionComponent} from './administrator/role-permission/role-permission.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LogoutComponent} from './auth/logout/logout.component';
+import {CreateRoomComponent} from './administrator/meeting-room/create-room/create-room.component';
 
 const Routing: Routes = [
   {
@@ -37,6 +38,10 @@ const Routing: Routes = [
       {
         path: 'meeting-room',
         component: MeetingRoomComponent
+      },
+      {
+        path: 'meeting-room-create',
+        component: CreateRoomComponent
       },
       {
         path: 'role-permission',
