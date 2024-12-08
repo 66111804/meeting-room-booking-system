@@ -92,6 +92,7 @@ export class RoomMeetingService {
     formData.append('name', datForm.name.data);
     formData.append('capacity',  datForm.capacity.data);
     formData.append('description',  datForm.description.data);
+    formData.append('status',  datForm.status.data);
     if(this.imageFile !== null){
       formData.append('image', this.imageFile);
     }

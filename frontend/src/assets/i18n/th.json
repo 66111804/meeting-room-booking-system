@@ -92,5 +92,10 @@
   "Description": "รายละเอียด",
   "Status": "สถานะ",
   "Last Updated": "อัพเดทล่าสุด",
-  "Room Image": "รูปภาพห้อง"
+  "Room Image": "รูปภาพห้อง",
+  "STATUS": "สถานะ",
+  "ACTIVE": "ใช้งาน",
+  "active": "ใช้งาน",
+  "INACTIVE": "ไม่ใช้งาน",
+  "inactive": "ไม่ใช้งาน"
 }

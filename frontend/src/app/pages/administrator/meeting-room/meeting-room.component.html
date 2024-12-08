@@ -69,7 +69,9 @@
                 <td class="designation">{{ room.description | slice:0:20 }} {{ room.description.length > 20 ? '...' : '' }}</td>
                 <td class="designation">{{ room.capacity }}</td>
                 <td class="designation">
-                  <div class="badge fw-medium bg-success-subtle text-success">{{ room.status }}</div>
+                  <div class="badge {{room.status  == 'active'?'bg-success-subtle text-success':'bg-danger-subtle text-danger'}}">
+                    {{ room.status | translate }}
+                  </div>
                 </td>
                 <td class="designation">
                   {{ room.updatedAt | date: 'dd-MMM-yyyy hh:mm a' }}
@@ -235,11 +237,17 @@
           </div>
           <!-- status -->
           <div class="col-lg-12">
-            <mat-radio-group aria-label="Select an option" class="justify-content-between" name="status" [(ngModel)]="roomFormControls.status.data">
-              <mat-radio-button value="1">Option 1</mat-radio-button>
-              <mat-radio-button value="2">Option 2</mat-radio-button>
-            </mat-radio-group>
-
+            <div class="mb-3">
+              <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }}</label>
+              <mat-radio-group id="statusInfo" class="justify-content-start d-flex align-items-center" aria-label="Select Status" name="status" >
+                <mat-radio-button value="active" class="mt-1" (change)="statusChange($event)"  [checked]="roomFormControls.status.data == 'active'">
+                  {{ "ACTIVE" | translate }}
+                </mat-radio-button>
+                <mat-radio-button value="inactive" class="mt-1" (change)="statusChange($event)" [checked]="roomFormControls.status.data == 'inactive'">
+                  {{ "INACTIVE" | translate }}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
           </div>
           <div class="col-lg-12">
             <div class="mb-3">

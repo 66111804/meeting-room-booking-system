@@ -285,6 +285,7 @@ export class MeetingRoomComponent implements OnInit
     this.roomFormControls.name.data = room.name;
     this.roomFormControls.capacity.data = room.capacity ? room.capacity.toString() : '';
     this.roomFormControls.description.data = room.description;
+    this.roomFormControls.status.data = room.status;
     this.roomFeaturesService.getFeatureWithRoom(1,50,'',room.id).subscribe({
       next: (response) => {
         this.features = response;
@@ -333,5 +334,10 @@ export class MeetingRoomComponent implements OnInit
 
   showImage(content:any) {
     this.modalService.open(content, { size: 'lg', centered: true ,fullscreen: true});
+  }
+
+  statusChange(event: any) {
+    console.log(event.value);
+    this.roomFormControls.status.data = event.value;
   }
 }

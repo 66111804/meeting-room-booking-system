@@ -88,15 +88,12 @@ export const getMeetingRoom = async (req: any, res: any) => {
 // ------------------- Create meeting room -------------------
 export const createMeetingRoom = async (req: any, res: any) => {
   try {
-    // console.log(req.file);
-    // console.log(req.body);
-
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ message: result.array() });
     }
 
-    const { name, description, features , capacity} = req.body
+    const { name, description, features , capacity, status} = req.body
 
 
     /*
@@ -125,6 +122,7 @@ export const createMeetingRoom = async (req: any, res: any) => {
         description,
         imageUrl: fileName || '',
         capacity: capacity ? parseInt(capacity) : 0,
+        status: status || 'active',
         roomHasFeatures: {
           create: features.map((featureId: number) => ({
             featureId: parseInt(featureId.toString(), 10),
@@ -148,7 +146,7 @@ export const updateMeetingRoom = async (req: any, res: any) => {
     }
 
     const { id } = req.params;
-    const { name, description, features,capacity } = req.body;
+    const { name, description, features, capacity, status } = req.body;
 
     /*
       example for data:
@@ -202,6 +200,7 @@ export const updateMeetingRoom = async (req: any, res: any) => {
         description,
         imageUrl: fileName || '',
         capacity: capacity ? parseInt(capacity) : 0,
+        status: status || 'active',
         roomHasFeatures: {
           deleteMany: {},
           create: features.map((featureId: number) => ({
