@@ -9,13 +9,13 @@
         <div class="row g-3">
           <div class="col-md-4">
             <div class="search-box">
-              <input type="text" name="searchTerm" class="form-control" placeholder="Search for users" [(ngModel)]="searchTerm" (ngModelChange)="searchUser()">
+              <input type="text" name="searchTerm" class="form-control" placeholder="Search for room" [(ngModel)]="searchTerm">
               <i class="ri-search-line search-icon"></i>
             </div>
           </div>
           <div class="col-md-auto ms-auto">
             <div class="">
-              <button class="btn btn-info add-btn ms-2" (click)="addUser()">{{ "ADD-ROOM" | translate }}</button>
+              <button class="btn btn-info add-btn ms-2" (click)="openModal(meetingRoomModal)">{{ "ADD-ROOM" | translate }}</button>
               <button class="btn btn-success add-btn ms-2 {{ isFeatures?'active':'' }}" (click)="showFeatures()">{{ "ROOM-FEATURES" | translate }}</button>
             </div>
           </div>
@@ -29,7 +29,7 @@
     <div class="card">
       <div class="card-header border-0 p-4 pb-0">
         <div class="justify-content-between d-flex align-items-center m-0">
-          <h3 class=" pb-1 text-decoration-underline">{{ "MEETING-ROOMS-LIST" | translate }}</h3>
+          <h4 class=" pb-1 text-decoration-underline">{{ "MEETING-ROOMS-LIST" | translate }}</h4>
         </div>
       </div>
       <div class="card-body p-4">
@@ -38,27 +38,54 @@
             <table class="table">
               <thead>
               <tr class="bg-light">
-                <th scope="col" style="width: 50px;">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="checkAll" value="option" >
-                  </div>
-                </th>
-                <th class="sort" >Name</th>
-                <th class="sort" (click)="onSort('email')">Email
-                </th>
-                <th class="sort" (click)="onSort('phone')">Position</th>
-                <th class="sort" (click)="onSort('department')">Department</th>
-                <th class="sort" (click)="onSort('role')">Role</th>
-                <th class="sort" (click)="onSort('status')">Status</th>
-                <th class="sort" (click)="onSort('date')">Last Updated</th>
+                <th >No</th>
+                <th >Image</th>
+                <th >Name(Room no)</th>
+                <th >Description</th>
+                <th >Capacity</th>
+                <th >Status</th>
+                <th >Last Updated</th>
                 <th>Action</th>
               </tr>
               </thead>
+              <tbody>
+              @for (room of meetingRooms.meetingRooms; track $index){
+              <tr>
+                <td class="fw-medium">
+                  @if(page > 1){
+                    {{ (page - 1) * pageSize + $index + 1 }}
+                  }@else{
+                    {{ $index + 1 }}
+                  }
+                </td>
+                <td>
+                  <img src="{{ room.imageUrl }}" class="avatar-xs rounded" alt="lead-image">
+                </td>
+                <td class="designation">{{ room.name }}</td>
+                <td class="designation">{{ room.description }}</td>
+                <td class="designation">{{ room.capacity }}</td>
+                <td class="designation">
+                  <div class="badge fw-medium bg-success-subtle text-success">{{ room.status }}</div>
+                </td>
+                <td class="designation"></td>
+                <td class="action">
+                  <!-- (click)="edit(editMeetingRoom,room)" -->
+                  <a href="javascript:void(0);"  class="me-2 bg-success-subtle text-success fs-15 rounded">
+                    <i class="ri-pencil-line fs-15">
+                    </i>
+                  </a>
+                  <!--  (click)="confirm(deleteMeetingRoomModel,room)" -->
+                  <a href="javascript:void(0);"class="mr-2 bg-danger-subtle text-danger fs-15 rounded" (click)="confirm(deleteRoomModel,room)">
+                    <i class="ri-delete-bin-line"></i>
+                  </a>
+                </td>
+              </tr>
+              }
             </table>
           </div>
           <div class="d-flex justify-content-end mt-3">
             <!-- Pagination -->
-            <ngb-pagination [collectionSize]="100"
+            <ngb-pagination [collectionSize]="meetingRooms.total"
                             [(page)]="page"
                             [pageSize]="pageSize"
                             (pageChange)="changePage()"
@@ -77,69 +104,17 @@
       @if (isFeatures){
         <app-features></app-features>
       } @else {
-        <div class="card-body text-center contact-details">
-          <div class="position-relative d-inline-block">
-            <img src="assets/images/users/avatar-10.jpg" alt="" class="avatar-lg rounded-circle img-thumbnail">
-            <span class="contact-active position-absolute rounded-circle bg-success"></span><span class="visually-hidden"></span>
-          </div>
-          <h5 class="mt-4 mb-1">Tonya Noble</h5>
-          <p class="text-muted">Nesta Technologies</p>
+        <div class="card-body overlay-caption">
+          <h6 class="text-muted text-uppercase fw-semibold mb-3">Information</h6>
 
-          <ul class="list-inline mb-0">
-            <li class="list-inline-item avatar-xs">
-              <a href="javascript:void(0);" class="avatar-title bg-success-subtle text-success fs-15 rounded">
-                <i class="ri-phone-line"></i>
-              </a>
-            </li>
-            <li class="list-inline-item avatar-xs">
-              <a href="javascript:void(0);" class="avatar-title bg-danger-subtle text-danger fs-15 rounded">
-                <i class="ri-mail-line"></i>
-              </a>
-            </li>
-            <li class="list-inline-item avatar-xs">
-              <a href="javascript:void(0);" class="avatar-title bg-warning-subtle text-warning fs-15 rounded">
-                <i class="ri-question-answer-line"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="card-body">
-          <h6 class="text-muted text-uppercase fw-semibold mb-3">Personal Information</h6>
-          <p class="text-muted mb-4">Hello, I'm Tonya Noble, The most effective objective is one that is tailored
-            to the job you are applying for. It states what kind of career you are seeking, and what skills and
-            experiences.</p>
-          <div class="table-responsive table-card">
+          <!-- table-responsive table-card -->
+          <div class="">
 
             <table class="table table-borderless mb-0">
               <tbody>
               <tr>
-                <td class="fw-medium" scope="row">Designation</td>
+                <td class="fw-medium">Designation</td>
                 <td class="designation">Lead Designer / Developer</td>
-              </tr>
-              <tr>
-                <td class="fw-medium" scope="row">Email ID</td>
-                <td class="email">tonyanoble&#64;velzon.com</td>
-              </tr>
-              <tr>
-                <td class="fw-medium" scope="row">Phone No</td>
-                <td class="phone">414-453-5725</td>
-              </tr>
-              <tr>
-                <td class="fw-medium" scope="row">Lead Score</td>
-                <td class="l_score">154</td>
-              </tr>
-              <tr>
-                <td class="fw-medium" scope="row">Tags</td>
-                <td class="tags-list">
-                  <div class="d-flex gap-1">
-                    <span class="badge bg-primary-subtle text-primary">Lead</span>
-                    <span class="badge bg-primary-subtle text-primary">Partner</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="fw-medium" scope="row">Last Contacted</td>
-                <td class="contacted_date">15 Dec, 2021 <small class="text-muted">08:58AM</small></td>
               </tr>
               </tbody>
             </table>
@@ -150,4 +125,106 @@
       }
     </div>
   </div>
+  <!--end col-->
+
+  <!-- AddMeetingRoomModal -->
+  <ng-template #meetingRoomModal let-meetingModal>
+    <div class="modal-header bg-info-subtle p-3">
+      <h5 class="modal-title" id="addMeetingRoom">{{ "ADD-MEETING-ROOM" | translate }}</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="meetingModal.dismiss('Cross click')"></button>
+    </div>
+
+    <div class="modal-body p-4">
+      <form (ngSubmit)="formSubmitCreate()" >
+        <input type="hidden" name="id" />
+        <div class="row g-3">
+          <div class="col-lg-12">
+            <div class="text-center">
+              <div class="position-relative d-inline-block">
+                <div class="position-absolute bottom-0 end-0">
+                  <label for="room-image-input" class="mb-0" data-bs-toggle="tooltip" data-bs-placement="right" title="Select Image">
+                    <div class="avatar-xs cursor-pointer">
+                      <div class="avatar-title bg-light border rounded-circle text-muted">
+                        <i class="ri-image-fill"></i>
+                      </div>
+                    </div>
+                  </label>
+                  <input class="form-control d-none" value="" id="room-image-input" type="file" accept="image/png, image/gif, image/jpeg" (change)="fileChange($event)" name="image" [(ngModel)]="roomFormControls.image.data">
+                </div>
+                <div class="p-1">
+                  <div class=" bg-light ">
+                    <img src="assets/images/dummy-image-square.jpg" id="imagePreview" class="object-fit-cover" alt="lead-image" height="300">
+                  </div>
+                </div>
+              </div>
+              <h5 class="fs-13 mt-3">Room Image</h5>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label for="room" class="form-label fw-medium">{{ "ROOM" | translate }}</label>
+              <input type="text" class="form-control"  id="room"  name="name" [ngClass]="{'is-invalid' : roomFormControls.name.valid }" placeholder="{{ 'ROOM' | translate }}" [(ngModel)]="roomFormControls.name.data" (input)="roomFormChange()">
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label for="capacity" class="form-label fw-medium">{{ "CAPACITY" | translate }} - {{ 'CAPACITY-UNIT' | translate }}*</label>
+              <input type="number" class="form-control" id="capacity" max="100" name="capacity" [ngClass]="{'is-invalid' : roomFormControls.capacity.valid }" placeholder="{{ 'CAPACITY' | translate }} - {{ 'CAPACITY-UNIT' | translate }}" [(ngModel)]="roomFormControls.capacity.data" >
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="mb-3">
+              <label for="description" class="form-label fw-medium">{{ "DESCRIPTION" | translate }}</label>
+              <textarea class="form-control"  id="description" rows="3"  name="description" [ngClass]="{'is-invalid' : roomFormControls.description.valid }"  [(ngModel)]="roomFormControls.description.data"  placeholder="{{ 'DESCRIPTION' | translate }}"></textarea>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <!-- List checkbox of features -->
+            <div class="mb-3">
+              <label class="form-label fw-medium">{{ "FEATURES" | translate }}</label>
+              <div class="row">
+                @for (feature of features.features; track $index){
+                <div class="col-lg-6">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="feature{{feature.id}}" (change)="featureChange($event)" value="{{feature.id}}">
+                    <label class="form-check label" for="feature{{feature.id}}">{{ feature.name }}</label>
+                  </div>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+          <!-- End List checkbox of features -->
+          <!-- Button -->
+          <div class="col-lg-12">
+            <div class="d-grid">
+              <button type="submit" [disabled]="roomFormError" class="btn btn-info">{{ "SAVE" | translate }}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+
+  <!-- removeItemModal -->
+  <ng-template #deleteRoomModel let-deleteRoomModel>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="deleteRecord-close" (click)="deleteRoomModel.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>{{ 'You are about to delete a room' | translate }} {{ meetingRoomDelete?.name }}?</h4>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button class="btn btn-link link-success fw-medium text-decoration-none" data-bs-dismiss="modal" id="delete" (click)="deleteRoomModel.close('Close click')"><i class="ri-close-line me-1 align-middle"></i> {{ 'Close'| translate }}</button>
+          <button type="button" class="btn w-sm btn-danger " id="delete-product" (click)="deleteRoom(deleteRoomModel)" >{{ 'Yes, Delete It!' | translate }}</button>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </ng-template>
 </div>

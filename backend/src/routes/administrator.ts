@@ -16,6 +16,7 @@ import {
     updateFeature,
     updateMeetingRoom
 } from "../controllers/administrator/meeting-room";
+import { upload } from "../shared/uploadFile";
 
 const router = Router();
 
@@ -34,7 +35,7 @@ router.get('/meeting-room/:id', async (req, res) => {
     await getMeetingRoom(req, res);
 });
 
-router.post('/meeting-room', async (req, res) => {
+router.post('/meeting-room-create', upload.single('image') ,async (req, res) => {
     await createMeetingRoom(req, res);
 });
 
@@ -46,7 +47,7 @@ router.delete('/meeting-room/:id/delete', async (req, res) => {
     await deleteMeetingRoom(req, res);
 });
 
-router.get('/meeting-room/validate', async (req, res) => {
+router.get('/meeting-room-validate', async (req, res) => {
     await isValidateMeetingRoom(req, res);
 });
 

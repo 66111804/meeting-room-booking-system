@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit,AfterViewInit
 
   constructor(private formBuilder: UntypedFormBuilder, private router: Router, private service: AuthenticationService,private store: Store,private tokenStorageService:TokenStorageService) { }
 
+  isDisabled = false;
   ngOnInit(): void {
 
     /**
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit,AfterViewInit
             this.router.navigateByUrl('app').then();
           },
           error: (error) => {
-            console.log(error);
+            // console.log(error);
           }
         }
       );
@@ -75,9 +76,7 @@ export class LoginComponent implements OnInit,AfterViewInit
       return;
     }
 
-    console.log(this.loginForm.value);
-
-
+    this.isDisabled = true;
     this.service.login(this.loginForm.value.employeeId, this.loginForm.value.password)
       .subscribe({
         next: (res:LogInResponse) => {
@@ -95,6 +94,7 @@ export class LoginComponent implements OnInit,AfterViewInit
             }
           )
             .then(() => {
+              this.isDisabled = false;
               this.router.navigateByUrl('app').then();
             });
         },
@@ -104,11 +104,13 @@ export class LoginComponent implements OnInit,AfterViewInit
             title: 'Oops...',
             text: `Invalid Credentials! ${error.error.message}`,
           }).then(()=>{
+            this.isDisabled = false;
             return this.store.dispatch(loginFailure({ error: error.error.message }));
           });
         },
         complete: () => {
           console.log('complete');
+          this.isDisabled = false;
         }
       });
 

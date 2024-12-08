@@ -76,5 +76,12 @@
   "Are you sure?": "คุณแน่ใจหรือไม่?",
   "Success": "สำเร็จ",
   "Error": "ผิดพลาด",
-  "Feature deleted successfully!": "ลบคุณสมบัติสำเร็จ"
+  "Feature deleted successfully!": "ลบคุณสมบัติสำเร็จ",
+  "ADD": "เพิ่ม",
+  "ADD-MEETING-ROOM": "เพิ่มห้องประชุม",
+  "ROOM": "ห้อง",
+  "CAPACITY": "ความจุ",
+  "CAPACITY-UNIT": "คน",
+  "DESCRIPTION": "รายละเอียด",
+  "You are about to delete a room": "คุณกำลังจะลบห้อง"
 }

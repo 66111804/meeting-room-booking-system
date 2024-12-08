@@ -83,7 +83,7 @@ model MeetingRoom {
   capacity    Int? // number of people
   imageUrl    String? // image url of the meeting room
   status      String?  @default("active") // active, inactive, deleted
-  features    MeetingRoomFeatures[] // relation to features
+  roomHasFeatures    MeetingRoomFeatures[] // relation to features
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

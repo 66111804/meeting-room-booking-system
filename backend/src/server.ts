@@ -1,15 +1,14 @@
 // import express from "express";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import routes from "express-list-endpoints";
 import { createServer } from "http";
 import auth from "./routes/auth";
 import { PrismaClient } from "@prisma/client";
-import cron from "node-cron";
 import administrator from "./routes/administrator";
 import { authMiddleware } from "./middlewares/auth";
 import fs from "fs";
-import { uploadDir } from "./shared/uploadDir";
+import { upload, uploadDir } from "./shared/uploadFile";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -35,11 +34,15 @@ const prisma = new PrismaClient();
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
+
+app.use('/files/uploads',express.static(uploadDir));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) =>{
-    // console.log("session", req.body);
+app.use((req: Request, res: Response, next: NextFunction) => {
+    // console.log('Headers:', req.headers);
+    // console.log('Content-Type:', req.headers['content-type']);
     next();
 });
 

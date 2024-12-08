@@ -1,11 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { validationResult } from "express-validator";
-import path from "node:path";
-import fs from "fs";
-import formidable, { IncomingForm,File } from "formidable";
-import { uploadDir } from "../../shared/uploadDir";
-import crypto from "crypto";
-
 const prisma = new PrismaClient();
 
 // ------------------- Get all meeting rooms -------------------
@@ -38,7 +32,7 @@ export const getMeetingRooms = async (req: any, res: any) => {
     const meetingRooms = await prisma.meetingRoom.findMany({
       where,
       include:{
-        features:{
+        roomHasFeatures:{
           include:{
             feature: true
           },
@@ -70,7 +64,7 @@ export const getMeetingRoom = async (req: any, res: any) => {
         id: parseInt(id),
       },
       include:{
-        features:{
+        roomHasFeatures:{
           include:{
             feature: true
           },
@@ -87,12 +81,17 @@ export const getMeetingRoom = async (req: any, res: any) => {
 // ------------------- Create meeting room -------------------
 export const createMeetingRoom = async (req: any, res: any) => {
   try {
+    console.log(req.file);
+    console.log(req.body);
+
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ message: result.array() });
     }
 
-    const { name, description, features } = req.body
+    const { name, description, features , capacity} = req.body
+
+
     /*
       example for data:
       {
@@ -109,43 +108,19 @@ export const createMeetingRoom = async (req: any, res: any) => {
     // image upload
     const image = req.file;
     let fileName: string | undefined ='';
-
-    if (image) {
-        const form = new formidable.IncomingForm({
-          uploadDir,
-          keepExtensions: true,
-          maxFileSize: 5 * 1024 * 1024, // 5MB
-          filter: ({ mimetype }) => !!mimetype && mimetype.startsWith("image/"), // image only
-        });
-
-        form.on("fileBegin", (name, file: File) => {
-          const extension = path.extname(file.originalFilename || ""); // ดึงนามสกุลไฟล์
-          const randomName = crypto.randomBytes(16).toString("hex"); // สร้างชื่อแบบสุ่ม
-          file.filepath = path.join(uploadDir, `${randomName}${extension}`); // กำหนดเส้นทางไฟล์ใหม่
-        });
-
-        form.parse(req, async (err, fields, files) => {
-          if (err) {
-            return res.status(500).json({ error: err.message });
-          }
-
-          const file = Array.isArray(files.file) ? files.file[0] : files.file;
-
-          if (!file) {
-            return res.status(400).json({ message: "Missing image" });
-          }
-          fileName = file.filepath.split("/").pop();
-        });
-      }
+    if(image){
+      fileName = image.filename;
+    }
 
     const meetingRoom = await prisma.meetingRoom.create({
       data: {
         name,
         description,
         imageUrl: fileName || '',
-        features: {
+        capacity: capacity || 0,
+        roomHasFeatures: {
           create: features.map((featureId: number) => ({
-            featureId,
+            featureId: parseInt(featureId.toString(), 10),
           })),
         },
       },
@@ -166,7 +141,8 @@ export const updateMeetingRoom = async (req: any, res: any) => {
     }
 
     const { id } = req.params;
-    const { name, description, features } = req.body
+    const { name, description, features } = req.body;
+
     /*
       example for data:
       {
@@ -187,9 +163,9 @@ export const updateMeetingRoom = async (req: any, res: any) => {
       data: {
         name,
         description,
-        features: {
+        roomHasFeatures: {
           create: features.map((featureId: number) => ({
-            featureId,
+            featureId: parseInt(featureId.toString(), 10),
           })),
         },
       },
@@ -234,7 +210,7 @@ export const isValidateMeetingRoom = async (req: any, res: any) => {
         name: name,
       },
     });
-    return res.status(200).json({ isExist: !!meetingRoom });
+    return res.status(200).json({ valid: !!meetingRoom });
   } catch (error:any) {
     return res.status(500).json({ message: error.message });
   }
@@ -255,7 +231,7 @@ export const isValidateMeetingRoomWithId = async (req: any, res: any) => {
         name: name,
       },
     });
-    return res.status(200).json({ isExist: !!meetingRoom });
+    return res.status(200).json({ valid: !!meetingRoom });
   } catch (error:any) {
     return res.status(500).json({ message: error.message });
   }
@@ -397,7 +373,7 @@ export const deleteFeature = async (req: any, res: any) => {
     // check if feature is used in meeting room
     const meetingRoom = await prisma.meetingRoom.findFirst({
       where: {
-        features: {
+        roomHasFeatures: {
           some: {
             id: parseInt(id),
           },
