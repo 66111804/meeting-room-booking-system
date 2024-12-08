@@ -233,6 +233,14 @@
               <input type="number" class="form-control" id="capacity" max="100" name="capacity" [ngClass]="{'is-invalid' : roomFormControls.capacity.valid }" placeholder="{{ 'CAPACITY' | translate }} - {{ 'CAPACITY-UNIT' | translate }}" [(ngModel)]="roomFormControls.capacity.data" >
             </div>
           </div>
+          <!-- status -->
+          <div class="col-lg-12">
+            <mat-radio-group aria-label="Select an option">
+              <mat-radio-button value="1">Option 1</mat-radio-button>
+              <mat-radio-button value="2">Option 2</mat-radio-button>
+            </mat-radio-group>
+
+          </div>
           <div class="col-lg-12">
             <div class="mb-3">
               <label for="description" class="form-label fw-medium">{{ "DESCRIPTION" | translate }}</label>

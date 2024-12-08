@@ -17,6 +17,10 @@ export interface RoomForm {
     data: string,
     valid: boolean
   };
+  status: {
+    data: string,
+    valid: boolean
+  };
   features: {
     data: any[],
     valid: boolean

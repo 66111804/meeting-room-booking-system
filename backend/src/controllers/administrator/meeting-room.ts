@@ -187,7 +187,6 @@ export const updateMeetingRoom = async (req: any, res: any) => {
         if(fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
-        console.log('File removed', filePath);
       }catch (error:any) {
         console.log(error);
       }

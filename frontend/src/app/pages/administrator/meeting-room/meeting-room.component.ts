@@ -52,6 +52,7 @@ export class MeetingRoomComponent implements OnInit
     name: {data: '', valid: false},
     capacity: {data: '', valid: false},
     description: {data: '', valid: false},
+    status: {data: 'active', valid: false},
     features: {data: [], valid: false},
     image: {data: '', valid: false}
   };
