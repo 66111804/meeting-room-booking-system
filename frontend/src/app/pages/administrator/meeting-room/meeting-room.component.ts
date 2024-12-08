@@ -17,6 +17,7 @@ import {
 } from '../../../core/services/room-meeting.service';
 import {GlobalComponent} from '../../../global-component';
 import Swal from 'sweetalert2';
+import {MatRadioModule} from '@angular/material/radio';
 
 
 @Component({
@@ -31,6 +32,7 @@ import Swal from 'sweetalert2';
     FormsModule,
     FeaturesComponent,
     CKEditorModule,
+    MatRadioModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './meeting-room.component.html',

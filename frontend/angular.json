@@ -34,6 +34,7 @@
               "node_modules/prismjs/themes/prism.css",
               "src/styles.scss",
               "src/assets/scss/config/default/bootstrap.scss",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/assets/scss/config/default/app.scss",
               "src/assets/scss/icons.scss"
             ],
