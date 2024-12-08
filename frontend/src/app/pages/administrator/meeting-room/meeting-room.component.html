@@ -60,13 +60,13 @@
                 </td>
                 <td>
                   @if (room.imageUrl) {
-                    <img src="{{ serverUrl }}/files/uploads/{{ room.imageUrl }}" class="rounded image-hover" alt="lead-image" width="100">
+                    <img src="{{ serverUrl }}/files/uploads/{{ room.imageUrl }}" class="rounded image-hover" alt="lead-image" width="100" (click)="showInformation(room)">
                   } @else {
-                    <img src="assets/images/dummy-image-square.jpg" class="rounded image-hover" alt="lead-image" width="100">
+                    <img src="assets/images/dummy-image-square.jpg" class="rounded image-hover" alt="lead-image" width="100" (click)="showInformation(room)">
                   }
                 </td>
                 <td class="designation">{{ room.name }}</td>
-                <td class="designation">{{ room.description }}</td>
+                <td class="designation">{{ room.description | slice:0:20 }} {{ room.description.length > 20 ? '...' : '' }}</td>
                 <td class="designation">{{ room.capacity }}</td>
                 <td class="designation">
                   <div class="badge fw-medium bg-success-subtle text-success">{{ room.status }}</div>
@@ -116,24 +116,67 @@
       @if (isFeatures){
         <app-features></app-features>
       } @else {
-        <div class="card-body overlay-caption">
-          <h6 class="text-muted text-uppercase fw-semibold mb-3">Information</h6>
 
-          <!-- table-responsive table-card -->
-          <div class="">
-
+        @if(meetingRoomInformation != undefined){
+          <div class="card-body overlay-caption">
+            <h6 class="text-muted text-uppercase fw-semibold mb-3">{{ 'Information of room' | translate }} {{ meetingRoomInformation.name }}</h6>
+            <!-- Image -->
+            <div class="text-center">
+              @if (meetingRoomInformation.imageUrl) {
+                <img src="{{ serverUrl }}/files/uploads/{{ meetingRoomInformation.imageUrl }}"  (click)="showImage(showImageModel)" class="rounded image-hover" alt="lead-image" width="100">
+              } @else {
+                <img src="assets/images/dummy-image-square.jpg" class="rounded image-hover" alt="lead-image" width="100">
+              }
+            </div>
+            <!-- table-responsive table-card -->
             <table class="table table-borderless mb-0">
               <tbody>
               <tr>
-                <td class="fw-medium">Designation</td>
-                <td class="designation">Lead Designer / Developer</td>
+                <td class="fw-medium">{{ 'Room' | translate }}</td>
+                <td class="designation">{{ meetingRoomInformation.name }}</td>
+              </tr>
+              <tr>
+                <td class="fw-medium">{{ 'Description' | translate }}</td>
+                <td class="designation">{{ meetingRoomInformation.description }}</td>
+              </tr>
+              <tr>
+                <td class="fw-medium">{{ 'Capacity' | translate }}</td>
+                <td class="designation">{{ meetingRoomInformation.capacity }}</td>
+              </tr>
+              <tr>
+                <td class="fw-medium">{{ 'Status' | translate }}</td>
+                <td class="designation">
+                  <div class="badge fw-medium bg-success-subtle text-success">{{ meetingRoomInformation.status }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-medium">{{ 'Last Updated' | translate }}</td>
+                <td class="designation">{{ meetingRoomInformation.updatedAt | date: 'dd-MMM-yyyy hh:mm a' }}</td>
               </tr>
               </tbody>
             </table>
 
-
+            <hr>
+            <!-- Features -->
+            <h6 class="text-muted text-uppercase fw-semibold mb-3">{{ 'Features' | translate }}</h6>
+            <table class="table table-borderless mb-0">
+              <tbody>
+              @for (feature of meetingRoomInformation.roomHasFeatures; track $index){
+                <tr>
+                  <td class="designation">
+                    <div class="badge bg-success-subtle text-primary">{{ feature.feature.name }}</div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
           </div>
+
+        } @else {
+        <div class="card-body overlay-caption">
+          <h6 class="text-muted text-uppercase fw-semibold mb-3">No Room Selected</h6>
         </div>
+        }
       }
     </div>
   </div>
@@ -249,5 +292,27 @@
         </div>
       </div>
     </div><!-- /.modal-content -->
+  </ng-template>
+
+  <ng-template #showImageModel let-image>
+    <div class="modal-header bg-info-subtle p-3">
+      <h5 class="modal-title" id="showImage">{{ 'Room Image' | translate }}</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="image.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body p-4">
+      <div class="text-center">
+        <div class="position-relative d-inline-block">
+          <div class="p-1">
+            <div class=" bg-light ">
+              @if(meetingRoomInformation){
+                <img src="{{ serverUrl }}/files/uploads/{{ meetingRoomInformation.imageUrl }}" class="object-fit-cover border rounded w-100" alt="lead-image" height="300">
+              } @else {
+                <img src="assets/images/dummy-image-square.jpg" class="object-fit-cover border rounded w-100" alt="lead-image" height="300">
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-template>
 </div>

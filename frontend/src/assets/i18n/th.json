@@ -85,5 +85,12 @@
   "CAPACITY": "ความจุ",
   "CAPACITY-UNIT": "คน",
   "DESCRIPTION": "รายละเอียด",
-  "You are about to delete a room": "คุณกำลังจะลบห้อง"
+  "You are about to delete a room": "คุณกำลังจะลบห้อง",
+  "Information of room": "ข้อมูลของห้อง",
+  "Room": "ห้อง",
+  "Capacity": "ความจุ",
+  "Description": "รายละเอียด",
+  "Status": "สถานะ",
+  "Last Updated": "อัพเดทล่าสุด",
+  "Room Image": "รูปภาพห้อง"
 }

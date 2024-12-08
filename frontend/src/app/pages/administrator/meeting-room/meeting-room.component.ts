@@ -282,10 +282,8 @@ export class MeetingRoomComponent implements OnInit
     this.roomFormControls.name.data = room.name;
     this.roomFormControls.capacity.data = room.capacity ? room.capacity.toString() : '';
     this.roomFormControls.description.data = room.description;
-    console.log(room.roomHasFeatures);
     this.roomFeaturesService.getFeatureWithRoom(1,50,'',room.id).subscribe({
       next: (response) => {
-        console.log(response);
         this.features = response;
         this.roomFormControls.features.data = room.roomHasFeatures.map((feature) => feature.featureId);
       },
@@ -304,7 +302,6 @@ export class MeetingRoomComponent implements OnInit
   }
 
   deleteRoom(modal: any) {
-    console.log('Delete room');
     modal.close('Close click');
     const triggerButton = document.getElementById('triggerButton');
     if (triggerButton) {
@@ -322,5 +319,16 @@ export class MeetingRoomComponent implements OnInit
         }
       });
     }
+  }
+
+  meetingRoomInformation: MeetingRoom | undefined;
+  showInformation(room: MeetingRoom) {
+    this.isFeatures = false;
+   this.meetingRoomInformation = room;
+   console.log(room);
+  }
+
+  showImage(content:any) {
+    this.modalService.open(content, { size: 'lg', centered: true ,fullscreen: true});
   }
 }

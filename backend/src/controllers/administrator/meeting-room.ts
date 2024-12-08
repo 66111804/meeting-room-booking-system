@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { validationResult } from "express-validator";
 import { RoomFeaturesResponse } from "../../shared/RoomFeaturesResponse";
+import { uploadDir } from "../../shared/uploadFile";
 const prisma = new PrismaClient();
 
 // ------------------- Get all meeting rooms -------------------
@@ -176,6 +177,21 @@ export const updateMeetingRoom = async (req: any, res: any) => {
     let fileName: string | null = meetingRoom.imageUrl;
     if(image){
       fileName = image.filename;
+
+      // remove old image
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const filePath = path.join(`${uploadDir}/${meetingRoom.imageUrl}`);
+
+        if(fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+        console.log('File removed', filePath);
+      }catch (error:any) {
+        console.log(error);
+      }
+
     }
 
     const updatedMeetingRoom = await prisma.meetingRoom.update({
