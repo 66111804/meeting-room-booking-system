@@ -14,6 +14,7 @@ export interface RoomFeaturesResponse
 export interface Feature {
   id: number
   name: string
+  selected?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -50,7 +51,7 @@ export class RoomFeaturesService {
     return this.http.put(`${GlobalComponent.API_URL}/admin/feature-update/${id}`, {name});
   }
 
-  getFeature(id: number) {
-    return this.http.get<Feature>(`${GlobalComponent.API_URL}/admin/feature-get/${id}`);
+  getFeatureWithRoom(page = 1, size = 10, searchTerm = '',id: number) {
+    return this.http.get<RoomFeaturesResponse>(`${GlobalComponent.API_URL}/admin/meeting-room/${id}/feature?page=${page}&limit=${size}&search=${searchTerm}`)
   }
 }

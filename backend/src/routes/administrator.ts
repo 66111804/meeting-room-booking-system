@@ -14,7 +14,7 @@ import {
     isValidateFeature,
     isValidateFeatureWithId,
     updateFeature,
-    updateMeetingRoom
+    updateMeetingRoom, getRoomFeatures
 } from "../controllers/administrator/meeting-room";
 import { upload } from "../shared/uploadFile";
 
@@ -39,7 +39,7 @@ router.post('/meeting-room-create', upload.single('image') ,async (req, res) => 
     await createMeetingRoom(req, res);
 });
 
-router.put('/meeting-room/:id/update', async (req, res) => {
+router.put('/meeting-room/:id/update',upload.single('image'), async (req, res) => {
     await updateMeetingRoom(req, res);
 });
 
@@ -55,6 +55,9 @@ router.get('/meeting-room/:id/validate', async (req, res) => {
     await isValidateMeetingRoomWithId(req, res);
 });
 
+router.get('/meeting-room/:id/feature', async (req, res) => {
+    await getRoomFeatures(req, res);
+});
 //---------- Features ------------
 
 router.get('/features', async (req, res) => {

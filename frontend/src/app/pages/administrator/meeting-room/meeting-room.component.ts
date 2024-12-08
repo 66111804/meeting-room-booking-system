@@ -1,7 +1,7 @@
 import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import {BreadcrumbsComponent} from "../../../shared/breadcrumbs/breadcrumbs.component";
 import {NgbModal, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
-import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
 import {FeaturesComponent} from './features/features.component';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -15,7 +15,8 @@ import {
   RoomForm,
   RoomMeetingService
 } from '../../../core/services/room-meeting.service';
-
+import {GlobalComponent} from '../../../global-component';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -43,7 +44,7 @@ export class MeetingRoomComponent implements OnInit
   pageSize = 10;
   isFeatures!: boolean;
   description: string = '';
-
+  serverUrl = GlobalComponent.SERVE_URL;
   public Editor = ClassicEditor;
   features: RoomFeaturesResponse;
 
@@ -64,7 +65,7 @@ export class MeetingRoomComponent implements OnInit
 
   roomFormError!: boolean;
   nameSubject: Subject<string> = new Subject<string>();
-
+  searchSubject: Subject<string> = new Subject<string>();
   constructor(private modalService: NgbModal, private roomFeaturesService:RoomFeaturesService, private roomMeetingService:RoomMeetingService) {
     this.breadCrumbItems = [
       { label: 'Meeting Room' },
@@ -78,8 +79,6 @@ export class MeetingRoomComponent implements OnInit
       current: 0
     }
   }
-
-
 
   ngOnInit() {
     document.getElementById('elmLoader')?.classList.add('d-none');
@@ -105,8 +104,14 @@ export class MeetingRoomComponent implements OnInit
 
       }
     });
-
     this.fetchMeetingRooms();
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe((value) => {
+      this.fetchMeetingRooms();
+    });
   }
 
   checkFormErrors(){
@@ -144,7 +149,6 @@ export class MeetingRoomComponent implements OnInit
     });
   }
 
-
   fetchFeatures(){
     this.roomFeaturesService.getAll(1,50).subscribe({
       next: (response) => {
@@ -156,6 +160,9 @@ export class MeetingRoomComponent implements OnInit
     });
   }
 
+  searchInput(){
+    this.searchSubject.next(this.searchTerm);
+  }
   changePage() {
     this.fetchMeetingRooms();
   }
@@ -170,6 +177,9 @@ export class MeetingRoomComponent implements OnInit
    * @param content modal content
    */
   openModal(content: any) {
+    this.meetingRoomEdit = undefined;
+    this.isFeatures = false;
+    this.imagePreviewSrc = 'assets/images/dummy-image-square.jpg';
     this.fetchFeatures();
     this.roomFormControls.name.data = '';
     this.roomFormControls.capacity.data = '';
@@ -205,19 +215,38 @@ export class MeetingRoomComponent implements OnInit
    */
 
   formSubmitCreate() {
-    console.log('Create form submit');
-    console.log(this.roomFormControls);
     this.checkFormErrors();
+
     if(!this.roomFormError){
-      this.roomMeetingService.updateRoom(this.roomFormControls).subscribe({
-        next: (response) => {
-          console.log(response);
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      });
+      if(this.meetingRoomEdit){
+        this.roomMeetingService.updateRoom(this.roomFormControls,this.meetingRoomEdit.id).subscribe({
+          next: (response) => {
+            this.fetchMeetingRooms();
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
+      }else {
+        this.roomMeetingService.updateRoom(this.roomFormControls).subscribe({
+          next: (response) => {
+            // console.log(response);
+            this.fetchMeetingRooms();
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
+      }
+    }else{
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please fill all required fields',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      }).then();
     }
+    this.modalService.dismissAll();
   }
 
   roomFormChange() {
@@ -238,14 +267,34 @@ export class MeetingRoomComponent implements OnInit
     }else {
       this.roomFormControls.features.data = this.roomFormControls.features.data.filter((id) => id !== featureId);
     }
-    //
-    // console.log(status, featureId);
-    // console.log(this.roomFormControls);
-
   }
+  meetingRoomEdit: MeetingRoom | undefined;
+  imagePreviewSrc: string = 'assets/images/dummy-image-square.jpg';
+  edit(editMeetingRoom: any, room: MeetingRoom) {
+    this.meetingRoomEdit = room;
+    this.isFeatures = false;
+    if(this.meetingRoomEdit.imageUrl){
+    this.imagePreviewSrc = `${this.serverUrl}/files/uploads/${room.imageUrl}`;
+    }else{
+      this.imagePreviewSrc = 'assets/images/dummy-image-square.jpg';
+    }
 
-  edit(editMeetingRoom: any, room: any) {
+    this.roomFormControls.name.data = room.name;
+    this.roomFormControls.capacity.data = room.capacity ? room.capacity.toString() : '';
+    this.roomFormControls.description.data = room.description;
+    console.log(room.roomHasFeatures);
+    this.roomFeaturesService.getFeatureWithRoom(1,50,'',room.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.features = response;
+        this.roomFormControls.features.data = room.roomHasFeatures.map((feature) => feature.featureId);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
 
+    this.modalService.open(editMeetingRoom, { size: 'lg', centered: true });
   }
 
   meetingRoomDelete: MeetingRoom | undefined;
@@ -262,7 +311,6 @@ export class MeetingRoomComponent implements OnInit
       triggerButton.focus();
     }
 
-    console.log(this.meetingRoomDelete);
     if(this.meetingRoomDelete){
       this.roomMeetingService.deleteRoom(this.meetingRoomDelete.id).subscribe({
         next: (response) => {

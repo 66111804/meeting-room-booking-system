@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { validationResult } from "express-validator";
+import { RoomFeaturesResponse } from "../../shared/RoomFeaturesResponse";
 const prisma = new PrismaClient();
 
 // ------------------- Get all meeting rooms -------------------
@@ -11,16 +12,16 @@ export const getMeetingRooms = async (req: any, res: any) => {
     // const token = req.headers.authorization.split(" ")[1];
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
-
     let where = {};
     if (search) {
       where = {
         OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { description: { contains: search, mode: "insensitive" } },
-          { location: { contains: search, mode: "insensitive" } },
+            { name: { startsWith: search },},
+            { description: { startsWith: search },},
+
         ]
       };
+
     }
     if (id) {
       where = {
@@ -36,10 +37,13 @@ export const getMeetingRooms = async (req: any, res: any) => {
           include:{
             feature: true
           },
-        }
+        },
       },
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     const total = await prisma.meetingRoom.count({ where });
@@ -47,6 +51,8 @@ export const getMeetingRooms = async (req: any, res: any) => {
 
     return res.status(200).json({ meetingRooms, total, totalPages, current: page });
   } catch (error:any) {
+    console.log(error.message);
+
     return res.status(500).json({ message: error.message });
   }
 };
@@ -81,8 +87,8 @@ export const getMeetingRoom = async (req: any, res: any) => {
 // ------------------- Create meeting room -------------------
 export const createMeetingRoom = async (req: any, res: any) => {
   try {
-    console.log(req.file);
-    console.log(req.body);
+    // console.log(req.file);
+    // console.log(req.body);
 
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -117,7 +123,7 @@ export const createMeetingRoom = async (req: any, res: any) => {
         name,
         description,
         imageUrl: fileName || '',
-        capacity: capacity || 0,
+        capacity: capacity ? parseInt(capacity) : 0,
         roomHasFeatures: {
           create: features.map((featureId: number) => ({
             featureId: parseInt(featureId.toString(), 10),
@@ -141,7 +147,7 @@ export const updateMeetingRoom = async (req: any, res: any) => {
     }
 
     const { id } = req.params;
-    const { name, description, features } = req.body;
+    const { name, description, features,capacity } = req.body;
 
     /*
       example for data:
@@ -156,14 +162,33 @@ export const updateMeetingRoom = async (req: any, res: any) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const meetingRoom = await prisma.meetingRoom.update({
+    const meetingRoom = await prisma.meetingRoom.findFirst({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    if (!meetingRoom) {
+      return res.status(404).json({ message: "Meeting room not found" });
+    }
+
+    const image = req.file;
+    let fileName: string | null = meetingRoom.imageUrl;
+    if(image){
+      fileName = image.filename;
+    }
+
+    const updatedMeetingRoom = await prisma.meetingRoom.update({
       where: {
         id: parseInt(id),
       },
       data: {
         name,
         description,
+        imageUrl: fileName || '',
+        capacity: capacity ? parseInt(capacity) : 0,
         roomHasFeatures: {
+          deleteMany: {},
           create: features.map((featureId: number) => ({
             featureId: parseInt(featureId.toString(), 10),
           })),
@@ -171,7 +196,7 @@ export const updateMeetingRoom = async (req: any, res: any) => {
       },
     });
 
-    return res.status(200).json(meetingRoom);
+    return res.status(200).json(updatedMeetingRoom);
   } catch (error:any) {
     return res.status(500).json({ message: error.message });
   }
@@ -237,6 +262,68 @@ export const isValidateMeetingRoomWithId = async (req: any, res: any) => {
   }
 };
 
+// ------------------- Room features -------------------
+export const getRoomFeatures = async (req: any, res: any) => {
+  try {
+
+    let { page, limit, search } = req.query;
+    const { id } = req.params; // meeting room id
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    search = search || '';
+
+    let where = {};
+    if (search) {
+      where = {
+        OR: [
+          { name: { startsWith: search} },
+        ]
+      };
+    }
+
+    const features = await prisma.features.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    const roomFeatures = await prisma.meetingRoomFeatures.findMany({
+      where: {
+        meetingRoomId: parseInt(id),
+      },
+      select: {
+        featureId: true,
+      }
+    });
+
+    const selectedFeatureIds = new Set(roomFeatures.map((rf) => rf.featureId));
+
+    const enrichedFeatures = features.map((feature) => ({
+      ...feature,
+      createdAt: feature.createdAt.toISOString(), // Convert Date to string
+      updatedAt: feature.updatedAt.toISOString(), // Convert Date to string
+      selected: selectedFeatureIds.has(feature.id), // Add selected property
+    }));
+
+    const total = await prisma.features.count({ where });
+    const totalPages = Math.ceil(total / limit);
+
+    const response: RoomFeaturesResponse = {
+      features: enrichedFeatures,
+      total,
+      totalPages,
+      current: page,
+    };
+
+    return res.status(200).json(response);
+  } catch (error:any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // ------------------- Get all features -------------------
 export const getFeatures = async (req: any, res: any) => {
   try {
@@ -251,7 +338,7 @@ export const getFeatures = async (req: any, res: any) => {
     if (search) {
       where = {
         OR: [
-          { name: { contains: search, mode: "insensitive" } },
+          { name: { startsWith: search} },
         ]
       };
     }

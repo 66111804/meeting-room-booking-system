@@ -9,7 +9,7 @@
         <div class="row g-3">
           <div class="col-md-4">
             <div class="search-box">
-              <input type="text" name="searchTerm" class="form-control" placeholder="Search for room" [(ngModel)]="searchTerm">
+              <input type="text" name="searchTerm" class="form-control" placeholder="Search for room" [(ngModel)]="searchTerm" (input)="searchInput()">
               <i class="ri-search-line search-icon"></i>
             </div>
           </div>
@@ -59,7 +59,11 @@
                   }
                 </td>
                 <td>
-                  <img src="{{ room.imageUrl }}" class="avatar-xs rounded" alt="lead-image">
+                  @if (room.imageUrl) {
+                    <img src="{{ serverUrl }}/files/uploads/{{ room.imageUrl }}" class="rounded image-hover" alt="lead-image" width="100">
+                  } @else {
+                    <img src="assets/images/dummy-image-square.jpg" class="rounded image-hover" alt="lead-image" width="100">
+                  }
                 </td>
                 <td class="designation">{{ room.name }}</td>
                 <td class="designation">{{ room.description }}</td>
@@ -67,10 +71,12 @@
                 <td class="designation">
                   <div class="badge fw-medium bg-success-subtle text-success">{{ room.status }}</div>
                 </td>
-                <td class="designation"></td>
+                <td class="designation">
+                  {{ room.updatedAt | date: 'dd-MMM-yyyy hh:mm a' }}
+                </td>
                 <td class="action">
                   <!-- (click)="edit(editMeetingRoom,room)" -->
-                  <a href="javascript:void(0);"  class="me-2 bg-success-subtle text-success fs-15 rounded">
+                  <a href="javascript:void(0);"  class="me-2 bg-success-subtle text-success fs-15 rounded" (click)="edit(meetingRoomModal,room)">
                     <i class="ri-pencil-line fs-15">
                     </i>
                   </a>
@@ -80,19 +86,25 @@
                   </a>
                 </td>
               </tr>
+              } @empty {
+              <tr>
+                <td colspan="8" class="text-center">No data found</td>
+              </tr>
               }
             </table>
           </div>
           <div class="d-flex justify-content-end mt-3">
+            @if (meetingRooms.total > pageSize) {
             <!-- Pagination -->
-            <ngb-pagination [collectionSize]="meetingRooms.total"
-                            [(page)]="page"
-                            [pageSize]="pageSize"
-                            (pageChange)="changePage()"
-                            [maxSize]="2"
-                            [boundaryLinks]="true">
-            </ngb-pagination>
+              <ngb-pagination [collectionSize]="meetingRooms.total"
+                              [(page)]="page"
+                              [pageSize]="pageSize"
+                              (pageChange)="changePage()"
+                              [maxSize]="2"
+                              [boundaryLinks]="true">
+              </ngb-pagination>
             <!-- End Pagination -->
+            }
           </div>
         </div>
       </div>
@@ -130,7 +142,13 @@
   <!-- AddMeetingRoomModal -->
   <ng-template #meetingRoomModal let-meetingModal>
     <div class="modal-header bg-info-subtle p-3">
-      <h5 class="modal-title" id="addMeetingRoom">{{ "ADD-MEETING-ROOM" | translate }}</h5>
+      <h5 class="modal-title" id="addMeetingRoom">
+        @if (meetingRoomEdit){
+          {{ "EDIT-MEETING-ROOM" | translate }}
+        } @else {
+          {{ "ADD-MEETING-ROOM" | translate }}
+        }
+      </h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="meetingModal.dismiss('Cross click')"></button>
     </div>
 
@@ -153,7 +171,7 @@
                 </div>
                 <div class="p-1">
                   <div class=" bg-light ">
-                    <img src="assets/images/dummy-image-square.jpg" id="imagePreview" class="object-fit-cover" alt="lead-image" height="300">
+                    <img src="{{imagePreviewSrc}}" id="imagePreview" class="object-fit-cover border rounded w-100" alt="lead-image" height="300">
                   </div>
                 </div>
               </div>
@@ -186,7 +204,7 @@
                 @for (feature of features.features; track $index){
                 <div class="col-lg-6">
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="feature{{feature.id}}" (change)="featureChange($event)" value="{{feature.id}}">
+                    <input class="form-check-input" type="checkbox" id="feature{{feature.id}}" (change)="featureChange($event)" value="{{feature.id}}" [checked]="feature.selected">
                     <label class="form-check label" for="feature{{feature.id}}">{{ feature.name }}</label>
                   </div>
                 </div>
@@ -198,14 +216,19 @@
           <!-- Button -->
           <div class="col-lg-12">
             <div class="d-grid">
-              <button type="submit" [disabled]="roomFormError" class="btn btn-info">{{ "SAVE" | translate }}</button>
+              <button type="submit" [disabled]="roomFormError" class="btn btn-info">
+                @if(meetingRoomEdit){
+                  {{ "UPDATE" | translate }}
+                } @else {
+                  {{ "SAVE" | translate }}
+                }
+              </button>
             </div>
           </div>
         </div>
       </form>
     </div>
   </ng-template>
-
 
   <!-- removeItemModal -->
   <ng-template #deleteRoomModel let-deleteRoomModel>
