@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { ValidateResponse } from "../../shared/Validate";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -41,6 +43,9 @@ export const getUsers = async (req: any, res: any) => {
       where,
       skip: (page - 1) * limit,
       take: limit,
+      orderBy:{
+        updatedAt:"desc"
+      }
     });
 
     const total = await prisma.user.count({ where });
@@ -110,3 +115,148 @@ export const getUser = async (req: any, res: any) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const employeeIdValidation = async (req: any, res: any) => {
+  try {
+    const { employeeId } = req.query;
+    const id = req.params.id;
+    if(!employeeId) return res.status(400).json({ message: "Employee ID is required" });
+
+    if(id){
+      const user = await prisma.user.findFirst({
+        where: {
+          employeeId,
+          NOT:{
+            id:parseInt(id)
+          }
+        },
+      });
+      const response:ValidateResponse = { valid: !user };
+      return res.status(200).json(response);
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        employeeId,
+      },
+    });
+    const response:ValidateResponse = { valid: !user };
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Error validating employee ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const createUser = async (req: any, res: any) => {
+  try {
+    const { name, lastName, employeeId, email, password, position, department, status, roles } = req.body;
+
+    if(!name) return res.status(400).json({ message: "Name is required" });
+    if(!lastName) return res.status(400).json({ message: "Last name is required" });
+    if(!employeeId) return res.status(400).json({ message: "Employee ID is required" });
+    if(!email) return res.status(400).json({ message: "Email is required" });
+    if(!password) return res.status(400).json({ message: "Password is required" });
+    if(!position) return res.status(400).json({ message: "Position is required" });
+    if(!department) return res.status(400).json({ message: "Department is required" });
+    // if(!status) return res.status(400).json({ message: "Status is required" });
+
+    const file = req.file;
+    const avatar = file ? file.filename : null;
+
+    const hash = await bcrypt.hash(password, 12);
+    const user = await prisma.user.create({
+      data: {
+        name,
+        lastName,
+        employeeId,
+        email,
+        password: hash,
+        position,
+        avatar: avatar || null,
+        department,
+        status: status || "active",
+        roles: {
+          connect:roles ? roles.map((id:number) => ({ id })) : [],
+        },
+      },
+    });
+
+    const userWithoutPassword = { ...user, password: undefined };
+
+
+    return res.status(201).json({ user: userWithoutPassword });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const updateUser = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    let { name, lastName, employeeId, email, password, position, department, status, roles } = req.body;
+
+    if(!name) return res.status(400).json({ message: "Name is required" });
+    if(!lastName) return res.status(400).json({ message: "Last name is required" });
+    if(!employeeId) return res.status(400).json({ message: "Employee ID is required" });
+    if(!email) return res.status(400).json({ message: "Email is required" });
+    if(!position) return res.status(400).json({ message: "Position is required" });
+    if(!department) return res.status(400).json({ message: "Department is required" });
+
+   const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const file = req.file;
+    const avatar = file ? file.filename : user.avatar;
+
+    const hash = password ? await bcrypt.hash(password, 12) : user.password;
+
+    status = status || user.status;
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        name,
+        lastName,
+        employeeId,
+        email,
+        password: hash,
+        position,
+        avatar,
+        department,
+        status: status || "active",
+        roles: {
+          set: roles ? roles.map((id:number) => ({ id })) : [],
+        },
+      },
+    });
+
+    const userWithoutPassword = { ...updatedUser, password: undefined };
+
+    return res.status(200).json({ user: userWithoutPassword });
+  }
+  catch (error) {
+    console.error("Error updating user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const validateData = (data: any) => {
+  const { name, lastName, employeeId, email, password, position, department } = data;
+  if(!name) return "Name is required";
+  if(!lastName) return "Last name is required";
+  if(!employeeId) return "Employee ID is required";
+  if(!email) return "Email is required";
+  if(!password) return "Password is required";
+  if(!position) return "Position is required";
+  if(!department) return "Department is required";
+  return null;
+}

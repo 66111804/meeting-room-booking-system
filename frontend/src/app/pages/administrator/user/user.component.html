@@ -15,7 +15,7 @@
           </div>
           <div class="col-md-auto ms-auto">
             <div class="">
-              <button class="btn btn-info add-btn" (click)="addUser()">{{ "ADD-USER" | translate }}</button>
+              <button class="btn btn-info add-btn" (click)="updateUser(updateUserModel)">{{ "ADD-USER" | translate }}</button>
             </div>
           </div>
         </div>
@@ -62,7 +62,11 @@
                     </td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <img src="assets/images/users/avatar-1.jpg" alt="user" class="avatar-md me-2">
+                        @if(user.avatar){
+                          <img src="{{GlobalComponent.SERVE_URL}}/files/uploads/{{ user.avatar }}" alt="user" class="me-2 image-hover" width="150" (click)="userShowClick(user)">
+                        }@else{
+                          <img src="assets/images/users/user-dummy-img.jpg" alt="user" class="image-hover" width="150" (click)="userShowClick(user)">
+                        }
                       </div>
                     </td>
 
@@ -74,7 +78,7 @@
                     <td>{{ user.department }}</td>
                     <td>{{ user.position }}position </td>
                     <td>
-                      @if(user.status == 'Active'){
+                      @if(user.status == 'active'){
                         <span class="badge bg-success">Active</span>
                       }@else{
                         <span class="badge bg-danger">Inactive</span>
@@ -85,7 +89,9 @@
                     </td>
                     <td>
                       <div class="d-flex gap-3">
-                        <a href="javascript:void(0);" class="text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="javascript:void(0);" class="text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
+                           (click)="editUser(updateUserModel, user)"
+                        >
                           <i class="ri-pencil-line"></i>
                         </a>
                         <a href="javascript:void(0);" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
@@ -116,73 +122,169 @@
 
   <div class="col-xxl-3">
     <div class="card">
+      @if(userShow){
       <div class="card-body text-center contact-details">
         <div class="position-relative d-inline-block">
-          <img src="assets/images/users/avatar-10.jpg" alt="" class="avatar-lg rounded-circle img-thumbnail">
+          @if(userShow.avatar != null){
+            <!--suppress TypeScriptUnresolvedReference -->
+            <img src="{{GlobalComponent.SERVE_URL}}/files/uploads/{{ userShow.avatar }}" alt="" class="avatar-lg rounded-circle img-thumbnail">
+          }@else{
+            <img src="assets/images/users/user-dummy-img.jpg" alt="" class="avatar-lg rounded-circle img-thumbnail">
+          }
           <span class="contact-active position-absolute rounded-circle bg-success"></span><span class="visually-hidden"></span>
         </div>
-        <h5 class="mt-4 mb-1">Tonya Noble</h5>
-        <p class="text-muted">Nesta Technologies</p>
-
-        <ul class="list-inline mb-0">
-          <li class="list-inline-item avatar-xs">
-            <a href="javascript:void(0);" class="avatar-title bg-success-subtle text-success fs-15 rounded">
-              <i class="ri-phone-line"></i>
-            </a>
-          </li>
-          <li class="list-inline-item avatar-xs">
-            <a href="javascript:void(0);" class="avatar-title bg-danger-subtle text-danger fs-15 rounded">
-              <i class="ri-mail-line"></i>
-            </a>
-          </li>
-          <li class="list-inline-item avatar-xs">
-            <a href="javascript:void(0);" class="avatar-title bg-warning-subtle text-warning fs-15 rounded">
-              <i class="ri-question-answer-line"></i>
-            </a>
-          </li>
-        </ul>
+        <h5 class="mt-4 mb-1">{{ userShow.name }} {{ userShow.lastName }}</h5>
+        <p class="text-muted">{{ userShow.position }}</p>
       </div>
       <div class="card-body">
-        <h6 class="text-muted text-uppercase fw-semibold mb-3">Personal Information</h6>
-        <p class="text-muted mb-4">Hello, I'm Tonya Noble, The most effective objective is one that is tailored
-          to the job you are applying for. It states what kind of career you are seeking, and what skills and
-          experiences.</p>
+        <h6 class="text-muted text-uppercase fw-semibold mb-3">{{ 'Personal Information' | translate }}</h6>
         <div class="table-responsive table-card">
           <table class="table table-borderless mb-0">
             <tbody>
             <tr>
-              <td class="fw-medium" scope="row">Designation</td>
-              <td class="designation">Lead Designer / Developer</td>
+              <td class="fw-medium" scope="row">{{ "EMPLOYEE-ID" | translate }}</td>
+              <td class="">{{ userShow.employeeId }}</td>
             </tr>
+
             <tr>
-              <td class="fw-medium" scope="row">Email ID</td>
-              <td class="email">tonyanoble&#64;velzon.com</td>
+              <td class="fw-medium" scope="row">{{ "EMAIL" | translate }}</td>
+              <td class="">{{ userShow.email }}</td>
             </tr>
+
             <tr>
-              <td class="fw-medium" scope="row">Phone No</td>
-              <td class="phone">414-453-5725</td>
+              <td class="fw-medium" scope="row">{{ "DEPARTMENT" | translate }}</td>
+              <td class="">{{ userShow.department }}</td>
             </tr>
+
             <tr>
-              <td class="fw-medium" scope="row">Lead Score</td>
-              <td class="l_score">154</td>
+              <td class="fw-medium" scope="row">{{ "POSITION" | translate }}</td>
+              <td class="">{{ userShow.position }}</td>
             </tr>
+
             <tr>
-              <td class="fw-medium" scope="row">Tags</td>
-              <td class="tags-list">
-                <div class="d-flex gap-1">
-                  <span class="badge bg-primary-subtle text-primary">Lead</span>
-                  <span class="badge bg-primary-subtle text-primary">Partner</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="fw-medium" scope="row">Last Contacted</td>
-              <td class="contacted_date">15 Dec, 2021 <small class="text-muted">08:58AM</small></td>
+              <td class="fw-medium" scope="row">Last Updated</td>
+              <td class="contacted_date">{{ userShow.updatedAt | date: 'dd-MMM-yyyy hh:mm a' }}</td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
+      }@else{
+        <!-- No User Selected -->
+        <div class="card-body text-center">
+          <p class="text-muted mb-0">Select a user to view details</p>
+        </div>
+
+      }
     </div>
   </div>
 </div>
+
+<!-- addUser Modal -->
+<ng-template #updateUserModel let-userModel>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="addMeetingRoom">
+        {{ "ADD-USER" | translate }}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="userModel.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body p-4">
+    <form [formGroup]="userForm">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="text-center">
+            <div class="position-relative d-inline-block">
+              <div class="position-absolute bottom-0 end-0">
+                <label for="image-input" class="mb-0" data-bs-toggle="tooltip" data-bs-placement="right" title="Select Image">
+                  <div class="avatar-xs cursor-pointer">
+                    <div class="avatar-title bg-light border rounded-circle text-muted">
+                      <i class="ri-image-fill"></i>
+                    </div>
+                  </div>
+                </label>
+                <input class="form-control d-none" value="" id="image-input" type="file" accept="image/png, image/gif, image/jpeg" name="image" (change)="fileChange($event)">
+              </div>
+              <div class="p-1">
+                <div class="">
+                  <img src="{{ imageSrc }}" id="imagePreview" class="avatar-lg rounded-circle img-thumbnail" alt="lead-image" height="300">
+                </div>
+              </div>
+            </div>
+            <h5 class="fs-13 mt-3">Avatar</h5>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="name" class="form-label">{{ "FIRST-NAME" | translate }}</label>
+            <input type="text" class="form-control" id="name" formControlName="name" placeholder="First Name" [ngClass]="{'is-invalid': submitted && form['name'].errors}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="lastName" class="form-label">{{ "LAST-NAME" | translate }}</label>
+            <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Last Name" [ngClass]="{'is-invalid': submitted && form['lastName'].errors}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="email" class="form-label">{{ "EMAIL" | translate }}</label>
+            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email" [ngClass]="{'is-invalid': submitted  && form['email'].errors}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="employeeId" class="form-label">{{ "EMPLOYEE-ID" | translate }}</label>
+            <input type="text" class="form-control" id="employeeId" formControlName="employeeId" placeholder="Employee ID" (input)="employeeIdChange($event)" [ngClass]="{'is-invalid': (submitted || empHasValid) && form['employeeId'].errors}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="position" class="form-label">{{ "POSITION" | translate }}</label>
+            <input type="text" class="form-control" id="position" formControlName="position" placeholder="Position" [ngClass]="{'is-invalid': submitted && form['position'].errors}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="department" class="form-label">{{ "DEPARTMENT" | translate }}</label>
+            <input type="text" class="form-control" id="department" formControlName="department" placeholder="Department" [ngClass]="{'is-invalid': submitted && form['department'].errors}">
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }}</label>
+            <mat-radio-group id="statusInfo" class="justify-content-start d-flex align-items-center" aria-label="Select Status" name="status" >
+              <mat-radio-button value="active" class="mt-1" (change)="statusChange($event)"  [checked]="form['status'].value == 'active'">
+                {{ "ACTIVE" | translate }}
+              </mat-radio-button>
+              <mat-radio-button value="inactive" class="mt-1" (change)="statusChange($event)" [checked]="form['status'].value == 'inactive'">
+                {{ "INACTIVE" | translate }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="password" class="form-label">{{ "PASSWORD" | translate }}</label>
+            <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password" [ngClass]="{'is-invalid': submitted && form['password'].errors}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">{{ "CONFIRM-PASSWORD" | translate }}</label>
+            <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm Password" [ngClass]="{'is-invalid': submitted && form['confirmPassword'].errors}">
+          </div>
+        </div>
+
+      </div>
+      <div class="text-end">
+        <button type="button" class="btn btn-info" (click)="onSubmit(userModel)" [disabled]="!userForm.valid">
+          @if (userEdit){
+            {{ "UPDATE" | translate }}
+          }@else{
+            {{ "SAVE" | translate }}
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>

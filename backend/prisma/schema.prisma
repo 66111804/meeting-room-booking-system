@@ -28,7 +28,7 @@ model User {
   status    String?  @default("active") // active, inactive, deleted
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  roles     UserRole[]
+  roles     UserRole[] // relation to roles table
 }
 
 model Role {

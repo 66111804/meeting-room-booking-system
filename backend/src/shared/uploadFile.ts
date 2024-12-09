@@ -11,7 +11,8 @@ export const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const ext = file.originalname.split('.').pop();
     const uuid = Math.random().toString(36).substring(2, 15);
-    cb(null, `${file.fieldname}-${Date.now()}-${uuid}.${ext}`);
+    const originalName = file.originalname.split('.').slice(0, -1).join('.').trim().replace(/\s+/g, "");
+    cb(null, `${originalName}-${Date.now()}-${uuid}.${ext}`);
   }
 });
 

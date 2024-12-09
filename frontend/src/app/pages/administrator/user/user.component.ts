@@ -1,12 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {BreadcrumbsComponent} from '../../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
-import {FormsModule} from '@angular/forms';
-import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
+import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
+import {NgbModal, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {User, UserList, UserProfileService} from '../../../core/services/user.service';
-import {of} from 'rxjs';
+import {debounceTime, distinctUntilChanged, of, Subject} from 'rxjs';
 import {formatDateGlobal} from '../../../shared/utils/date-utils';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgClass} from '@angular/common';
+import {switchMap} from 'rxjs/operators';
+import {GlobalComponent} from '../../../global-component';
+import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 
 @Component({
   selector: 'app-user',
@@ -16,42 +19,88 @@ import {DatePipe} from '@angular/common';
     TranslatePipe,
     FormsModule,
     NgbPagination,
-    DatePipe
+    DatePipe,
+    ReactiveFormsModule,
+    NgClass,
+    MatRadioButton,
+    MatRadioGroup
   ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
 })
 export class UserComponent implements OnInit {
   breadCrumbItems!: Array<{}>;
-
-  constructor(private userProfileService:UserProfileService) {
-    this.breadCrumbItems = [
-      { label: 'Administrator' },
-      { label: 'User', active: true },
-    ];
-  }
+  submitted = false;
+  empHasValid = false;
   searchTerm: string = '';
   page = 1;
   pageSize = 10;
   users: User[] = [];
   totalUsers = 0;
+  userForm!: UntypedFormGroup;
+
+  protected readonly GlobalComponent = GlobalComponent;
+
+  userShow:User | null = null;
+  userEdit:User | null = null;
+
+  imageSrc: any = 'assets/images/users/user-dummy-img.jpg';
+  searchSubject: Subject<string> = new Subject<string>();
+  employeeSubject: Subject<string> = new Subject<string>();
+  constructor(private userProfileService: UserProfileService,
+              private modalService: NgbModal,
+              private formBuilder: UntypedFormBuilder) {
+    this.breadCrumbItems = [
+      {label: 'Administrator'},
+      {label: 'User', active: true},
+    ];
+  }
 
   ngOnInit() {
     document.getElementById('elmLoader')?.classList.add('d-none');
+    this.userForm = this.formBuilder.group({
+      _id: [''],
+      name: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      employeeId: ['', [Validators.required]],
+      email: [''],
+      password: [''],
+      confirmPassword: [''],
+      image: [''],
+      position: ['', [Validators.required]],
+      department: ['', [Validators.required]],
+      role: ['', ],
+      status: ['active'],
+    });
     this.fetchUsers();
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+    ).subscribe((searchTerm: string) => {
+      this.searchTerm = searchTerm;
+      this.fetchUsers();
+    });
+
+    this.employeeSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+    ).subscribe((employeeId: string) => {
+      this.employeeIdValidation(employeeId);
+    });
   }
 
   fetchUsers() {
-    this.userProfileService.getAll(this.page,this.pageSize).subscribe({
+    this.userProfileService.getAll(this.page, this.pageSize).subscribe({
       next: (res: UserList) => {
-        console.log(res);
         this.users = res.users;
         this.totalUsers = res.total;
       },
       error: (err: any) => {
         console.log(err);
       },
-      complete: () => {}
+      complete: () => {
+      }
     });
   }
 
@@ -59,15 +108,145 @@ export class UserComponent implements OnInit {
     return formatDateGlobal(date);
   }
 
-  addUser() {}
+  updateUser(content: any) {
+    this.imageSrc = 'assets/images/users/user-dummy-img.jpg';
+    this.userForm.reset();
+    this.submitted = false;
+    this.empHasValid = false;
+    this.userProfileService.imageFile = null; // reset image file
+    this.userEdit = null;
+    this.modalService.open(content, {size: 'lg', centered: true});
+  }
 
-  searchUser(){}
-
-  onSort(name: string) {}
+  searchUser() {
+  }
 
   changePage() {
     this.fetchUsers();
   }
 
-  protected readonly of = of;
+  onSubmit(modal: any) {
+    this.submitted = true;
+    if (this.userForm.invalid) {
+      return;
+    }
+    if(this.userEdit !== null){
+      this.userProfileService.updateUser(this.userForm.value, this.userEdit.id).subscribe({
+        next: (res) => {
+          console.log(res);
+          modal.close('Close click');
+          const triggerButton = document.getElementById('triggerButton');
+          if (triggerButton) {
+            triggerButton.focus();
+          }
+
+          this.fetchUsers();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
+
+    }else {
+      // password validation
+      if (this.userForm.value.password === '' || this.userForm.value.confirmPassword === '') {
+        this.userForm.get('password')?.setErrors({required: true});
+        this.userForm.get('confirmPassword')?.setErrors({required: true});
+        return;
+      }
+      if (this.userForm.value.password !== this.userForm.value.confirmPassword) {
+        this.userForm.get('confirmPassword')?.setErrors({notMatch: true});
+        return;
+      }
+
+      this.userProfileService.updateUser(this.userForm.value).subscribe({
+        next: (res) => {
+          console.log(res);
+          modal.close('Close click');
+
+          const triggerButton = document.getElementById('triggerButton');
+          if (triggerButton) {
+            triggerButton.focus();
+          }
+
+          this.fetchUsers();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
+    }
+  }
+
+  fileChange(event: any) {
+    if(event.target.files.length === 0) {
+      return;
+    }
+    const reader = new FileReader();
+    this.userProfileService.imageFile = event.target.files[0];
+    reader.onload = (e: any) => {
+      this.imageSrc = e.target.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+  employeeIdChange(event: any) {
+    const employeeId = event.target.value;
+    this.employeeSubject.next(employeeId);
+  };
+  employeeIdValidation(employeeId: string) {
+    if(this.userEdit && this.userEdit.employeeId === employeeId){
+      this.empHasValid = true;
+      this.userForm.get('employeeId')?.setErrors(null);
+      return;
+    }
+    this.userProfileService.employeeIdValidation(employeeId).subscribe({
+      next: (res) => {
+        if(res.valid){
+          this.userForm.get('employeeId')?.setErrors(null);
+        }else{
+          this.userForm.get('employeeId')?.setErrors({invalid: true});
+        }
+        this.empHasValid = true;
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
+  }
+  get form() {
+    return this.userForm.controls;
+  }
+
+  editUser(content: any,user: User,) {
+    this.imageSrc = user.avatar ? `${GlobalComponent.SERVE_URL}/files/uploads/${user.avatar}` : 'assets/images/users/user-dummy-img.jpg';
+    this.userEdit = user;
+    this.userForm.reset();
+    this.userForm.patchValue({
+      _id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      employeeId: user.employeeId,
+      email: user.email,
+      position: user.position,
+      department: user.department,
+      status: user.status,
+      role: user.roles.map(role => role.id),
+    });
+    console.log(this.userForm.get('status')?.value);
+    console.log(this.form['status'].value);
+    this.modalService.open(content, {size: 'lg', centered: true});
+  }
+
+  statusChange(event: any) {
+    // this.roomFormControls.status.data = event.value;
+    this.userForm.patchValue({
+      status: event.value
+    });
+
+  }
+
+  userShowClick(user: User)
+  {
+    this.userShow = user;
+  }
 }

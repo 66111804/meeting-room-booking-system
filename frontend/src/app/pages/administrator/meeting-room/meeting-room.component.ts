@@ -113,6 +113,7 @@ export class MeetingRoomComponent implements OnInit
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe((value) => {
+      this.page = 1;
       this.fetchMeetingRooms();
     });
   }
@@ -277,7 +278,7 @@ export class MeetingRoomComponent implements OnInit
     this.meetingRoomEdit = room;
     this.isFeatures = false;
     if(this.meetingRoomEdit.imageUrl){
-    this.imagePreviewSrc = `${this.serverUrl}/files/uploads/${room.imageUrl}`;
+      this.imagePreviewSrc = `${this.serverUrl}/files/uploads/${room.imageUrl}`;
     }else{
       this.imagePreviewSrc = 'assets/images/dummy-image-square.jpg';
     }
@@ -337,7 +338,6 @@ export class MeetingRoomComponent implements OnInit
   }
 
   statusChange(event: any) {
-    console.log(event.value);
     this.roomFormControls.status.data = event.value;
   }
 }

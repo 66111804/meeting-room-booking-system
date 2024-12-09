@@ -97,5 +97,22 @@
   "ACTIVE": "ใช้งาน",
   "active": "ใช้งาน",
   "INACTIVE": "ไม่ใช้งาน",
-  "inactive": "ไม่ใช้งาน"
+  "inactive": "ไม่ใช้งาน",
+  "FIRST-NAME": "ชื่อ",
+  "LAST-NAME": "นามสกุล",
+  "EMAIL": "อีเมล",
+  "ROLE": "บทบาท",
+  "ROLE-NAME": "ชื่อบทบาท",
+  "ROLE-DESCRIPTION": "รายละเอียดบทบาท",
+  "ROLE-PERMISSIONS": "สิทธิ์การใช้งาน",
+  "EMPLOYEE-ID": "รหัสพนักงาน",
+  "PHONE-NUMBER": "เบอร์โทร",
+  "PASSWORD": "รหัสผ่าน",
+  "CONFIRM-PASSWORD": "ยืนยันรหัสผ่าน",
+  "ROLE-NAME-REQUIRED": "กรุณากรอกชื่อบทบาท",
+  "ROLE-DESCRIPTION-REQUIRED": "กรุณากรอกรายละเอียดบทบาท",
+  "ROLE-PERMISSIONS-REQUIRED": "กรุณาเลือกสิทธิ์การใช้งาน",
+  "DEPARTMENT": "แผนก",
+  "DEPARTMENT-NAME": "ชื่อแผนก",
+  "POSITION": "ตำแหน่ง"
 }

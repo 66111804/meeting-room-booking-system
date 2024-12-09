@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUsers } from "../controllers/administrator/user";
+import { createUser, employeeIdValidation, getUsers, updateUser } from "../controllers/administrator/user";
 import {
     createFeature,
     createMeetingRoom,
@@ -25,6 +25,24 @@ router.get('', (req, res) => {
 });
 //----------- Users ------------
 router.get('/users', async (req, res) => { await getUsers(req, res) });
+
+//----------- User EmployeeId Validation ------------
+router.get('/user-validate', async (req, res) => {
+    await employeeIdValidation(req, res);
+});
+
+router.get('/user/:id/validate', async (req, res) => {
+    await employeeIdValidation(req, res);
+});
+// ----------- Create User ------------
+router.post('/user-create', upload.single('avatar') , async (req, res) => {
+    await createUser(req, res);
+});
+
+// ----------- Update User ------------
+router.put('/user/:id/update', upload.single('avatar'), async (req, res) => {
+    await updateUser(req, res);
+});
 
 //---------- Meeting Rooms ------------
 router.get('/meeting-rooms', async (req, res) => {

@@ -166,7 +166,7 @@
               @for (feature of meetingRoomInformation.roomHasFeatures; track $index){
                 <tr>
                   <td class="designation">
-                    <div class="badge bg-success-subtle text-primary">{{ feature.feature.name }}</div>
+                    <div class="badge bg-success-subtle text-primary">- {{ feature.feature.name }}</div>
                   </td>
                 </tr>
                 }
@@ -310,6 +310,7 @@
     </div><!-- /.modal-content -->
   </ng-template>
 
+  <!-- showImageModel -->
   <ng-template #showImageModel let-image>
     <div class="modal-header bg-info-subtle p-3">
       <h5 class="modal-title" id="showImage">{{ 'Room Image' | translate }}</h5>
