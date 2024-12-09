@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import { PrismaClient } from "@prisma/client";
 import { validationResult } from "express-validator";
 import { RoomFeaturesResponse } from "../../shared/RoomFeaturesResponse";
@@ -10,7 +12,6 @@ export const getMeetingRooms = async (req: any, res: any) => {
     let { page, limit, search } = req.query;
     const { id } = req.params;
 
-    // const token = req.headers.authorization.split(" ")[1];
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     let where = {};
@@ -19,7 +20,6 @@ export const getMeetingRooms = async (req: any, res: any) => {
         OR: [
             { name: { startsWith: search },},
             { description: { startsWith: search },},
-
         ]
       };
 

@@ -16,10 +16,12 @@ export const getUsers = async (req: any, res: any) => {
     if (search) {
       where = {
         OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { lastName: { contains: search, mode: "insensitive" } },
-          { email: { contains: search, mode: "insensitive" } },
-          { employeeId: { contains: search, mode: "insensitive" } }
+          { name: { startsWith: search } },
+          { lastName: { startsWith: search } },
+          { email: { startsWith: search } },
+          { employeeId: { startsWith: search } },
+          { position: { startsWith: search } },
+          { department: { startsWith: search } },
         ]
       };
     }

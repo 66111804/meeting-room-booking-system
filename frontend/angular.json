@@ -36,6 +36,7 @@
               "src/assets/scss/config/default/bootstrap.scss",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/assets/scss/config/default/app.scss",
+              "src/assets/scss/config/default/custom.scss",
               "src/assets/scss/icons.scss"
             ],
             "scripts": [

@@ -37,6 +37,13 @@ export class UserComponent implements OnInit {
   pageSize = 10;
   users: User[] = [];
   totalUsers = 0;
+
+  useList: UserList = {
+    users: [],
+    total: 0,
+    totalPages: 0,
+    current: 0
+  }
   userForm!: UntypedFormGroup;
 
   protected readonly GlobalComponent = GlobalComponent;
@@ -78,7 +85,6 @@ export class UserComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
     ).subscribe((searchTerm: string) => {
-      this.searchTerm = searchTerm;
       this.fetchUsers();
     });
 
@@ -91,10 +97,11 @@ export class UserComponent implements OnInit {
   }
 
   fetchUsers() {
-    this.userProfileService.getAll(this.page, this.pageSize).subscribe({
+    this.userProfileService.getAll(this.page, this.pageSize,this.searchTerm).subscribe({
       next: (res: UserList) => {
         this.users = res.users;
         this.totalUsers = res.total;
+        this.useList = res;
       },
       error: (err: any) => {
         console.log(err);
@@ -119,6 +126,7 @@ export class UserComponent implements OnInit {
   }
 
   searchUser() {
+    this.searchSubject.next(this.searchTerm);
   }
 
   changePage() {
@@ -249,4 +257,5 @@ export class UserComponent implements OnInit {
   {
     this.userShow = user;
   }
+
 }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,} from '@angular/core';
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe, NgForOf, SlicePipe} from '@angular/common';
@@ -6,7 +6,9 @@ import {FlatpickrDefaultsInterface, FlatpickrDirective} from 'angularx-flatpickr
 import {FormsModule} from '@angular/forms';
 import {RoomInfo} from './room.module';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {MeetingRoomResponse, RoomMeetingService} from '../../core/services/room-meeting.service';
+import {GlobalComponent} from '../../global-component';
 
 
 @Component({
@@ -54,7 +56,7 @@ export class BookingRoomComponent implements OnInit
   dateSelected!:Date;
 
   // Room list example 12 rooms
-  roomList: Array<RoomInfo> = [
+  roomLists: Array<RoomInfo> = [
     {
       id: 1,
       name: '101',
@@ -130,10 +132,14 @@ export class BookingRoomComponent implements OnInit
   ]
 
   page:number = 1;
-  limit:number = 5;
+  limit:number = 12;
+  searchTerm:string = '';
+
+  meetingRooms: MeetingRoomResponse;
 
   searchSubject: Subject<string> = new Subject<string>();
-  constructor() {
+  protected readonly GlobalComponent = GlobalComponent;
+  constructor(private roomMeetingService: RoomMeetingService,private cdr: ChangeDetectorRef) {
     this.breadCrumbItems = [
       { label: 'Dashboard' },
       { label: 'Booking Room', active: true }
@@ -147,7 +153,16 @@ export class BookingRoomComponent implements OnInit
     ];
 
     this.dateSelected = new Date();
+    this.meetingRooms = {
+      meetingRooms: [],
+      total: 0,
+      totalPages: 0,
+      current: 0
+    }
+
+    this.fetchMeetingRooms();
   }
+
   ngOnInit() {
     const now = new Date();
     const currentHour = now.getHours();
@@ -171,11 +186,29 @@ export class BookingRoomComponent implements OnInit
     this.timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
     this.timeEndSlotSelectList = this.timeSlots.slice(1);
 
-    console.log('Start Time:', this.timeStartSlotSelected);
-    console.log('End Time:', this.timeEndSlotSelected);
-
     // Calculate the initial total hours
     this.calculateTotalHours();
+
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe((value) => {
+      this.page = 1;
+      this.fetchMeetingRooms();
+    });
+  }
+
+  fetchMeetingRooms() {
+    this.roomMeetingService.getAllBooking(this.page, this.limit,this.searchTerm).subscribe({
+      next: (response) => {
+        this.meetingRooms = response;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
   }
 
   onTimeStartSlotSelectChange(selectedStartTime: string) {
@@ -210,9 +243,9 @@ export class BookingRoomComponent implements OnInit
 
     this.totalHours = totalHours + totalMinutes / 60;
 
-    console.log('Start Time:', startHour, startMinute);
-    console.log('End Time:', endHour, endMinute);
-    console.log('Total Hours:', this.totalHours);
+    // console.log('Start Time:', startHour, startMinute);
+    // console.log('End Time:', endHour, endMinute);
+    // console.log('Total Hours:', this.totalHours);
   }
 
   onSubmit() {
@@ -226,12 +259,21 @@ export class BookingRoomComponent implements OnInit
 
   }
   changePage() {
-    console.log('Page changed');
+    // console.log('Page changed');
+    this.fetchMeetingRooms();
   }
 
   private getMaxDate(): Date {
     const currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() + 3);
     return currentDate;
+  }
+
+
+
+
+  searchInput(){
+    console.log('Search:', this.searchTerm);
+    this.searchSubject.next(this.searchTerm);
   }
 }

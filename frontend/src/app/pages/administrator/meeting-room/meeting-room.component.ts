@@ -330,7 +330,6 @@ export class MeetingRoomComponent implements OnInit
   showInformation(room: MeetingRoom) {
     this.isFeatures = false;
    this.meetingRoomInformation = room;
-   console.log(room);
   }
 
   showImage(content:any) {

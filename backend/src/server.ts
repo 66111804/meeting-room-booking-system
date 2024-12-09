@@ -9,6 +9,7 @@ import administrator from "./routes/administrator";
 import { authMiddleware } from "./middlewares/auth";
 import fs from "fs";
 import { upload, uploadDir } from "./shared/uploadFile";
+import bookingRoom from "./routes/booking-room";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -57,6 +58,7 @@ app.get("/api", (req, res) => {
 // ----------------- Routes -----------------
 app.use('/api/auth',auth);
 app.use('/api/admin',administrator);
+app.use('/api/booking-room',bookingRoom);
 // List all routes
 console.table(routes(app));
 

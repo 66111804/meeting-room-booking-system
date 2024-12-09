@@ -70,6 +70,7 @@ export interface Feature {
 @Injectable({
   providedIn: 'root'
 })
+
 export class RoomMeetingService {
 
   constructor(private http: HttpClient,) { }
@@ -121,4 +122,14 @@ export class RoomMeetingService {
   deleteRoom(id: number) {
     return this.http.delete(`${GlobalComponent.API_URL}/admin/meeting-room/${id}/delete`);
   }
+
+
+  // ----------------- Meeting Room Booking (booking-room)-----------------
+  /**
+   * Get all meeting room booking
+   */
+  getAllBooking(page = 1, size = 10, searchTerm = '') {
+    return this.http.get<MeetingRoomResponse>(`${GlobalComponent.API_URL}/booking-room?page=${page}&limit=${size}&search=${searchTerm}`)
+  }
+
 }

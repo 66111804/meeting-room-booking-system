@@ -15,14 +15,13 @@
         <div class="row justify-content-start g-3">
           <div class="col-xxl-3 col-sm-6">
             <div class="search-box">
-              <input type="text" class="form-control search" placeholder="Search for ...">
+              <input type="text" class="form-control search" placeholder="Search for ..." (input)="searchInput()"  [(ngModel)]="searchTerm">
               <i class="ri-search-line search-icon"></i>
             </div>
           </div>
           <div class="col-xxl-3 col-sm-6">
             <div>
               <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
-
             </div>
           </div>
           <!--end col-->
@@ -41,23 +40,34 @@
 
   <div class="col-xl-8">
     <div class="row">
-      @for (room of roomList; track $index){
-      <div class="col-xxl-4 col-lg-6">
-        <div class="card card-body text-center">
-          <div class="mb-2">
-            <img src="assets/images/small/img-1.jpg" alt="" width="200"  class="rounded-1 img-hover">
+
+      @for (room of meetingRooms.meetingRooms; track $index){
+        <div class="col-xxl-4 col-lg-6">
+          <div class="card card-body text-center">
+            <div class="mb-2 h-150 d-flex justify-content-center align-items-center">
+              @if (room.imageUrl) {
+                <img src="{{ GlobalComponent.SERVE_URL }}/files/uploads/{{ room.imageUrl }}" class="rounded img-hover" alt="lead-image" width="200" >
+              } @else {
+                <img src="assets/images/dummy-image-square.jpg" class="rounded img-hover" alt="lead-image" width="200" >
+              }
+            </div>
+            <h4 class="card-title mt-2">ห้องประชุม {{ room.name}}</h4>
+            <p class="card-text text-muted">
+              <!-- Limit text to 20 characters -->
+              {{ room.description | slice:0:20 }} {{ room.description.length > 20 ? '...' : '' }}
+            </p>
+            <div>
+              <a href="javascript:void(0);" class="btn btn-success m-1">เลือก</a>
+              <a href="javascript:void(0);" class="btn btn-success m-1">ดูรายละเอียด</a>
+            </div>
           </div>
-          <h4 class="card-title mt-2">ห้องประชุม {{ room.name}}</h4>
-          <p class="card-text text-muted">
-            <!-- Limit text to 20 characters -->
-            {{ room.description | slice:0:20 }} {{ room.description.length > 20 ? '...' : '' }}
-          </p>
-          <div>
-             <a href="javascript:void(0);" class="btn btn-success m-1">เลือก</a>
-             <a href="javascript:void(0);" class="btn btn-success m-1">ดูรายละเอียด</a>
+        </div><!-- end col -->
+      } @empty {
+        <div class="col-12">
+          <div class="alert alert-warning" role="alert">
+            <i class="ri-alert-line me-2"></i> No meeting rooms found
           </div>
         </div>
-      </div><!-- end col -->
       }
     </div><!-- end row -->
       <!-- Pagination -->
@@ -72,7 +82,7 @@
         <div class="col col-sm-6">
           <div class="text-sm-right float-sm-end listjs-pagination">
             <ngb-pagination
-              [collectionSize]="100"
+              [collectionSize]="meetingRooms.total"
               [(page)]="page"
               [pageSize]="limit"
               (pageChange)="changePage()"
