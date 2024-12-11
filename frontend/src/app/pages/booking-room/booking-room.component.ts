@@ -7,7 +7,7 @@ import {FormsModule} from '@angular/forms';
 import {RoomInfo} from './room.module';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
-import {MeetingRoomResponse, RoomMeetingService} from '../../core/services/room-meeting.service';
+import {MeetingRoom, MeetingRoomResponse, RoomMeetingService} from '../../core/services/room-meeting.service';
 import {GlobalComponent} from '../../global-component';
 
 
@@ -136,6 +136,7 @@ export class BookingRoomComponent implements OnInit
   searchTerm:string = '';
 
   meetingRooms: MeetingRoomResponse;
+  roomSelected: MeetingRoom | undefined = undefined;
 
   searchSubject: Subject<string> = new Subject<string>();
   protected readonly GlobalComponent = GlobalComponent;
@@ -270,10 +271,12 @@ export class BookingRoomComponent implements OnInit
   }
 
 
-
-
   searchInput(){
-    console.log('Search:', this.searchTerm);
     this.searchSubject.next(this.searchTerm);
+  }
+
+  onRoomSelect(room: MeetingRoom) {
+    this.roomSelected = room;
+    // get time and date of the selected room
   }
 }
