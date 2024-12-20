@@ -75,4 +75,21 @@ export class UserProfileService {
       }
       return this.http.post(`${GlobalComponent.API_URL}/admin/user-create`, formData);
     }
+
+
+    /**
+     * Get User by Id
+     * @param id
+     */
+    getUserById(id: number) {
+      return this.http.get<User>(`${GlobalComponent.API_URL}/admin/users/${id}`);
+    }
+
+    /**
+     * Delete User
+     * @param id
+     */
+    deleteUser(id: number) {
+      return this.http.delete(`${GlobalComponent.API_URL}/admin/user/${id}/delete`);
+    }
 }

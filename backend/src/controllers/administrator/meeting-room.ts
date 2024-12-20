@@ -225,6 +225,29 @@ export const deleteMeetingRoom = async (req: any, res: any) => {
       return res.status(400).json({ message: "Missing meeting room id" });
     }
 
+    const meetingRoom = await prisma.meetingRoom.findFirst({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    if(!meetingRoom){
+      return res.status(404).json({ message: "Meeting room not found" });
+    }
+
+    // remove image
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const filePath = path.join(`${uploadDir}/${meetingRoom.imageUrl}`);
+
+      if(fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }catch (error:any) {
+      console.log(error);
+    }
+
     await prisma.meetingRoom.delete({
       where: {
         id: parseInt(id),
@@ -233,6 +256,7 @@ export const deleteMeetingRoom = async (req: any, res: any) => {
 
     return res.status(204).json();
   } catch (error:any) {
+    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };

@@ -82,8 +82,19 @@ model MeetingRoom {
   description String? // description of the meeting room
   capacity    Int? // number of people
   imageUrl    String? // image url of the meeting room
+  // Image obj list for multiple images
+  images      ImageRoom[]
   status      String?  @default("active") // active, inactive, deleted
   roomHasFeatures    MeetingRoomFeatures[] // relation to features
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ImageRoom {
+  id          Int      @id @default(autoincrement())
+  imageUrl     String
+  meetingRoom MeetingRoom @relation(fields: [meetingRoomId], references: [id], onDelete: Cascade)
+  meetingRoomId Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -98,14 +109,11 @@ model Features {
 
 model MeetingRoomFeatures {
   id            Int      @id @default(autoincrement())
-  meetingRoom   MeetingRoom @relation(fields: [meetingRoomId], references: [id])
+  meetingRoom   MeetingRoom @relation(fields: [meetingRoomId], references: [id], onDelete: Cascade)
   meetingRoomId Int
-
   feature       Features @relation(fields: [featureId], references: [id])
   featureId     Int
-
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
   @@index([meetingRoomId, featureId]) // add index for meetingRoomId and featureId to make it unique
 }

@@ -17,6 +17,7 @@ import {allIcons} from 'angular-feather/icons';
 import {provideFlatpickrDefaults} from 'angularx-flatpickr';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {authInterceptorProviders} from './core/helpers/auth.interceptor';
+import {provideToastr} from 'ngx-toastr';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -40,6 +41,7 @@ export const appConfig: ApplicationConfig = {
     authInterceptorProviders,
     // provideHttpClient(),
     provideAnimations(),
+    provideToastr(),
     provideMockStore(),
     provideStore(rootReducer),
     provideStoreDevtools({

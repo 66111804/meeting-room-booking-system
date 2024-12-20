@@ -114,5 +114,6 @@
   "ROLE-PERMISSIONS-REQUIRED": "กรุณาเลือกสิทธิ์การใช้งาน",
   "DEPARTMENT": "แผนก",
   "DEPARTMENT-NAME": "ชื่อแผนก",
-  "POSITION": "ตำแหน่ง"
+  "POSITION": "ตำแหน่ง",
+  "You are about to delete a user": "คุณกำลังจะลบผู้ใช้งาน"
 }

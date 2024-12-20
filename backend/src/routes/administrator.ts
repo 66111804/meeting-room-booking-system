@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, employeeIdValidation, getUsers, updateUser } from "../controllers/administrator/user";
+import { createUser, deleteUser, employeeIdValidation, getUsers, updateUser } from "../controllers/administrator/user";
 import {
     createFeature,
     createMeetingRoom,
@@ -44,6 +44,11 @@ router.put('/user/:id/update', upload.single('avatar'), async (req, res) => {
     await updateUser(req, res);
 });
 
+// ----------- Delete User ------------
+router.delete('/user/:id/delete', async (req, res) => {
+    await deleteUser(req, res);
+});
+
 //---------- Meeting Rooms ------------
 router.get('/meeting-rooms', async (req, res) => {
     await getMeetingRooms(req, res);
@@ -76,8 +81,8 @@ router.get('/meeting-room/:id/validate', async (req, res) => {
 router.get('/meeting-room/:id/feature', async (req, res) => {
     await getRoomFeatures(req, res);
 });
-//---------- Features ------------
 
+//---------- Features ------------
 router.get('/features', async (req, res) => {
     await getFeatures(req, res);
 });

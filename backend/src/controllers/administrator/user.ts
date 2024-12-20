@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { ValidateResponse } from "../../shared/Validate";
 import * as bcrypt from "bcrypt";
+import { uploadDir } from "../../shared/uploadFile";
+import path from "path";
 
 const prisma = new PrismaClient();
 
@@ -250,6 +252,53 @@ export const updateUser = async (req: any, res: any) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const deleteUser = async (req: any, res: any) => {
+
+  try {
+    const { id } = req.params;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if(user.id === 1){
+      return res.status(400).json({ message: "Cannot delete default user" });
+    }
+
+    // Delete image avatar
+    try {
+      if (user.avatar) {
+        const fs = require("fs");
+        const path = require('path');
+        const filePath = path.join(`${uploadDir}/${user.avatar}`);
+        fs.unlinkSync(filePath);
+
+      }
+    }catch (error) {
+      console.error("Error deleting user avatar:", error);
+    }
+
+    await prisma.user.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    return res.status(200).json({ message: "User deleted successfully" });
+  }
+  catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+};
+
 
 const validateData = (data: any) => {
   const { name, lastName, employeeId, email, password, position, department } = data;

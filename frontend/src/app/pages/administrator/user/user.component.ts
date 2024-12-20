@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import {BreadcrumbsComponent} from '../../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
@@ -10,6 +10,7 @@ import {DatePipe, NgClass} from '@angular/common';
 import {switchMap} from 'rxjs/operators';
 import {GlobalComponent} from '../../../global-component';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-user',
@@ -25,6 +26,7 @@ import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
     MatRadioButton,
     MatRadioGroup
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
 })
@@ -56,7 +58,9 @@ export class UserComponent implements OnInit {
   employeeSubject: Subject<string> = new Subject<string>();
   constructor(private userProfileService: UserProfileService,
               private modalService: NgbModal,
-              private formBuilder: UntypedFormBuilder) {
+              private formBuilder: UntypedFormBuilder,
+              private toastr: ToastrService
+              ) {
     this.breadCrumbItems = [
       {label: 'Administrator'},
       {label: 'User', active: true},
@@ -258,4 +262,33 @@ export class UserComponent implements OnInit {
     this.userShow = user;
   }
 
+  userDelete: User | null = null;
+  confirm(content: any, user: User) {
+    if(user.id === 1){
+      return;
+    }
+    this.userDelete = user;
+    this.modalService.open(content, {centered: true});
+  }
+
+  deleteUser() {
+    if(this.userDelete === null){
+      return;
+    }
+
+    this.userProfileService.deleteUser(this.userDelete.id).subscribe({
+      next: (res) => {
+        this.toastr.success('User deleted successfully');
+        this.fetchUsers();
+      },
+      error: (err) => {
+        this.toastr.error('Error deleting user');
+        console.log(err);
+      },
+      complete: () => {
+        this.userDelete = null;
+        this.modalService.dismissAll();
+      }
+    });
+  }
 }
