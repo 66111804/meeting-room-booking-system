@@ -58,7 +58,7 @@ app.get("/api", (req, res) => {
 // ----------------- Routes -----------------
 app.use('/api/auth',auth);
 app.use('/api/admin',administrator);
-app.use('/api/booking-room',bookingRoom);
+app.use('/api/booking-room',authMiddleware,bookingRoom);
 // List all routes
 console.table(routes(app));
 

@@ -1,6 +1,14 @@
-export interface RoomInfo {
-  id: number;
-  name: string; // Meeting Room 1 or room number
-  imageUrl: string;
-  description: string;
+export interface ITimeSlot {
+  time: string;
+  available: boolean;
+  booking?: any;
+}
+
+
+export interface IBookingRoom {
+  meetingRoomId: number;
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
 }

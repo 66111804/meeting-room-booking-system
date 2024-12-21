@@ -26,6 +26,10 @@ model User {
   position  String?
   department String?
   status    String?  @default("active") // active, inactive, deleted
+
+  MeetingRoomBooking MeetingRoomBooking[]
+  Logs Logs[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   roles     UserRole[] // relation to roles table
@@ -86,6 +90,8 @@ model MeetingRoom {
   images      ImageRoom[]
   status      String?  @default("active") // active, inactive, deleted
   roomHasFeatures    MeetingRoomFeatures[] // relation to features
+  meetingRoomBooking MeetingRoomBooking[] // relation to booking
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -116,4 +122,36 @@ model MeetingRoomFeatures {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   @@index([meetingRoomId, featureId]) // add index for meetingRoomId and featureId to make it unique
+}
+
+// Meeting Room Booking model
+
+model MeetingRoomBooking {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  meetingRoomId Int
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  status      String?  @default("confirmed") // confirmed, pending, cancelled
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  User        User         @relation(fields: [userId], references: [id])
+  MeetingRoom MeetingRoom  @relation(fields: [meetingRoomId], references: [id])
+
+  @@index([userId, meetingRoomId]) // add index for userId and meetingRoomId to make it unique
+}
+
+model AuditLog {
+  id            Int         @id @default(autoincrement())
+  userId        Int?        // User who performed the action
+  bookingId     Int?        // Related booking (if applicable)
+  action        String      // e.g., create, update, cancel
+  details       String?     // Optional description of the action
+  timestamp     DateTime    @default(now())
+
+  User          User?       @relation(fields: [userId], references: [id])
+  MeetingRoomBooking MeetingRoomBooking? @relation(fields: [bookingId], references: [id])
 }
