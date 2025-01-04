@@ -236,7 +236,7 @@ export class BookingRoomComponent implements OnInit
   onDateSelectChange(date: any) {
     // this.dateSelected = date;
     this.roomSelected = undefined;
-    console.log('Date:', date);
+    // console.log('Date:', date);
   }
   changePage() {
     this.roomSelected = undefined;
@@ -282,9 +282,9 @@ export class BookingRoomComponent implements OnInit
 
 
   openBookingModal(content: any) {
-    console.log(this.dateSelected);
-    console.log(this.timeStartSlotSelected);
-    console.log(this.timeEndSlotSelected);
+    // console.log(this.dateSelected);
+    // console.log(this.timeStartSlotSelected);
+    // console.log(this.timeEndSlotSelected);
     const startDateTime = new Date(this.dateSelected);
     // set the time
     const startTime = this.timeStartSlotSelected.split(':');
