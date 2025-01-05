@@ -4,10 +4,11 @@ import { PrismaClient } from "@prisma/client";
 import {
   cancelBookingRoom,
   createBookingRoom, IBookingRoom,
-  listBookingRoom,
-  updateBookingRoom
+  listBookingRoom, myBooking,
+  updateBookingRoom, validateBookingRoom
 } from "../service/bookingRoomService";
 const prisma = new PrismaClient();
+
 export const meetingRoomList = async (req: any, res: any) => {
   try {
     let { page, limit, search } = req.query;
@@ -59,7 +60,6 @@ export const meetingRoomList = async (req: any, res: any) => {
     return res.status(200).json({ meetingRooms:meetingRoomsList, total, totalPages, current: page });
   } catch (error:any) {
     console.log(error.message);
-
     return res.status(500).json({ message: error.message });
   }
 };
@@ -124,3 +124,29 @@ export const cancelMeetingRoomBooking = async (req: any, res: any) => {
     return res.status(400).json({ message: error.message });
   }
 }
+
+export const IsValidateBookingRoom = async (req: any, res: any) => {
+  try {
+    const isValid = await validateBookingRoom(req.body);
+    return res.status(200).json({ isValid });
+  }catch (error:any) {
+    console.log(error.message);
+    return res.status(400).json({ message: error.message, isValid: false });
+  }
+
+};
+
+// ------------------------ My Booking ------------------------ //
+export const getMyBooking = async (req: any, res: any) => {
+  try {
+    const { userId } = req.user;
+    let { page, limit, search } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const bookings = await myBooking(userId, page, limit, search);
+    return res.status(200).json(bookings);
+  } catch (error:any) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};

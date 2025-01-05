@@ -7,7 +7,7 @@
     <div class="card" id="contactList">
       <div class="card-header">
         <div class="d-flex align-items center">
-          <h5 class="card-title mb-0 flex-grow-1">{{ "MEETING-ROOMS-NEW" | translate }}</h5>
+          <h5 class="card-title mb-0 flex-grow-1">{{ "MEETING-ROOMS" | translate }}</h5>
           <p class="text-muted mb-0">Total 3 rooms</p>
         </div>
       </div>
@@ -105,19 +105,21 @@
           <div class="d-flex justify-content-between align-items-center">
             <h6 class="mb-0">เริ่ม</h6>
             <select class="form-select mb-3  m-3" aria-label="Default select example" [ngModel]="timeStartSlotSelected" (ngModelChange)="onTimeStartSlotSelectChange($event)">
-<!--              <option selected>เลือกเวลา เริ่มต้น</option>-->
-              <option *ngFor="let timeStartSlot of timeStartSlotSelectList" [value]="timeStartSlot.time">
-                {{ timeStartSlot.time }}
-              </option>
+              @for(timeStartSlot of timeStartSlotSelectList; track $index){
+                <option [value]="timeStartSlot.time">
+                  {{ timeStartSlot.time }}
+                </option>
+              }
             </select>
           </div>
           <div class="d-flex justify-content-between align-items-center mt-3">
             <h6 class="mb-0">ถึง</h6>
             <select class="form-select mb-3 m-3" aria-label="Default select example" [ngModel]="timeEndSlotSelected" (ngModelChange)="onTimeEndSlotSelectChange($event)">
-<!--              <option selected>เลือกเวลา สิ้นสุด</option>-->
-              <option *ngFor="let timeEndSlot of timeEndSlotSelectList" [value]="timeEndSlot.time">
-                {{ timeEndSlot.time }}
-              </option>
+              @for(timeEndSlot of timeEndSlotSelectList; track $index){
+                <option [value]="timeEndSlot.time">
+                  {{ timeEndSlot.time }}
+                </option>
+              }
             </select>
           </div>
 

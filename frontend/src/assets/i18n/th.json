@@ -115,5 +115,13 @@
   "DEPARTMENT": "แผนก",
   "DEPARTMENT-NAME": "ชื่อแผนก",
   "POSITION": "ตำแหน่ง",
-  "You are about to delete a user": "คุณกำลังจะลบผู้ใช้งาน"
+  "You are about to delete a user": "คุณกำลังจะลบผู้ใช้งาน",
+  "MY-MEETING-ROOMS": "ห้องประชุมของฉัน",
+  "MY-BOOKING": "การจองของฉัน",
+  "ACTION": "การกระทำ",
+  "BOOKING-DATE": "วันที่จอง",
+  "ROOM-NAME": "ชื่อห้อง",
+  "BOOKING-TIME": "เวลาที่จอง",
+  "TITLE": "หัวข้อ",
+  "NO-RECORD-FOUND": "ไม่พบข้อมูล"
 }

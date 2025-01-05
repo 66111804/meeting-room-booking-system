@@ -80,6 +80,7 @@ export class BookingRoomComponent implements OnInit
   totalHours = 0;
 
   dateSelected!:Date;
+  validateTimeSlot:boolean = false; // true is invalid, false is valid
 
   page:number = 1;
   limit:number = 12;
@@ -199,10 +200,12 @@ export class BookingRoomComponent implements OnInit
     this.timeEndSlotSelectList = this.timeSlots.slice(
       this.timeSlots.findIndex((slot) => slot.time === selectedStartTime) + 1
     ); // Update end time options
+
+    // validate time slot
+
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
   }
-
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
@@ -210,6 +213,9 @@ export class BookingRoomComponent implements OnInit
       0,
       this.timeSlots.findIndex((slot) => slot.time === selectedEndTime)
     ); // Update start time options
+
+   // validate time slot
+
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
   }
@@ -234,10 +240,10 @@ export class BookingRoomComponent implements OnInit
   }
 
   onDateSelectChange(date: any) {
-    // this.dateSelected = date;
     this.roomSelected = undefined;
-    // console.log('Date:', date);
   }
+
+
   changePage() {
     this.roomSelected = undefined;
     this.fetchMeetingRooms();

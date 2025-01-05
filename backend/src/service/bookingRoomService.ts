@@ -16,6 +16,13 @@ export interface IBookingRoom {
   status?: string;
 }
 
+export interface IBookingRoomValidation {
+  meetingRoomId: number;
+  startTime: string;
+  endTime: string;
+}
+
+
 export const createBookingRoom = async (data: IBookingRoom) => {
   const startTime = dayjs(data.startTime).tz("Asia/Bangkok").format();
   const endTime = dayjs(data.endTime).tz("Asia/Bangkok").format();
@@ -54,7 +61,6 @@ export const createBookingRoom = async (data: IBookingRoom) => {
       }
     });
 };
-
 
 export const listBookingRoom = async (meetingRoomId:number,date:string) => {
   const dateStart = dayjs(date).tz("Asia/Bangkok").startOf('day').toDate();
@@ -147,8 +153,8 @@ export const updateBookingRoom = async (id: number, data: IBookingRoom) => {
       status: 'confirmed',
       OR: [
         {
-          startTime: { gte: startTime },
-          endTime: { lte: endTime },
+          startTime: { gte: startTime }, // greater than or equal
+          endTime: { lte: endTime }, // less than or equal
         },
       ],
       NOT:{
@@ -167,4 +173,64 @@ export const updateBookingRoom = async (id: number, data: IBookingRoom) => {
     },
     data
   });
+};
+
+export const validateBookingRoom = async (data: IBookingRoomValidation) => {
+
+  const timeStart = dayjs(data.startTime).tz("Asia/Bangkok").format();
+  const timeEnd = dayjs(data.endTime).tz("Asia/Bangkok").format();
+  const roomId = data.meetingRoomId;
+
+  const conflicts = await prisma.meetingRoomBooking.findMany({
+    where:{
+      meetingRoomId: roomId,
+      status: 'confirmed',
+      OR: [
+        {
+          startTime: { gte: timeStart },
+          endTime: { lte: timeEnd },
+        },
+      ],
+    }
+  });
+
+  if(conflicts.length > 0){
+    throw new Error('This room is already booked for this time');
+  }
+
+  return true; // no conflict
+};
+
+// ------------------------ My Booking ------------------------ //
+export const myBooking = async (userId: number, page: number, limit: number, searchTerm: string) =>{
+
+  // ({ meetingRooms:meetingRoomsList, total, totalPages, current: page });
+  const myBooking = await prisma.meetingRoomBooking.findMany({
+    where:{
+      userId
+    },
+    include:{
+      MeetingRoom: true
+    },
+    skip: (page - 1) * limit,
+    take: limit,
+    orderBy:{
+      updatedAt: 'desc'
+    }
+  });
+
+  const total = await prisma.meetingRoomBooking.count({
+    where:{
+      userId
+    }
+  });
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    myBooking,
+    total,
+    totalPages,
+    current: page
+  };
 };

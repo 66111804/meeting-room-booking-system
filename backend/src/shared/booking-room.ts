@@ -10,3 +10,36 @@ export const baseTimeSlots: string[] = [
   '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
   '17:00', '17:30', '18:00'
 ];
+
+
+export interface IBookingsResponse {
+  myBooking: MyBooking[]
+  total: number
+  totalPages: number
+  current: number
+}
+
+export interface MyBooking {
+  id: number
+  userId: number
+  meetingRoomId: number
+  title: string
+  description: string
+  startTime: string
+  endTime: string
+  status: string
+  createdAt: string
+  updatedAt: string
+  MeetingRoom: MeetingRoom
+}
+
+export interface MeetingRoom {
+  id: number
+  name: string
+  description: string
+  capacity: number
+  imageUrl: string
+  status: string
+  createdAt: string
+  updatedAt: string
+}
