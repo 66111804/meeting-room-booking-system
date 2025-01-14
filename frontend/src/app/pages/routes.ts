@@ -8,11 +8,16 @@ import {MeetingRoomComponent} from './administrator/meeting-room/meeting-room.co
 import {RolePermissionComponent} from './administrator/role-permission/role-permission.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LogoutComponent} from './auth/logout/logout.component';
+import {RoomComponent} from './booking-room/room/room.component';
 
 const Routing: Routes = [
   {
     path: 'app',
     component: DashboardComponent
+  },
+  {
+    path: 'booking-room/:id/info',
+    component: RoomComponent
   },
   {
     path: 'booking-room',

@@ -38,16 +38,16 @@
     </div>
   </div>
 
-  <div class="col-xl-8">
+  <div class="col-xl-12">
     <div class="row">
       @for (room of meetingRooms.meetingRooms; track $index){
-        <div class="col-xxl-4 col-lg-6">
+        <div class="col-xxl-3 col-lg-6 col-xl-4">
           <div class="card card-body text-center">
             <div class="mb-2 h-150 d-flex justify-content-center align-items-center">
               @if (room.imageUrl) {
-                <img src="{{ GlobalComponent.SERVE_URL }}/files/uploads/{{ room.imageUrl }}" class="rounded img-hover" alt="lead-image" width="200" (click)="onRoomSelect(room)" >
+                <img src="{{ GlobalComponent.SERVE_URL }}/files/uploads/{{ room.imageUrl }}" class="rounded img-hover" alt="lead-image" width="250" (click)="onRoomSelect(room)" >
               } @else {
-                <img src="assets/images/dummy-image-square.jpg" class="rounded img-hover" alt="lead-image" width="200" (click)="onRoomSelect(room)" >
+                <img src="assets/images/dummy-image-square.jpg" class="rounded img-hover" alt="lead-image" width="250" (click)="onRoomSelect(room)" >
               }
             </div>
             <h4 class="card-title mt-2">ห้องประชุม {{ room.name}}</h4>
@@ -56,8 +56,10 @@
               {{ room.description | slice:0:20 }} {{ room.description.length > 20 ? '...' : '' }}
             </p>
             <div>
-              <a href="javascript:void(0);" class="btn btn-success m-1 {{roomSelected?.id == room.id?'active':''}}" (click)="onRoomSelect(room)">เลือก</a>
-              <a href="javascript:void(0);" class="btn btn-success m-1">ดูรายละเอียด</a>
+<!--              <a href="javascript:void(0);" class="btn btn-success m-1 {{roomSelected?.id == room.id?'active':''}}" (click)="onRoomSelect(room)">เลือก</a>-->
+              <a class="btn btn-success m-1" [routerLink]="['/booking-room',room.id,'info']">
+                <i class="ri-arrow-right-double-line"></i> เลือก <i class="ri-arrow-left-double-line"></i>
+              </a>
             </div>
           </div>
         </div><!-- end col -->
@@ -94,7 +96,7 @@
       <!-- End Pagination -->
     </div>
   </div>
-  <div class="col-xl-4">
+  <div class="col-xl-4 d-none">
     <div class="card">
       @if(roomSelected){
         <div class="card-header d-flex justify-content-between align-items-center">

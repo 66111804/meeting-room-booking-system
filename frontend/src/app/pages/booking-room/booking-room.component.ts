@@ -11,6 +11,7 @@ import {GlobalComponent} from '../../global-component';
 import {IBookingRoom, ITimeSlot} from './room.module';
 import {BookingRoomService} from '../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
+import {RouterLink} from '@angular/router';
 
 
 @Component({
@@ -25,6 +26,7 @@ import {ToastrService} from 'ngx-toastr';
     DatePipe,
     SlicePipe,
     NgbPagination,
+    RouterLink,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './booking-room.component.html',
@@ -83,7 +85,7 @@ export class BookingRoomComponent implements OnInit
   validateTimeSlot:boolean = false; // true is invalid, false is valid
 
   page:number = 1;
-  limit:number = 12;
+  limit:number = 12; // col-xxl-3 = 11, col-xl-4 = 9, col-lg-6 = 6
   searchTerm:string = '';
 
   meetingRooms: MeetingRoomResponse;
@@ -136,6 +138,24 @@ export class BookingRoomComponent implements OnInit
       this.datePickerOptions.minDate = new Date(now.setDate(now.getDate() + 1));
       this.dateSelected = new Date(now.setDate(now.getDate()));
     }
+
+    // get window size
+    // if(window.innerWidth < 576){
+    //   // size is xs
+    // }else if(window.innerWidth < 768){
+    //   // size is sm
+    // }else if(window.innerWidth < 992){
+    //   // size is md
+    // }else if(window.innerWidth < 1200){
+    //   // size is lg
+    //   this.limit = 6;
+    // }else if(window.innerWidth < 1400){
+    //   // size is xl
+    //   this.limit = 9;
+    // }else{
+    //   // size is xxl
+    //   this.limit = 12;
+    // }
 
     this.fetchMeetingRooms();
   }

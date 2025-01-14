@@ -66,7 +66,6 @@
                                         @if(subSubitem.badge){<span class="badge badge-pill {{subSubitem.badge.variant}}">{{subSubitem.badge.text
                                           | translate}}</span>}
                                       </a>
-
                                       <div class="collapse menu-dropdown extra-sub-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subSubitem.isCollapsed">
                                         <ul class="nav nav-sm flex-column" aria-expanded="false">
                                           @for(subSubitem1 of subSubitem.subItems; track $index){

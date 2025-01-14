@@ -4,7 +4,7 @@ export interface MenuItem {
   icon?: string;
   isCollapsed?: any;
   link?: string;
-  subItems?: any;
+  subItems?: MenuItem[];
   isTitle?: boolean;
   badge?: any;
   parentId?: number;

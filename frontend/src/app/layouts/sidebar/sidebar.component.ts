@@ -9,6 +9,7 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
 import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
 import {SimplebarAngularModule} from 'simplebar-angular';
+import {findActiveMenuItem, isRouteMatching} from '../../shared/utils/sidebar';
 
 @Component({
   selector: 'app-sidebar',
@@ -146,8 +147,12 @@ export class SidebarComponent implements OnInit {
       pathName = pathName.replace('/velzon/angular/default', '');
     }
 
-    const active = this.findMenuItem(pathName, this.menuItems)
-    this.toggleItem(active)
+    // Find the active menu item
+    // const active = this.findMenuItem(pathName, this.menuItems)
+    const activeItem = findActiveMenuItem(pathName, this.menuItems);
+    if(activeItem) {
+      this.toggleItem(activeItem)
+    }
     const ul = document.getElementById("navbar-nav");
     if (ul) {
       const items = Array.from(ul.querySelectorAll("a.nav-link"));
@@ -155,13 +160,17 @@ export class SidebarComponent implements OnInit {
       this.removeActivation(activeItems);
 
       let matchingMenuItem = items.find((x: any) => {
-        if (environment.production) {
-          let path = x.pathname
-          path = path.replace('/velzon/angular/default', '');
-          return path === pathName;
-        } else {
-          return x.pathname === pathName;
-        }
+        // if (environment.production) {
+        //   let path = x.pathname
+        //   path = path.replace('/velzon/angular/default', '');
+        //   return path === pathName;
+        // } else {
+        //   return x.pathname === pathName;
+        // }
+
+        const itemPath =  environment.production ? x.pathname.replace('/velzon/angular/default', '') : x.pathname;
+
+        return isRouteMatching(pathName, itemPath);
 
       });
       if (matchingMenuItem) {
