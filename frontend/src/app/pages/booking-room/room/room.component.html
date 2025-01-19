@@ -11,21 +11,22 @@
           <div class="row">
             <div class="col-md">
               <div class="row align-items-center">
-                <div class="col-md-auto">
-                  <div class="avatar-md mb-md-0 mb-4">
-                    <div class="avatar-title bg-white rounded-circle">
-                      <img src="assets/images/companies/img-4.png" alt="" class="avatar-sm" />
-                    </div>
-                  </div>
-                </div><!--end col-->
+<!--                <div class="col-md-auto">-->
+<!--                  <div class="avatar-md mb-md-0 mb-4">-->
+<!--                    <div class="avatar-title bg-white rounded-circle">-->
+<!--                      <img src="assets/images/companies/img-4.png" alt="" class="avatar-sm" />-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>&lt;!&ndash;end col&ndash;&gt;-->
                 <div class="col-md">
-                  <h4 class="fw-semibold" id="ticket-title">#Room Name</h4>
+                  <h4 class="fw-semibold" id="ticket-title"># {{roomInfo.name}}</h4>
                   <div class="hstack gap-3 flex-wrap">
                     <div class="text-muted"><i class="ri-building-line align-bottom me-1"></i> <span
                       id="ticket-client">Room</span></div>
                     <div class="vr"></div>
-                    <div class="text-muted">Create Date : <span class="fw-medium"
-                                                                id="create-date">20 Dec, 2021</span></div>
+                    <div class="text-muted">Last Updated : <span class="fw-medium" id="create-date">
+                    {{ roomInfo.updatedAt | date: 'dd-MMM-yyyy HH:mm' }}
+                    </span></div>
 
                   </div>
                 </div><!--end col-->
@@ -43,28 +44,44 @@
 <div class="row">
   <div class="col-xxl-9">
     <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title mb-0">รายละเอียดห้องประชุม</h5>
+        <div class="d-flex align-items-center">
+          <!-- back button -->
+          <a href="javascript:history.back()" class="btn btn-sm btn-primary">
+            <i class="ri-arrow-left-line me-2"></i>Back
+          </a>
+        </div>
+      </div>
       <div class="card-body p-4">
-        <h6 class="fw-semibold text-uppercase mb-3">Ticket Description</h6>
-        <p class="text-muted">It would also help to know what the errors are - it could be something simple like
-          a message saying delivery is not available which could be a problem with your shipping templates.
-          Too much or too little spacing, as in the example below, can make things unpleasant for the reader.
-          The goal is to make your text as comfortable to read as possible. On the note of consistency, color
-          consistency is a MUST. If you’re not trying to create crazy contrast in your design, then a great
-          idea would be for you to use a color palette throughout your entire design. It will subconsciously
-          interest viewers and also is very pleasing to look at. <a href="javascript:void(0);"
-                                                                    class="link-secondary text-decoration-underline">Example</a></p>
-        <h6 class="fw-semibold text-uppercase mb-3">Create an Excellent UI for a Dashboard</h6>
-        <ul class="text-muted vstack gap-2 mb-4 Excellent-list">
-          <li>Pick a Dashboard Type</li>
-          <li>Categorize information when needed</li>
-          <li>Provide Context</li>
-          <li>On using colors</li>
-          <li>On using the right graphs</li>
-        </ul>
-        <div class="mt-4">
-          <h6 class="fw-semibold text-uppercase mb-3">Here is the code you've requsted</h6>
-          <div>
+        <div class="row">
+          <!-- Image center-->
+          <div class="col-12">
+            <div class="text-center">
+              <img src="{{ GlobalComponent.SERVE_URL }}/files/uploads/{{ roomInfo.imageUrl }}" class="rounded img-hover" alt="lead-image" width="250">
+              <h4 class="card-title mt-2">ห้องประชุม {{ roomInfo.name}}</h4>
+            </div>
+          </div>
+          <!-- Description -->
+          <div class="col-xl-8">
+            <div class="mt-4">
+              <h5 class="fw-semibold">รายละเอียด</h5>
+              <p class="text-muted mb-0">{{ roomInfo.description }}</p>
+            </div>
+          </div>
 
+          <!-- Features คุณสมบัติ -->
+          <div class="col-xl-4">
+            <div class="mt-4">
+              <h5 class="fw-semibold">คุณสมบัติ</h5>
+              <ul class="list-unstyled text-muted">
+                <li><i class="ri-check-line text-success me-1"></i> จอภาพ</li>
+                <li><i class="ri-check-line text-success me-1"></i> โปรเจคเตอร์</li>
+                <li><i class="ri-check-line text-success me-1"></i> ไมค์</li>
+                <li><i class="ri-check-line text-success me-1"></i> โต๊ะ</li>
+                <li><i class="ri-check-line text-success me-1"></i> เก้าอี้</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div><!--end card-body-->
@@ -73,6 +90,64 @@
       </div>
       <!-- end card body -->
     </div><!--end card-->
+
+    <!-- From การจองห้อง -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">จองห้องประชุม</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row">
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label for="roomName" class="form-label">ห้องประชุม</label>
+              <input type="text" class="form-control" id="roomName" name="roomName" value="{{roomInfo.name}}" disabled>
+            </div>
+          </div>
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label for="date" class="form-label">วันที่</label>
+              <input type="text" class="form-control" id="date" name="roomName" value="{{dateSelected | date: 'dd-MM-yyyy'}}" disabled>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label for="timeStart" class="form-label">เวลาเริ่ม</label>
+              <input type="text" class="form-control" id="timeStart" name="roomName" value="{{timeStartSlotSelected}}" disabled>
+            </div>
+          </div>
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label for="timeEnd" class="form-label">เวลาสิ้นสุด</label>
+              <input type="text" class="form-control" id="timeEnd" name="roomName" value="{{timeEndSlotSelected}}" disabled>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="mb-3">
+              <label for="title" class="form-label">หัวข้อการประชุม</label>
+              <input type="text" class="form-control" id="title" name="title"  required>
+            </div>
+          </div>
+
+          <div class="col-xl-12">
+            <div class="mb-3">
+              <label for="description" class="form-label">รายละเอียดการใช้ห้อง</label>
+              <textarea class="form-control" id="description" rows="3" name="description" required></textarea>
+            </div>
+          </div>
+
+          <!-- ปุ่มยืนยันการจอง -->
+          <div class="col-xl-12">
+            <button type="button" class="btn btn-success w-100" >ยืนยันการจอง</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div><!--end col-->
   <div class="col-xxl-3">
     <div class="card">
@@ -86,12 +161,72 @@
       </div><!--end card-body-->
     </div><!--end card-->
     <div class="card">
-      <div class="card-header">
-        <h6 class="card-title fw-semibold mb-0">เวลา</h6>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">เลือกเวลาการจองของ {{roomInfo.name}}</h5>
+        <p class="text-muted mb-0">{{totalHours}} ชั่วโมง</p>
       </div>
-      <div class="card-body">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">เริ่ม</h6>
+            <select class="form-select mb-3  m-3" aria-label="Default select example" [ngModel]="timeStartSlotSelected" (ngModelChange)="onTimeStartSlotSelectChange($event)">
+              @for(timeStartSlot of timeStartSlotSelectList; track $index){
+                <option [value]="timeStartSlot.time">
+                  {{ timeStartSlot.time }}
+                </option>
+              }
+            </select>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <h6 class="mb-0">ถึง</h6>
+            <select class="form-select mb-3 m-3" aria-label="Default select example" [ngModel]="timeEndSlotSelected" (ngModelChange)="onTimeEndSlotSelectChange($event)">
+              @for(timeEndSlot of timeEndSlotSelectList; track $index){
+                <option [value]="timeEndSlot.time">
+                  {{ timeEndSlot.time }}
+                </option>
+              }
+            </select>
+          </div>
 
-      </div>
+          <div class="mt-4">
+            <!-- (click)="openBookingModal(bookingRoomModal)" -->
+            <button type="button" class="btn btn-success w-100" >ยืนยันการจอง</button>
+          </div>
+          <!-- รายการที่ จองแล้ว -->
+          <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">รายละเอียดของวันที่ {{ dateSelected | date: 'dd-MM-yyyy' }}</h6>
+            </div>
+            <div class="mt-3">
+
+              <ul class="list-group list-group-flush">
+                @for (timeSlot of timeSlots; track $index)
+                {
+                  <li class="list-group-item py-3 pt-1 pb-1">
+                    <div class="d-flex align-items-center">
+                      <div class="flex-shrink-0">
+                        <div>{{ timeSlot.time }}</div>
+                      </div>
+                      <div class="flex-shrink-0 mx-3">
+                        <i class="ri-arrow-right-fill text-muted"></i>
+                      </div>
+                      <div class="flex-grow-1 text-muted overflow-hidden">
+                        @if(timeSlot.available){
+                          <h5 class="text-truncate fs-14 mb-1 badge ms-auto bg-success">ว่าง</h5>
+                        } @else {
+                          <h5 class="text-truncate fs-14 mb-1 badge ms-auto bg-danger">ไม่ว่าง</h5>
+                          <a href="javascript:void(0);"  class="text-truncate fs-14 mb-1 ms-1 badge  bg-info">รายละเอียด</a>
+                        }
+                      </div>
+                    </div>
+                  </li>
+                }
+              </ul>
+
+            </div>
+
+          </div>
+
+        </div>
     </div>
   </div><!--end col-->
 </div><!--end row-->
@@ -99,42 +234,3 @@
 
 
 
-
-
-
-<div class="row">
-  <div class="col-lg-8">
-    <div class="card" id="contactList">
-      <div class="card-header">
-        <div class="d-flex align-items center">
-          <h5 class="card-title mb-0 flex-grow-1">{{ "MEETING-ROOMS" | translate }}</h5>
-        </div>
-      </div>
-
-      <div class="card-body mb-3">
-        <div class="row">
-          <div class="col-lg-3">
-
-          </div>
-          <div class="col-lg-8">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-4">
-    <div class="card" id="">
-      <div class="card-header">
-        <div class="d-flex align-items center">
-          <h5 class="card-title mb-0 flex-grow-1">ปฏิทิน</h5>
-        </div>
-      </div>
-
-      <div class="card-body mb-3">
-
-      </div>
-    </div>
-  </div>
-
-</div>

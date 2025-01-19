@@ -76,12 +76,28 @@ export class RoomMeetingService {
   constructor(private http: HttpClient,) { }
 
   imageFile: File | null = null;
+
+  /**
+   * Validate meeting room name
+   * @param name
+   * @param id
+   */
   validateName(name: string, id: number = 0) {
     if (id > 0) {
       return this.http.get<ValidateResponse>(`${GlobalComponent.API_URL}/admin/meeting-room/${id}/validate?name=${name}`);
     }
     return this.http.get<ValidateResponse>(`${GlobalComponent.API_URL}/admin/meeting-room-validate?name=${name}`);
   }
+
+
+  /**
+   * Get meeting room by id
+   * @param id
+   */
+  getRoomById(id: number) {
+    return this.http.get<MeetingRoom>(`${GlobalComponent.API_URL}/admin/meeting-room/${id}`);
+  }
+
 
   /**
    * Create or update meeting room

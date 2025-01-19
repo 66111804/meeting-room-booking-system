@@ -8,21 +8,52 @@
       <div class="card-header">
         <div class="d-flex align-items center">
           <h5 class="card-title mb-0 flex-grow-1">{{ "MEETING-ROOMS" | translate }}</h5>
-          <p class="text-muted mb-0">Total 3 rooms</p>
+          <p class="text-muted mb-0">----</p>
         </div>
       </div>
       <div class="card-body mb-3">
         <div class="row justify-content-start g-3">
           <div class="col-xxl-3 col-sm-6">
             <div class="search-box">
-              <input type="text" class="form-control search" placeholder="Search for ..." (input)="searchInput()"  [(ngModel)]="searchTerm">
+              <input type="text" class="form-control search" id="searchRoom" placeholder="ค้นหาห้อง..." (input)="searchInput()"  [(ngModel)]="searchTerm">
               <i class="ri-search-line search-icon"></i>
             </div>
+              <label for="searchRoom" class="form-label">ค้นหาห้อง</label>
           </div>
           <div class="col-xxl-3 col-sm-6">
             <div>
+              <!-- วันที่ -->
               <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
+              <label for="inputDate" class="form-label">วันที่</label>
             </div>
+
+          </div>
+          <div class="col-xxl-2 col-sm-6">
+            <div>
+              <!-- เวลาเริ่ม -->
+              <select class="form-select" [ngModel]="timeStartSlotSelected" (ngModelChange)="onTimeStartSlotSelectChange($event)">
+                @for(timeStartSlot of timeStartSlotSelectList; track $index){
+                  <option [value]="timeStartSlot.time">
+                    {{ timeStartSlot.time }}
+                  </option>
+                }
+              </select>
+            </div>
+            <label for="inputTimeStart" class="form-label mt-2">เวลาเริ่ม</label>
+
+          </div>
+          <div class="col-xxl-2 col-sm-6">
+            <div>
+              <!-- เวลาสิ้นสุด -->
+              <select class="form-select" [ngModel]="timeEndSlotSelected" (ngModelChange)="onTimeEndSlotSelectChange($event)">
+                @for(timeEndSlot of timeEndSlotSelectList; track $index){
+                  <option [value]="timeEndSlot.time">
+                    {{ timeEndSlot.time }}
+                  </option>
+                }
+              </select>
+            </div>
+            <label for="inputTimeEnd" class="form-label mt-2">เวลาสิ้นสุด</label>
           </div>
           <!--end col-->
         </div><!--end row-->
@@ -57,9 +88,18 @@
             </p>
             <div>
 <!--              <a href="javascript:void(0);" class="btn btn-success m-1 {{roomSelected?.id == room.id?'active':''}}" (click)="onRoomSelect(room)">เลือก</a>-->
-              <a class="btn btn-success m-1" [routerLink]="['/booking-room',room.id,'info']">
-                <i class="ri-arrow-right-double-line"></i> เลือก <i class="ri-arrow-left-double-line"></i>
-              </a>
+<!--              <a class="btn btn-success m-1" [routerLink]="['/booking-room',room.id,'info']" [queryParams]="[{-->
+<!--                date: dateSelected,-->
+<!--                timeStart: timeStartSlotSelected,-->
+<!--                timeEnd: timeEndSlotSelected-->
+<!--              }]">-->
+<!--                <i class="ri-arrow-right-double-line"></i> เลือก <i class="ri-arrow-left-double-line"></i>-->
+<!--              </a>-->
+
+
+              <a class="btn btn-success m-1" href="javascript:void(0);" (click)="openBookingRoomModal(room)">
+                  <i class="ri-arrow-right-double-line"></i> เลือก <i class="ri-arrow-left-double-line"></i>
+                </a>
             </div>
           </div>
         </div><!-- end col -->

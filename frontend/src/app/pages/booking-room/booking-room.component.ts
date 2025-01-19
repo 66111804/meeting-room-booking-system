@@ -11,7 +11,7 @@ import {GlobalComponent} from '../../global-component';
 import {IBookingRoom, ITimeSlot} from './room.module';
 import {BookingRoomService} from '../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 
 
 @Component({
@@ -104,7 +104,8 @@ export class BookingRoomComponent implements OnInit
               private cdr: ChangeDetectorRef,
               private modalService: NgbModal,
               private bookingRoomService:BookingRoomService,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private router: Router) {
     this.breadCrumbItems = [
       { label: 'Dashboard' },
       { label: 'Booking Room', active: true }
@@ -374,4 +375,16 @@ export class BookingRoomComponent implements OnInit
     });
     // this.modalService.dismissAll();
   }
+
+  openBookingRoomModal(room: MeetingRoom) {
+
+    this.router.navigate(['/booking-room', room.id, 'info'], {
+      queryParams: {
+        date: this.dateSelected.toISOString(),
+        startTime: this.timeStartSlotSelected,
+        endTime: this.timeEndSlotSelected
+      }
+    });
+  }
+
 }
