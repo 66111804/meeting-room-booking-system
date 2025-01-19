@@ -47,7 +47,7 @@
             </thead>
             <tbody>
 
-            @for(bookings of myBookingList?.myBooking; track $index){
+            @for(bookings of myBookingList.myBooking; track $index){
             <tr>
               <td>{{ $index + 1 }}</td>
               <td>{{ bookings.title }}</td>
@@ -124,7 +124,7 @@
         <div class="col-lg-12">
           <div class="mb-3">
             <label for="inputDate" class="form-label">วันที่</label>
-            <input type="text" class="form-control" id="inputDate" placeholder="วันที่" name="date" value="{{ roomSelected?.startTime | date: 'dd-MMMM-yyyy' }}" disabled>
+            <input type="text" class="form-control" id="inputDate" placeholder="วันที่" name="date" value="{{ roomSelected.startTime | date: 'dd-MMMM-yyyy' }}" disabled>
           </div>
         </div>
         <!--end col-->
@@ -132,7 +132,7 @@
         <div class="col-lg-6">
           <div class="mb-3">
             <label for="inputTimeStart" class="form-label">เวลาเริ่ม</label>
-            <input type="text" class="form-control" id="inputTimeStart" placeholder="เวลาเริ่ม" name="timeStart" value="{{ roomSelected?.startTime | date: 'hh:mm a'}}" disabled>
+            <input type="text" class="form-control" id="inputTimeStart" placeholder="เวลาเริ่ม" name="timeStart" value="{{ roomSelected.startTime | date: 'hh:mm a'}}" disabled>
           </div>
         </div>
         <!--end col-->
