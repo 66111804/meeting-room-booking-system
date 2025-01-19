@@ -18,6 +18,7 @@ import {provideFlatpickrDefaults} from 'angularx-flatpickr';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {authInterceptorProviders} from './core/helpers/auth.interceptor';
 import {provideToastr} from 'ngx-toastr';
+import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -36,7 +37,9 @@ export const appConfig: ApplicationConfig = {
         defaultLanguage: 'en',
       }),
       FeatherModule.pick(allIcons),
+      CKEditorModule,
     ]),
+
     provideRouter(routes),
     authInterceptorProviders,
     // provideHttpClient(),

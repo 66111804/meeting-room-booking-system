@@ -1,14 +1,14 @@
-import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, OnInit} from '@angular/core';
 import {BreadcrumbsComponent} from "../../../shared/breadcrumbs/breadcrumbs.component";
 import {NgbModal, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
 import {FeaturesComponent} from './features/features.component';
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 import {CommonModule} from '@angular/common';
 import {RoomFeaturesResponse, RoomFeaturesService} from '../../../core/services/room-features.service';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+
+
 import {
   MeetingRoom,
   MeetingRoomResponse,
@@ -19,20 +19,27 @@ import {GlobalComponent} from '../../../global-component';
 import Swal from 'sweetalert2';
 import {MatRadioModule} from '@angular/material/radio';
 
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+
+import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
+import {Code} from 'angular-feather/icons';
+import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
 
 @Component({
   selector: 'app-meeting-room',
   standalone: true,
   imports: [
     CommonModule,
+    CKEditorModule,
     BreadcrumbsComponent,
     NgbPagination,
     ReactiveFormsModule,
     TranslatePipe,
     FormsModule,
     FeaturesComponent,
-    CKEditorModule,
     MatRadioModule,
+    CKEditorModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './meeting-room.component.html',
@@ -40,6 +47,30 @@ import {MatRadioModule} from '@angular/material/radio';
 })
 export class MeetingRoomComponent implements OnInit
 {
+  public Editor = ClassicEditor;
+  public editorData:string = '<p>Hello, world!</p>';
+  // config + image
+  public editorConfig = {
+    toolbar: {
+      items: [
+        'heading',
+        '|',
+        'bold',
+        'italic',
+        'link',
+        '|',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'insertTable',
+        '|',
+        'undo',
+        'redo'
+      ],
+      shouldNotGroupWhenFull: true
+    }
+  };
+
   breadCrumbItems!: Array<{}>;
   searchTerm: string = '';
   page = 1;
@@ -47,7 +78,6 @@ export class MeetingRoomComponent implements OnInit
   isFeatures!: boolean;
   description: string = '';
   serverUrl = GlobalComponent.SERVE_URL;
-  public Editor = ClassicEditor;
   features: RoomFeaturesResponse;
 
   roomFormControls:RoomForm = {
@@ -81,10 +111,14 @@ export class MeetingRoomComponent implements OnInit
       totalPages: 0,
       current: 0
     }
+    this.editorData = '<p>Hello, world!</p>';
+
+    // this.Editor = ClassicEditor;
   }
 
   ngOnInit() {
     document.getElementById('elmLoader')?.classList.add('d-none');
+
 
     this.nameSubject.pipe(
       debounceTime(500),
@@ -297,6 +331,7 @@ export class MeetingRoomComponent implements OnInit
       }
     });
 
+    this.editorData = room.description;
     this.modalService.open(editMeetingRoom, { size: 'lg', centered: true });
   }
 
@@ -338,5 +373,12 @@ export class MeetingRoomComponent implements OnInit
 
   statusChange(event: any) {
     this.roomFormControls.status.data = event.value;
+  }
+
+  onEditorChange(event: any){
+    const editorData = event.editor.getData();
+    console.log('Editor data:', editorData);
+    this.roomFormControls.description.data = editorData;
+    // console.log(this.editorData);
   }
 }

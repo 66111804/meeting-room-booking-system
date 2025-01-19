@@ -1,3 +1,140 @@
 <!-- Start Breadcrumbs -->
 <app-breadcrumbs title="Booking Room" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 <!-- End Breadcrumbs -->
+
+<div class="row mt-4">
+  <div class="col-lg-12">
+    <!-- mx-n4 -->
+    <div class="card mt-n4 mb-n5 ">
+      <div class="bg-dark-subtle rounded">
+        <div class="card-body pb-4 mb-5">
+          <div class="row">
+            <div class="col-md">
+              <div class="row align-items-center">
+                <div class="col-md-auto">
+                  <div class="avatar-md mb-md-0 mb-4">
+                    <div class="avatar-title bg-white rounded-circle">
+                      <img src="assets/images/companies/img-4.png" alt="" class="avatar-sm" />
+                    </div>
+                  </div>
+                </div><!--end col-->
+                <div class="col-md">
+                  <h4 class="fw-semibold" id="ticket-title">#Room Name</h4>
+                  <div class="hstack gap-3 flex-wrap">
+                    <div class="text-muted"><i class="ri-building-line align-bottom me-1"></i> <span
+                      id="ticket-client">Room</span></div>
+                    <div class="vr"></div>
+                    <div class="text-muted">Create Date : <span class="fw-medium"
+                                                                id="create-date">20 Dec, 2021</span></div>
+
+                  </div>
+                </div><!--end col-->
+              </div><!--end row-->
+            </div><!--end col-->
+            <div class="col-md-auto mt-md-0 mt-4">
+            </div><!--end col-->
+          </div><!--end row-->
+        </div><!-- end card body -->
+      </div>
+    </div><!-- end card -->
+  </div><!-- end col -->
+</div><!-- end row -->
+
+<div class="row">
+  <div class="col-xxl-9">
+    <div class="card">
+      <div class="card-body p-4">
+        <h6 class="fw-semibold text-uppercase mb-3">Ticket Description</h6>
+        <p class="text-muted">It would also help to know what the errors are - it could be something simple like
+          a message saying delivery is not available which could be a problem with your shipping templates.
+          Too much or too little spacing, as in the example below, can make things unpleasant for the reader.
+          The goal is to make your text as comfortable to read as possible. On the note of consistency, color
+          consistency is a MUST. If you’re not trying to create crazy contrast in your design, then a great
+          idea would be for you to use a color palette throughout your entire design. It will subconsciously
+          interest viewers and also is very pleasing to look at. <a href="javascript:void(0);"
+                                                                    class="link-secondary text-decoration-underline">Example</a></p>
+        <h6 class="fw-semibold text-uppercase mb-3">Create an Excellent UI for a Dashboard</h6>
+        <ul class="text-muted vstack gap-2 mb-4 Excellent-list">
+          <li>Pick a Dashboard Type</li>
+          <li>Categorize information when needed</li>
+          <li>Provide Context</li>
+          <li>On using colors</li>
+          <li>On using the right graphs</li>
+        </ul>
+        <div class="mt-4">
+          <h6 class="fw-semibold text-uppercase mb-3">Here is the code you've requsted</h6>
+          <div>
+
+          </div>
+        </div>
+      </div><!--end card-body-->
+      <div class="card-body p-4">
+
+      </div>
+      <!-- end card body -->
+    </div><!--end card-->
+  </div><!--end col-->
+  <div class="col-xxl-3">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">ปฏิทิน</h5>
+      </div>
+      <div class="card-body">
+        <div class="mt-1">
+          <input class="form-control flatpickr-input mb-2" type="text" mwlFlatpickr [altInput]="true" [options]="datePickerOptions" [convertModelValue]="true" [inline]="true" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
+        </div>
+      </div><!--end card-body-->
+    </div><!--end card-->
+    <div class="card">
+      <div class="card-header">
+        <h6 class="card-title fw-semibold mb-0">เวลา</h6>
+      </div>
+      <div class="card-body">
+
+      </div>
+    </div>
+  </div><!--end col-->
+</div><!--end row-->
+
+
+
+
+
+
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card" id="contactList">
+      <div class="card-header">
+        <div class="d-flex align-items center">
+          <h5 class="card-title mb-0 flex-grow-1">{{ "MEETING-ROOMS" | translate }}</h5>
+        </div>
+      </div>
+
+      <div class="card-body mb-3">
+        <div class="row">
+          <div class="col-lg-3">
+
+          </div>
+          <div class="col-lg-8">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card" id="">
+      <div class="card-header">
+        <div class="d-flex align-items center">
+          <h5 class="card-title mb-0 flex-grow-1">ปฏิทิน</h5>
+        </div>
+      </div>
+
+      <div class="card-body mb-3">
+
+      </div>
+    </div>
+  </div>
+
+</div>

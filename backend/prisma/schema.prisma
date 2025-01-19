@@ -82,7 +82,7 @@ model RolePermission {
 model MeetingRoom {
   id          Int      @id @default(autoincrement())
   name        String   @unique // name of the meeting room
-  description String? // description of the meeting room
+  description String? @db.Text  // description of the meeting room
   capacity    Int? // number of people
   imageUrl    String? // image url of the meeting room
   // Image obj list for multiple images
@@ -130,7 +130,8 @@ model MeetingRoomBooking {
   userId      Int
   meetingRoomId Int
   title       String
-  description String?
+  // long description
+  description String? // description of the meeting
   startTime   DateTime
   endTime     DateTime
   status      String?  @default("confirmed") // confirmed, pending, cancelled

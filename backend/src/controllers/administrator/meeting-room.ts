@@ -1,7 +1,7 @@
 // noinspection DuplicatedCode
 
 import { PrismaClient } from "@prisma/client";
-import { validationResult } from "express-validator";
+import { body, validationResult } from "express-validator";
 import { RoomFeaturesResponse } from "../../shared/RoomFeaturesResponse";
 import { uploadDir } from "../../shared/uploadFile";
 const prisma = new PrismaClient();
@@ -140,6 +140,10 @@ export const createMeetingRoom = async (req: any, res: any) => {
 // ------------------- Update meeting room -------------------
 export const updateMeetingRoom = async (req: any, res: any) => {
   try {
+    body("name").notEmpty().withMessage("Name is required");
+    body("description").notEmpty().withMessage("Description is required");
+    body("features").isArray({ min: 1 }).withMessage("Features is required");
+    body("capacity").isNumeric().optional();
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ message: result.array() });
@@ -197,7 +201,7 @@ export const updateMeetingRoom = async (req: any, res: any) => {
       },
       data: {
         name,
-        description,
+        description: description,
         imageUrl: fileName || '',
         capacity: capacity ? parseInt(capacity) : 0,
         status: status || 'active',
