@@ -5,7 +5,7 @@ import {
   IsValidateBookingRoom,
   meetingRoomList,
   updateMeetingRoomBooking
-} from "../controllers/booking-room";
+} from "../controllers/bookingRoomController";
 const router = Router();
 
 router.get('', meetingRoomList);

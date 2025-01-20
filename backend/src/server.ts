@@ -3,13 +3,14 @@ import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import routes from "express-list-endpoints";
 import { createServer } from "http";
-import auth from "./routes/auth";
+import auth from "./routes/authRoutes";
 import { PrismaClient } from "@prisma/client";
-import administrator from "./routes/administrator";
+import administrator from "./routes/administratorRoutes";
 import { authMiddleware } from "./middlewares/auth";
 import fs from "fs";
 import { upload, uploadDir } from "./shared/uploadFile";
-import bookingRoom from "./routes/booking-room";
+import bookingRoom from "./routes/bookingRoomRoutes";
+import slotTimeRoutes from './routes/slotTimeRoutes';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -59,6 +60,9 @@ app.get("/api", (req, res) => {
 app.use('/api/auth',auth);
 app.use('/api/admin',administrator);
 app.use('/api/booking-room',authMiddleware,bookingRoom);
+app.use('/api/slot-time', slotTimeRoutes);
+
+
 // List all routes
 console.table(routes(app));
 

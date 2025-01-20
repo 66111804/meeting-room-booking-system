@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, deleteUser, employeeIdValidation, getUsers, updateUser } from "../controllers/administrator/user";
+import { createUser, deleteUser, employeeIdValidation, getUsers, updateUser } from "../controllers/administrator/userController";
 import {
     createFeature,
     createMeetingRoom,
@@ -15,7 +15,7 @@ import {
     isValidateFeatureWithId,
     updateFeature,
     updateMeetingRoom, getRoomFeatures
-} from "../controllers/administrator/meeting-room";
+} from "../controllers/administrator/meetingRoomController";
 import { upload } from "../shared/uploadFile";
 
 const router = Router();

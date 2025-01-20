@@ -5,7 +5,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {FormsModule} from '@angular/forms';
 import {FlatpickrDefaultsInterface, FlatpickrDirective} from 'angularx-flatpickr';
 import {MeetingRoom, RoomMeetingService} from '../../../core/services/room-meeting.service';
-import {DatePipe} from '@angular/common';
+import {DatePipe, SlicePipe} from '@angular/common';
 import {GlobalComponent} from '../../../global-component';
 import {ITimeSlot} from '../room.module';
 
@@ -17,7 +17,8 @@ import {ITimeSlot} from '../room.module';
     TranslatePipe,
     FormsModule,
     FlatpickrDirective,
-    DatePipe
+    DatePipe,
+    SlicePipe
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.scss',
