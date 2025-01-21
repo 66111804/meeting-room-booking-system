@@ -9,6 +9,7 @@ import {RolePermissionComponent} from './administrator/role-permission/role-perm
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LogoutComponent} from './auth/logout/logout.component';
 import {RoomComponent} from './booking-room/room/room.component';
+import {EditBookingComponent} from './my-booking/edit-booking/edit-booking.component';
 
 const Routing: Routes = [
   {
@@ -26,6 +27,10 @@ const Routing: Routes = [
   {
     path: 'my-booking',
     component: MyBookingComponent
+  },
+  {
+    path: 'my-booking/:id/edit',
+    component: EditBookingComponent
   },
   {
     path: 'setting',

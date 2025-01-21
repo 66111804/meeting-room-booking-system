@@ -87,8 +87,8 @@ export class LoginComponent implements OnInit,AfterViewInit
           Swal.fire(
             {
               icon: 'success',
-              title: 'Success!',
-              text: 'Logged in successfully!',
+              title: 'Success',
+              text: 'เข้าสู่ระบบสำเร็จ!',
               timer: 1500,
               showConfirmButton: true
             }
@@ -101,8 +101,8 @@ export class LoginComponent implements OnInit,AfterViewInit
         error: error => {
           Swal.fire({
             icon: 'error',
-            title: 'Oops...',
-            text: `Invalid Credentials! ${error.error.message}`,
+            title: 'เข้าสู่ระบบไม่สำเร็จ!',
+            text: `มีข้อผิดพลาด: ${error.error.message}`,
           }).then(()=>{
             this.isDisabled = false;
             return this.store.dispatch(loginFailure({ error: error.error.message }));

@@ -48,7 +48,7 @@ import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
 export class MeetingRoomComponent implements OnInit
 {
   public Editor = ClassicEditor;
-  public editorData:string = '<p>Hello, world!</p>';
+  public editorData:string = '';
   // config + image
   public editorConfig = {
     toolbar: {
@@ -111,7 +111,7 @@ export class MeetingRoomComponent implements OnInit
       totalPages: 0,
       current: 0
     }
-    this.editorData = '<p>Hello, world!</p>';
+    this.editorData = '';
 
     // this.Editor = ClassicEditor;
   }
@@ -377,7 +377,7 @@ export class MeetingRoomComponent implements OnInit
 
   onEditorChange(event: any){
     const editorData = event.editor.getData();
-    console.log('Editor data:', editorData);
+    // console.log('Editor data:', editorData);
     this.roomFormControls.description.data = editorData;
     // console.log(this.editorData);
   }

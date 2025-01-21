@@ -127,7 +127,7 @@ model MeetingRoomFeatures {
 
 model MeetingRoomBooking {
   id          Int      @id @default(autoincrement())
-  userId      Int
+  userId      Int // user who booked the meeting room
   meetingRoomId Int
   slotTimeId  Int?
   title       String
@@ -139,7 +139,7 @@ model MeetingRoomBooking {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  User        User?         @relation(fields: [userId], references: [id])
+  User        User         @relation(fields: [userId], references: [id])
   MeetingRoom MeetingRoom  @relation(fields: [meetingRoomId], references: [id])
   SlotTime    SlotTime?     @relation(fields: [slotTimeId], references: [id])
 
