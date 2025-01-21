@@ -12,6 +12,11 @@ import { upload, uploadDir } from "./shared/uploadFile";
 import bookingRoom from "./routes/bookingRoomRoutes";
 import slotTimeRoutes from './routes/slotTimeRoutes';
 
+
+// ----------------- Auto call routes -----------------
+// create time slots for booking room
+import * as slots from "./controllers/slotTimeController";
+
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -62,6 +67,28 @@ app.use('/api/admin',administrator);
 app.use('/api/booking-room',authMiddleware,bookingRoom);
 app.use('/api/slot-time', slotTimeRoutes);
 
+// ----------------- Auto call routes -----------------
+const headers = {
+    "Content-Type": "application/json"
+};
+try {
+    setTimeout(() => {
+        fetch(`http://localhost:${PORT}/api/slot-time/generate-slots-safe`,
+          {
+              method: "POST",
+              headers: headers}
+        ).then(
+          res => res.json()
+        ).then(
+          data => console.log('create slots time:')
+        ).catch(
+          error => console.error(error)
+        )
+
+    }, 2000);
+}catch (error) {
+    console.error(error);
+}
 
 // List all routes
 console.table(routes(app));
