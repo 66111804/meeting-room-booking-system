@@ -34,6 +34,7 @@ export const singIn = async (req: any, res: any) => {
 
     return res.status(200).json({
       message: "Sign in success", user: {
+        id: user.id,
         employeeId: user.employeeId,
         email: user.email,
         name: user.name,

@@ -319,20 +319,20 @@ export class BookingRoomComponent implements OnInit
       return;
     }
 
-    this.bookingRoomService.createBooking(this.bookingRoomForm).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.toastr.success('จองห้องสำเร็จแล้ว');
-        if(this.roomSelected !== undefined){
-          this.fetchTimeSlots(this.roomSelected);
-        }
-        this.modalService.dismissAll();
-      },
-      error: (error) => {
-        console.log(error);
-        this.toastr.error(error.error.message);
-      }
-    });
+    // this.bookingRoomService.createBookingRoom(this.bookingRoomForm).subscribe({
+    //   next: (response) => {
+    //     console.log(response);
+    //     this.toastr.success('จองห้องสำเร็จแล้ว');
+    //     if(this.roomSelected !== undefined){
+    //       this.fetchTimeSlots(this.roomSelected);
+    //     }
+    //     this.modalService.dismissAll();
+    //   },
+    //   error: (error) => {
+    //     console.log(error);
+    //     this.toastr.error(error.error.message);
+    //   }
+    // });
     // this.modalService.dismissAll();
   }
 

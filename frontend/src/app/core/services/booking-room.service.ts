@@ -19,7 +19,7 @@ export class BookingRoomService {
     return this.http.get<ITimeSlot[]>(`${GlobalComponent.API_URL}/booking-room/list-time-slot/${id}?date=${date}`);
   }
 
-  createBooking(data: IBookingRoom) {
+  createBookingRoom(data: IBookingRoom) {
     return this.http.post(`${GlobalComponent.API_URL}/booking-room/create`, data);
   }
 

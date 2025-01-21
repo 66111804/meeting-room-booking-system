@@ -1,3 +1,5 @@
+// src/service/bookingRoomService.ts
+
 import { PrismaClient } from "@prisma/client";
 import { baseTimeSlots, ITimeSlot } from "../shared/booking-room";
 import { json } from "express";
@@ -24,9 +26,143 @@ export interface IBookingRoomValidation {
 
 
 export const createBookingRoom = async (data: IBookingRoom) => {
-  const startTime = dayjs(data.startTime).tz("Asia/Bangkok").format();
-  const endTime = dayjs(data.endTime).tz("Asia/Bangkok").format();
 
+
+  const startTime = dayjs(data.startTime);
+  const endTime = dayjs(data.endTime);
+
+  console.table(data.startTime);
+
+  // check if start time is before end time
+  if (startTime.isAfter(endTime)) {
+    throw new Error('Start time must be before end time');
+  }
+
+  if (startTime.isBefore(dayjs())) {
+    throw new Error('Cannot book in the past');
+  }
+
+  console.table({startTime, endTime});
+  const startDateTime = new Date();
+  startDateTime.setHours(startTime.hour(), startTime.minute(), 0, 0);
+
+  const endDateTime = new Date();
+  endDateTime.setHours(endTime.hour(), endTime.minute(), 0, 0);
+
+  // check if start time is before end time
+  const startSlot = await prisma.slotTime.findFirst({
+    where: {
+      startTime: {
+        equals: startDateTime
+      }
+    }
+  });
+
+  const endSlot = await prisma.slotTime.findFirst({
+    where: {
+      endTime: {
+        equals: endDateTime
+      }
+    }
+  });
+
+  if (!startSlot || !endSlot) {
+    throw new Error('Booking time must match with available time slots');
+  }
+
+  // check if booking time is between 08:00-18:00
+  const businessStartTime = startTime.clone().startOf('day').add(8, 'hours');
+  const businessEndTime = startTime.clone().startOf('day').add(18, 'hours');
+
+  if (startTime.isBefore(businessStartTime) || endTime.isAfter(businessEndTime)) {
+    throw new Error('Booking time must be between 08:00-18:00');
+  }
+
+  // check if booking time is at :00 or :30 minute marks
+  const startMinutes = startTime.minute();
+  const endMinutes = endTime.minute();
+  if ((startMinutes !== 0 && startMinutes !== 30) ||
+    (endMinutes !== 0 && endMinutes !== 30)) {
+    throw new Error('Booking time must be at :00 or :30 minute marks');
+  }
+
+  // check if room is available
+  const overlappingSlots = await prisma.slotTime.findMany({
+    where: {
+      AND: [
+        {
+          startTime: {
+            gte: startDateTime,
+            lt: endDateTime
+          }
+        },
+        { isActive: true }
+      ]
+    }
+  });
+  if(overlappingSlots.length === 0){
+    throw new Error('Booking time must match with available time slots');
+  }
+  // check if room is available
+  const conflicts = await prisma.meetingRoomBooking.findMany({
+    where: {
+      meetingRoomId: data.meetingRoomId,
+      status: 'confirmed',
+      OR: [
+        {
+          AND: [
+            { startTime: { lte: startTime.toDate() } },
+            { endTime: { gt: startTime.toDate() } }
+          ]
+        },
+        {
+          AND: [
+            { startTime: { lt: endTime.toDate() } },
+            { endTime: { gte: endTime.toDate() } }
+          ]
+        },
+        {
+          AND: [
+            { startTime: { gte: startTime.toDate() } },
+            { endTime: { lte: endTime.toDate() } }
+          ]
+        }
+      ]
+    },
+    include: {
+      MeetingRoom: {
+        select: { name: true }
+      }
+    }
+  });
+
+  if (conflicts.length > 0) {
+    const conflictRoom = conflicts[0].MeetingRoom.name;
+    throw new Error(`Room "${conflictRoom}" is already booked during this time period`);
+  }
+
+  return prisma.meetingRoomBooking.create({
+    data: {
+      ...data,
+      startTime: startTime.toDate(),
+      endTime: endTime.toDate(),
+      status: 'confirmed'
+    },
+    include: {
+      MeetingRoom: true,
+      User: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          avatar: true
+        }
+      }
+    }
+  });
+
+  // create booking
+  /*
   // remove endTime -1 minute
   const endTimeSub = dayjs(data.endTime).tz("Asia/Bangkok").subtract(1, 'minute').format();
 
@@ -60,6 +196,8 @@ export const createBookingRoom = async (data: IBookingRoom) => {
         endTime
       }
     });
+
+   */
 };
 
 export const listBookingRoom = async (meetingRoomId:number,date:string) => {

@@ -133,7 +133,7 @@
               <div class="col-xl-12">
                 <div class="mb-3">
                   <label for="title" class="form-label">หัวข้อการประชุม</label>
-                  <input type="text" class="form-control" id="title" name="title" placeholder="หัวข้อการประชุม" required>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="หัวข้อการประชุม" required [(ngModel)]="formBookingData.title">
                 </div>
               </div>
 
@@ -141,7 +141,9 @@
               <div class="col-xl-12">
                 <div class="mb-3">
                   <label for="description" class="form-label">รายละเอียดการประชุม</label>
-                  <textarea class="form-control" id="description" rows="3" name="description" placeholder="รายละเอียดการประชุม" required></textarea>
+                  <textarea class="form-control" id="description" rows="3" name="description" placeholder="รายละเอียดการประชุม" required
+                  [(ngModel)]="formBookingData.description"
+                  ></textarea>
                 </div>
               </div>
 
@@ -151,7 +153,7 @@
         <div class="card-body p-4">
           <!-- Book button  -->
           <div class="d-flex justify-content-center">
-            <a class="btn btn-success" href="javascript:void(0);" >
+            <a class="btn btn-success" href="javascript:void(0);" (click)="onSubmitBookingRoom()">
               <i class=" ri-file-text-line me-2"></i> บันทึกข้อมูล
             </a>
             <div class="d-flex align-items-center">
@@ -201,12 +203,12 @@
         <!-- Book button  -->
         <div class="d-flex justify-content-center">
           <a class="btn btn-success" href="javascript:void(0);" (click)="openBookingRoomForm(true)">
-            <i class=" ri-file-text-line me-2"></i> จอง
+            <i class=" ri-file-text-line me-2"></i> จองห้องประชุม ตอนนี้
           </a>
           <div class="d-flex align-items-center">
             <!-- Cancel button -->
-            <a href="javascript:history.back()" class="btn btn-danger ms-3">
-              <i class="ri-close-line me-2"></i>ยกเลิก </a>
+<!--            <a href="javascript:history.back()" class="btn btn-danger ms-3">-->
+<!--              <i class="ri-close-line me-2"></i>ยกเลิก </a>-->
 
           </div>
         </div>
@@ -248,7 +250,7 @@
             <tbody>
             @if(timeSlotsAvailable != undefined){
               @for (timeSlot of timeSlotsAvailable.timeSlots; track $index){
-                <tr>
+                <tr class="{{ IsSlotTimeSelectedInRanges(timeSlot.startTime, timeSlot.endTime)?'bg-light':''}}">
                   <td>{{ timeSlotsAvailable.date | date: 'dd-MMM-yyyy' }}</td>
                   <td>{{ timeSlot.startTime }}</td>
                   <td>{{ timeSlot.endTime }}</td>
@@ -261,7 +263,7 @@
                     }
                     <!-- สถานะ เลือก -->
                     @if(IsSlotTimeSelectedInRanges(timeSlot.startTime, timeSlot.endTime)){
-                      <span class="badge bg-primary me-1">กำลังเลือก</span>
+                      <span class="badge bg-primary me-1">คุณกำลังเลือก</span>
                     }
                   </td>
                 </tr>

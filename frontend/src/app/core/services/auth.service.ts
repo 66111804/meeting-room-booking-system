@@ -22,6 +22,7 @@ export interface LogInResponse {
 }
 
 export interface User {
+  id:             number;
   employeeId:     string;
   email:          string;
   name:           string;

@@ -1,4 +1,4 @@
-// noinspection DuplicatedCode
+// src/controllers/bookingRoomController.ts
 
 import { PrismaClient } from "@prisma/client";
 import {
@@ -69,7 +69,8 @@ export const createMeetingRoomBooking = async (req: any, res: any) => {
   try {
     const data:IBookingRoom = req.body;
     data.userId = req.user.id;
-    console.log(data);
+    // return res.status(200).json(data);
+
     const booking = await createBookingRoom(data);
     return res.status(201).json(booking);
   }catch (error:any) {
