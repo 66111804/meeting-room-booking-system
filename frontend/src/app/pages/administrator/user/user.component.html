@@ -76,7 +76,11 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.position }}</td>
                     <td>{{ user.department }}</td>
-                    <td>{{ user.position }}position </td>
+                    <td>
+                      @for(role of user.roles; track $index){
+                        <span class="badge bg-info">{{ role }}</span>
+                      }
+                    </td>
                     <td>
                       @if(user.status == 'active'){
                         <span class="badge bg-success">Active</span>

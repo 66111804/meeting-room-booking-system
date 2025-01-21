@@ -101,7 +101,7 @@
               <div class="col-xl-6">
                 <div class="mb-3">
                   <label for="name" class="form-label">ชื่อ</label>
-                  <input type="text" class="form-control" id="name" name="name" placeholder="ชื่อ" required>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="ชื่อ" disabled value="{{userInformation.user.name}}">
                 </div>
               </div>
 
@@ -109,7 +109,7 @@
               <div class="col-xl-6">
                 <div class="mb-3">
                   <label for="position" class="form-label">ตำแหน่ง</label>
-                  <input type="text" class="form-control" id="position" name="position" placeholder="ตำแหน่ง" required>
+                  <input type="text" class="form-control" id="position" name="position" placeholder="ตำแหน่ง" value="{{userInformation.user.position}}" disabled>
                 </div>
               </div>
 
@@ -117,7 +117,7 @@
               <div class="col-xl-6">
                 <div class="mb-3">
                   <label for="department" class="form-label">แผนก</label>
-                  <input type="text" class="form-control" id="department" name="department" placeholder="แผนก" required>
+                  <input type="text" class="form-control" id="department" name="department" placeholder="แผนก" value="{{userInformation.user.department}}" disabled>
                 </div>
               </div>
 

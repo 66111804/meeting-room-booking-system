@@ -76,7 +76,6 @@ export class UserProfileService {
       return this.http.post(`${GlobalComponent.API_URL}/admin/user-create`, formData);
     }
 
-
     /**
      * Get User by Id
      * @param id

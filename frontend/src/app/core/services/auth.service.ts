@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {GlobalComponent} from '../../global-component';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject, catchError, map, of, throwError} from 'rxjs';
+import {BehaviorSubject, catchError, map, Observable, of, throwError} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {loginFailure, loginSuccess, logout} from '../../store/Authentication/authentication.actions';
 import {getFirebaseBackend} from '../../authUtils';
@@ -26,6 +26,8 @@ export interface User {
   email:          string;
   name:           string;
   lastName:       string;
+  position?:      string;
+  department?:    string;
   avatar:         null;
   dateEmployment: Date;
 }
@@ -41,7 +43,7 @@ export class AuthenticationService {
     currentUserValue: any;
 
     private currentUserSubject: BehaviorSubject<User>;
-    // public currentUser: Observable<User>;
+    // public currentUser: Observable<any>;
 
     constructor(private http: HttpClient, private store: Store, private router: Router, private tokenStorageService:TokenStorageService) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentUser')!));
@@ -88,6 +90,27 @@ export class AuthenticationService {
     isAuthenticated() {
       const headerToken = { 'Authorization': `Bearer ` + this.tokenStorageService.getToken() };
       return this.http.get(GlobalComponent.AUTH_API + '/is-login');
+    }
+
+    /**
+     * Get the token
+     */
+    getToken() {
+      return this.tokenStorageService.getToken();
+    }
+
+    /**
+     * Set the token
+     */
+    setToken(token: string) {
+      this.tokenStorageService.saveToken(token);
+    }
+
+    /**
+     * Get the user
+     */
+    getUser() {
+      return this.tokenStorageService.getUser();
     }
 }
 

@@ -26,6 +26,8 @@ export const singIn = async (req: any, res: any) => {
       email: user.email,
       name: user.name,
       lastName: user.lastName,
+      position: user.position,
+      department: user.department,
       dateEmployment: user.dateEmployment,
       avatar: user.avatar
     }, JWT_SECRET, { expiresIn: "2h", algorithm: "HS256" });
@@ -37,6 +39,8 @@ export const singIn = async (req: any, res: any) => {
         name: user.name,
         lastName: user.lastName,
         avatar: user.avatar,
+        position: user.position,
+        department: user.department,
         dateEmployment: user.dateEmployment
       }, token: token
     });

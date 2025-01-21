@@ -9,6 +9,8 @@ import {DatePipe, SlicePipe} from '@angular/common';
 import {GlobalComponent} from '../../../global-component';
 import {ITimeSlot} from '../room.module';
 import {ITimeSlotResponse, SlotTimeService, TimeSlot} from '../../../core/services/slot-time.service';
+import {TokenStorageService} from '../../../core/services/token-storage.service';
+import {LogInResponse} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-room',
@@ -58,10 +60,13 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   isFormBookingVisible = false;
 
+  userInformation:LogInResponse;
+
   constructor(private route: ActivatedRoute,
               private roomMeetingService:RoomMeetingService,
               private cdr: ChangeDetectorRef,
-              private slotTimeService:SlotTimeService
+              private slotTimeService:SlotTimeService,
+              private tokenStorageService:TokenStorageService
   ) {
     this.breadCrumbItems = [
       { label: 'Dashboard' },
@@ -69,6 +74,9 @@ export class RoomComponent implements OnInit, AfterViewInit
       { label: 'Room'},
       { label: 'Detail', active: true }
     ];
+    this.userInformation = this.tokenStorageService.getUser();
+
+    console.log('User Information:', this.userInformation);
   }
 
 
@@ -95,10 +103,6 @@ export class RoomComponent implements OnInit, AfterViewInit
       });
 
     this.fetchTimeSlot();
-    // setTimeout(() => {
-    //   this.onTimeStartSlotSelectChange(this.timeStartSlotSelected);
-    //   this.onTimeEndSlotSelectChange(this.timeEndSlotSelected);
-    // }, 1000);
   }
 
   ngAfterViewInit() {
@@ -148,7 +152,6 @@ export class RoomComponent implements OnInit, AfterViewInit
     ); // Update end time options
 
     // validate time slot
-
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
   }
@@ -161,11 +164,8 @@ export class RoomComponent implements OnInit, AfterViewInit
     ); // Update start time options
 
     // validate time slot
-
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
-
-    console.log('Time End Slot:', this.timeStartSlotSelectList);
   }
 
   fetchTimeSlot() {
@@ -175,6 +175,7 @@ export class RoomComponent implements OnInit, AfterViewInit
       next: (response) => {
         this.timeSlotsAvailable = response;
         // console.log('Time Slot:', response);
+        this.timeSlots = []; // Clear time slots
         this.timeSlots.push(...response.timeSlots);
 
         this.onSelectTimeStartChange({target: {value: this.timeStartSlotSelected}});
@@ -191,12 +192,10 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
 
   onSelectTimeStartChange($event: any) {
-    console.log('Time Start value:', $event.target.value);
     this.onTimeStartSlotSelectChange($event.target.value);
   }
 
   onSelectTimeEndChange($event: any) {
-    console.log('Time End value:', $event.target.value);
     this.onTimeEndSlotSelectChange($event.target.value);
   }
 
