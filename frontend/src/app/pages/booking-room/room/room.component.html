@@ -174,11 +174,9 @@
             </div>
           </div>
           <!-- Description -->
-          <div class="col-xl-8">
+          <div class="col-xl-5">
             <div class="mt-4">
               <h5 class="fw-semibold">รายละเอียด</h5>
-<!--              <p class="text-muted mb-0">{{ roomInfo.description }}</p>-->
-
               <div [innerHTML]="roomInfo.description"></div>
             </div>
           </div>
@@ -188,12 +186,18 @@
             <div class="mt-4">
               <h5 class="fw-semibold">คุณสมบัติ</h5>
               <ul class="list-unstyled text-muted">
-                <li><i class="ri-check-line text-success me-1"></i> จอภาพ</li>
-                <li><i class="ri-check-line text-success me-1"></i> โปรเจคเตอร์</li>
-                <li><i class="ri-check-line text-success me-1"></i> ไมค์</li>
-                <li><i class="ri-check-line text-success me-1"></i> โต๊ะ</li>
-                <li><i class="ri-check-line text-success me-1"></i> เก้าอี้</li>
+                @for (feature of roomInfo.roomHasFeatures; track $index){
+                  <li><i class="ri-check-line text-success me-1"></i> {{ feature.feature.name }}</li>
+                }
               </ul>
+            </div>
+          </div>
+
+          <!-- จำนวนผู้รองรับ -->
+          <div class="col-xl-3">
+            <div class="mt-4">
+              <h5 class="fw-semibold">จำนวนผู้รองรับ สูงสุด</h5>
+              <p class="text-muted mb-0">{{ roomInfo.capacity }} คน</p>
             </div>
           </div>
         </div>

@@ -104,6 +104,12 @@ export class RoomComponent implements OnInit, AfterViewInit
       this.dateSelected = new Date();
     }
 
+    this.fetchRoomInfo();
+
+    this.fetchTimeSlot();
+  }
+
+  fetchRoomInfo() {
     this.roomMeetingService.getRoomById(this.roomId).subscribe(
       {
         next: (room: MeetingRoom) => {
@@ -114,9 +120,7 @@ export class RoomComponent implements OnInit, AfterViewInit
         }
       });
 
-    this.fetchTimeSlot();
   }
-
   ngAfterViewInit() {
   }
 
