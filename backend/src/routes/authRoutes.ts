@@ -9,7 +9,7 @@ router.post('/sign-in', async (req:any, res:any) =>{ await singIn(req, res)});
 router.post('/register', async (req:any, res:any) =>{ await register(req, res)});
 //
 router.get('/is-login', authMiddleware, async (req: any, res: any) => {
-  res.status(200).json({ message: "User is logged in", user: req.user });
+  res.status(200).json({ message: "User is logged in" });
 });
 
 router.post('/sign-out', authMiddleware, async (req: any, res: any) => { await logout(req, res)});

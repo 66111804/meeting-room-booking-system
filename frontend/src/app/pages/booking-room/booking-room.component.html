@@ -33,8 +33,8 @@
               <!-- เวลาเริ่ม -->
               <select class="form-select" [ngModel]="timeStartSlotSelected" (ngModelChange)="onTimeStartSlotSelectChange($event)">
                 @for(timeStartSlot of timeStartSlotSelectList; track $index){
-                  <option [value]="timeStartSlot.time">
-                    {{ timeStartSlot.time }}
+                  <option [value]="timeStartSlot.startTime">
+                    {{ timeStartSlot.startTime }}
                   </option>
                 }
               </select>
@@ -47,8 +47,8 @@
               <!-- เวลาสิ้นสุด -->
               <select class="form-select" [ngModel]="timeEndSlotSelected" (ngModelChange)="onTimeEndSlotSelectChange($event)">
                 @for(timeEndSlot of timeEndSlotSelectList; track $index){
-                  <option [value]="timeEndSlot.time">
-                    {{ timeEndSlot.time }}
+                  <option [value]="timeEndSlot.endTime">
+                    {{ timeEndSlot.endTime }}
                   </option>
                 }
               </select>

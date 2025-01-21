@@ -151,7 +151,7 @@ model SlotTime {
   id          Int      @id @default(autoincrement())
   startTime   DateTime @db.Time(0)
   endTime     DateTime @db.Time(0)
-
+  isActive    Boolean  @default(true)
   bookingSlot MeetingRoomBooking[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

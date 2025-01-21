@@ -12,6 +12,7 @@ import {IBookingRoom, ITimeSlot} from './room.module';
 import {BookingRoomService} from '../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
 import {Router, RouterLink} from '@angular/router';
+import {ITimeSlotResponse, SlotTimeService, TimeSlot} from '../../core/services/slot-time.service';
 
 
 @Component({
@@ -21,12 +22,9 @@ import {Router, RouterLink} from '@angular/router';
     BreadcrumbsComponent,
     TranslatePipe,
     FlatpickrDirective,
-    NgForOf,
     FormsModule,
     DatePipe,
-    SlicePipe,
     NgbPagination,
-    RouterLink,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './booking-room.component.html',
@@ -45,29 +43,7 @@ export class BookingRoomComponent implements OnInit
   //   '20:00', '20:30', '21:00', '21:30', '22:00', '23:30',
   // ];
 
-  timeSlots: ITimeSlot[] = [
-    { time: '08:00', available: true },
-    { time: '08:30', available: true },
-    { time: '09:00', available: true },
-    { time: '09:30', available: true },
-    { time: '10:00', available: true },
-    { time: '10:30', available: true },
-    { time: '11:00', available: true },
-    { time: '11:30', available: true },
-    { time: '12:00', available: true },
-    { time: '12:30', available: true },
-    { time: '13:00', available: true },
-    { time: '13:30', available: true },
-    { time: '14:00', available: true },
-    { time: '14:30', available: true },
-    { time: '15:00', available: true },
-    { time: '15:30', available: true },
-    { time: '16:00', available: true },
-    { time: '16:30', available: true },
-    { time: '17:00', available: true },
-    { time: '17:30', available: true },
-    { time: '18:00', available: true },
-  ];
+  timeSlots: TimeSlot[] = [];
 
   datePickerOptions: FlatpickrDefaultsInterface = {
     minDate: new Date(),
@@ -77,7 +53,7 @@ export class BookingRoomComponent implements OnInit
 
   timeStartSlotSelected = '08:00';
   timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
-  timeEndSlotSelected = '23:30';
+  timeEndSlotSelected = '18:00';
   timeEndSlotSelectList = this.timeSlots.slice(1);
   totalHours = 0;
 
@@ -105,6 +81,7 @@ export class BookingRoomComponent implements OnInit
               private modalService: NgbModal,
               private bookingRoomService:BookingRoomService,
               private toastr: ToastrService,
+              private slotTimeService:SlotTimeService,
               private router: Router) {
     this.breadCrumbItems = [
       { label: 'Dashboard' },
@@ -133,63 +110,34 @@ export class BookingRoomComponent implements OnInit
     const currentHour = now.getHours() + 1;
     const currentMinute = now.getMinutes();
     const formattedCurrentTime = `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`;
-    // const currentTimeSlotIndex = this.timeSlots.indexOf(formattedCurrentTime);
-    const currentTimeSlotIndex = this.timeSlots.findIndex((slot) => slot.time === formattedCurrentTime);
+    const currentTimeSlotIndex = this.timeSlots.findIndex((slot) => slot.startTime === formattedCurrentTime);
     if (currentTimeSlotIndex === -1) {
       this.datePickerOptions.minDate = new Date(now.setDate(now.getDate() + 1));
       this.dateSelected = new Date(now.setDate(now.getDate()));
     }
-
-    // get window size
-    // if(window.innerWidth < 576){
-    //   // size is xs
-    // }else if(window.innerWidth < 768){
-    //   // size is sm
-    // }else if(window.innerWidth < 992){
-    //   // size is md
-    // }else if(window.innerWidth < 1200){
-    //   // size is lg
-    //   this.limit = 6;
-    // }else if(window.innerWidth < 1400){
-    //   // size is xl
-    //   this.limit = 9;
-    // }else{
-    //   // size is xxl
-    //   this.limit = 12;
-    // }
 
     this.fetchMeetingRooms();
   }
 
   ngOnInit() {
     const now = new Date();
+    if(now.getHours() >= 18){
+      now.setDate(now.getDate() + 1);
+    }
+
     const currentHour = now.getHours() + 1;
     const currentMinute = now.getMinutes();
 
     // Find the nearest time slot for the current time
     const formattedCurrentTime = `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`;
     // const currentTimeSlotIndex = this.timeSlots.indexOf(formattedCurrentTime);
-    const currentTimeSlotIndex = this.timeSlots.findIndex((slot) => slot.time === formattedCurrentTime);
-
-    if (currentTimeSlotIndex === -1) {
-      // If the current time is not in the timeSlots list, set default to the first slot
-      this.timeStartSlotSelected = this.timeSlots[0].time;
-      this.timeEndSlotSelected = this.timeSlots[1].time;
-    } else
-    {
-      // Set start time to the current time slot and end time to the next slot
-      this.timeStartSlotSelected = this.timeSlots[currentTimeSlotIndex].time;
-      this.timeEndSlotSelected = this.timeSlots[currentTimeSlotIndex + 1].time || this.timeSlots[1].time;
-    }
-
-    if(this.timeStartSlotSelected === this.timeEndSlotSelected){
-      this.timeStartSlotSelected = this.timeSlots[0].time;
-      this.timeEndSlotSelected = this.timeSlots[1].time;
-    }
+    const slotTimeTemp = this.slotTimeService.getSlotTimeTemp();
+    this.timeStartSlotSelected = slotTimeTemp ? slotTimeTemp.startTime : '08:00';
+    this.timeEndSlotSelected = slotTimeTemp ? slotTimeTemp.endTime : '08:30';
 
     // Initialize the selectable time slot lists
-    this.timeEndSlotSelectList = this.timeSlots.slice(1);
     this.timeStartSlotSelectList = this.timeSlots.slice(0, 1);
+    this.timeEndSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
 
     // Calculate the initial total hours
     this.calculateTotalHours();
@@ -202,6 +150,8 @@ export class BookingRoomComponent implements OnInit
       this.page = 1;
       this.fetchMeetingRooms();
     });
+
+    this.fetchTimeSlot();
   }
 
   fetchMeetingRooms() {
@@ -218,27 +168,41 @@ export class BookingRoomComponent implements OnInit
 
   onTimeStartSlotSelectChange(selectedStartTime: string) {
     this.timeStartSlotSelected = selectedStartTime;
-    this.timeEndSlotSelectList = this.timeSlots.slice(
-      this.timeSlots.findIndex((slot) => slot.time === selectedStartTime) + 1
-    ); // Update end time options
 
-    // validate time slot
+    this.timeEndSlotSelectList = this.timeSlots.slice(
+      this.timeSlots.findIndex((slot) => slot.endTime === this.timeStartSlotSelected) + 1,
+      this.timeSlots.length
+    ); // Update end time options
 
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
+
+    this.slotTimeService.storeSlotTimeTemp(
+      {
+        startTime: this.timeStartSlotSelected,
+        endTime: this.timeEndSlotSelected
+      }
+    );
   }
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
     this.timeStartSlotSelectList = this.timeSlots.slice(
       0,
-      this.timeSlots.findIndex((slot) => slot.time === selectedEndTime)
+      this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
     ); // Update start time options
 
-   // validate time slot
-
+    // validate time slot
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
+
+    this.slotTimeService.storeSlotTimeTemp(
+      {
+        startTime: this.timeStartSlotSelected,
+        endTime: this.timeEndSlotSelected
+      }
+    );
+
   }
 
   calculateTotalHours() {
@@ -254,10 +218,6 @@ export class BookingRoomComponent implements OnInit
     const totalMinutes = endMinute - startMinute;
 
     this.totalHours = totalHours + totalMinutes / 60;
-
-    // console.log('Start Time:', startHour, startMinute);
-    // console.log('End Time:', endHour, endMinute);
-    // console.log('Total Hours:', this.totalHours);
   }
 
   onDateSelectChange(date: any) {
@@ -293,7 +253,7 @@ export class BookingRoomComponent implements OnInit
     const dateStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     this.bookingRoomService.getTimeSlot(room.id,dateStr).subscribe({
       next: (response) => {
-        this.timeSlots = response;
+        // this.timeSlots = response;
         // this.timeStartSlotSelected = this.timeSlots[0].time;
         // this.timeEndSlotSelected = this.timeSlots[1].time;
         this.calculateTotalHours();
@@ -386,5 +346,38 @@ export class BookingRoomComponent implements OnInit
       }
     });
   }
+  timeSlotsAvailable: ITimeSlotResponse ={
+    date: '',
+    timeSlots: [],
+    totalSlots: 0,
+    availableSlots: 0,
+    bookedSlots: 0
+  }
+  fetchTimeSlot() {
+    // YYYY-MM-DD
+    const date = this.dateSelected.toISOString().split('T')[0];
+    this.slotTimeService.getTimeSlot(date).subscribe({
+      next: (response) => {
+        this.timeSlotsAvailable = response;
+        // console.log('Time Slot:', response);
+        this.timeSlots.push(...response.timeSlots);
 
+        this.onSelectTimeStartChange({target: {value: this.timeStartSlotSelected}});
+        this.onSelectTimeEndChange({target: {value: this.timeEndSlotSelected}});
+      },
+      error: (error) => {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  onSelectTimeStartChange($event: any) {
+    console.log('Time Start value:', $event.target.value);
+    this.onTimeStartSlotSelectChange($event.target.value);
+  }
+
+  onSelectTimeEndChange($event: any) {
+    console.log('Time End value:', $event.target.value);
+    this.onTimeEndSlotSelectChange($event.target.value);
+  }
 }

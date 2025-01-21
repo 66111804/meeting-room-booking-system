@@ -16,6 +16,11 @@ export interface TimeSlot {
   isAvailable: boolean
   bookings: any[]
 }
+
+export interface Slot{
+  startTime: string
+  endTime: string
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -29,5 +34,18 @@ export class SlotTimeService {
       url += `&meetingRoomId=${id}`;
     }
     return this.http.get<ITimeSlotResponse>(url);
+  }
+
+  storeSlotTimeTemp(slotTime:Slot) {
+      localStorage.setItem('slotTime',JSON.stringify(slotTime));
+  }
+
+  getSlotTimeTemp():Slot | null
+  {
+  const slotTime = localStorage.getItem('slotTime');
+    if (slotTime) {
+      return JSON.parse(slotTime);
+    }
+    return null;
   }
 }
