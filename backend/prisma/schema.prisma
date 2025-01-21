@@ -27,7 +27,7 @@ model User {
   department String?
   status    String?  @default("active") // active, inactive, deleted
 
-  MeetingRoomBooking MeetingRoomBooking[]
+  MeetingRoomBooking MeetingRoomBooking[] // relation to booking
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -139,7 +139,7 @@ model MeetingRoomBooking {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  User        User         @relation(fields: [userId], references: [id])
+  User        User?         @relation(fields: [userId], references: [id])
   MeetingRoom MeetingRoom  @relation(fields: [meetingRoomId], references: [id])
   SlotTime    SlotTime?     @relation(fields: [slotTimeId], references: [id])
 

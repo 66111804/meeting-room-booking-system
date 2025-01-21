@@ -1,3 +1,4 @@
+// src/controllers/administrator/meetingRoomController.ts
 // noinspection DuplicatedCode
 
 import { PrismaClient } from "@prisma/client";
@@ -252,11 +253,26 @@ export const deleteMeetingRoom = async (req: any, res: any) => {
       console.log(error);
     }
 
-    await prisma.meetingRoom.delete({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    // delete meeting room and related features
+    await prisma.$transaction([
+      // delete meeting room features
+      prisma.meetingRoomFeatures.deleteMany({
+        where: {
+          meetingRoomId: parseInt(id),
+        },
+      }),
+      prisma.meetingRoomBooking.deleteMany({
+        where: {
+          meetingRoomId: parseInt(id),
+        },
+      }),
+      // delete meeting room
+      prisma.meetingRoom.delete({
+        where: {
+          id: parseInt(id),
+        },
+      }),
+    ]);
 
     return res.status(204).json();
   } catch (error:any) {
