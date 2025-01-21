@@ -8,6 +8,7 @@ import {MeetingRoom, RoomMeetingService} from '../../../core/services/room-meeti
 import {DatePipe, SlicePipe} from '@angular/common';
 import {GlobalComponent} from '../../../global-component';
 import {ITimeSlot} from '../room.module';
+import {ITimeSlotResponse, SlotTimeService, TimeSlot} from '../../../core/services/slot-time.service';
 
 @Component({
   selector: 'app-room',
@@ -32,44 +33,36 @@ export class RoomComponent implements OnInit, AfterViewInit
   searchTerm: string = '';
   dateSelected!:Date;
   datePickerOptions: FlatpickrDefaultsInterface = {
-    minDate: new Date(),
+    minDate: this.getMinDate(),
     maxDate: this.getMaxDate(),
     dateFormat: 'Y-m-d',
   };
 
-  roomInfo!: MeetingRoom;
-  timeSlots: ITimeSlot[] = [
-    { time: '08:00', available: true },
-    { time: '08:30', available: true },
-    { time: '09:00', available: true },
-    { time: '09:30', available: true },
-    { time: '10:00', available: true },
-    { time: '10:30', available: true },
-    { time: '11:00', available: true },
-    { time: '11:30', available: true },
-    { time: '12:00', available: true },
-    { time: '12:30', available: true },
-    { time: '13:00', available: true },
-    { time: '13:30', available: true },
-    { time: '14:00', available: true },
-    { time: '14:30', available: true },
-    { time: '15:00', available: true },
-    { time: '15:30', available: true },
-    { time: '16:00', available: true },
-    { time: '16:30', available: true },
-    { time: '17:00', available: true },
-    { time: '17:30', available: true },
-    { time: '18:00', available: true },
-  ];
+  roomInfo: MeetingRoom = {
+    id: 0,
+    name: '',
+    description: '',
+    status: '',
+    createdAt: '',
+    updatedAt: '',
+    roomHasFeatures: []
+  }
 
+  timeSlots: TimeSlot[] = [];
+  timeSlotsAvailable!: ITimeSlotResponse;
   timeStartSlotSelected = '08:00';
-  timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
-  timeEndSlotSelected = '23:30';
-  timeEndSlotSelectList = this.timeSlots.slice(1);
+  timeStartSlotSelectList:TimeSlot[] = [];
+  timeEndSlotSelected = '8:30';
+  timeEndSlotSelectList:TimeSlot[] = [];
   totalHours = 0;
+
+  isFormBookingVisible = false;
+
   constructor(private route: ActivatedRoute,
               private roomMeetingService:RoomMeetingService,
-              private cdr: ChangeDetectorRef) {
+              private cdr: ChangeDetectorRef,
+              private slotTimeService:SlotTimeService
+  ) {
     this.breadCrumbItems = [
       { label: 'Dashboard' },
       { label: 'Booking Room'},
@@ -81,7 +74,8 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   ngOnInit() {
     this.roomId = Number(this.route.snapshot.paramMap.get('id'));
-    this.dateSelected = new Date();
+    this.timeStartSlotSelected = this.route.snapshot.queryParamMap.get('startTime') || '08:00';
+    this.timeEndSlotSelected = this.route.snapshot.queryParamMap.get('endTime') || '08:30';
     // get query params from URL date
     const date = this.route.snapshot.queryParamMap.get('date');
     if(date){
@@ -99,19 +93,58 @@ export class RoomComponent implements OnInit, AfterViewInit
           console.error('Error:', error);
         }
       });
+
+    this.fetchTimeSlot();
+    // setTimeout(() => {
+    //   this.onTimeStartSlotSelectChange(this.timeStartSlotSelected);
+    //   this.onTimeEndSlotSelectChange(this.timeEndSlotSelected);
+    // }, 1000);
   }
 
   ngAfterViewInit() {
-    console.log('Room ID:', this.roomId);
   }
 
-  searchInput() {
-    console.log('Search Term:', this.searchTerm);
+  calculateTotalHours() {
+    const startTime = this.timeStartSlotSelected.split(':');
+    const endTime = this.timeEndSlotSelected.split(':');
+    const startHour = parseInt(startTime[0], 10);
+    const startMinute = parseInt(startTime[1], 10); // Fix: Use base 10
+    const endHour = parseInt(endTime[0], 10);
+    const endMinute = parseInt(endTime[1], 10); // Fix: Use base 10
+    const totalHours = endHour - startHour;
+    const totalMinutes = endMinute - startMinute;
+    this.totalHours = totalHours + totalMinutes / 60;
   }
+
+  private getMinDate(){
+    let currentDate = new Date();
+    const currentHour = currentDate.getHours();
+    if(currentHour >= 17){
+      currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+    }
+    return currentDate;
+  }
+
+  private getMaxDate(): Date {
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() + 3);
+    return currentDate;
+  }
+
+  onDateSelectChange(date: any)
+  {
+    this.dateSelected = new Date(date.dateString);
+    this.fetchTimeSlot();
+  }
+
+  protected readonly GlobalComponent = GlobalComponent;
+
   onTimeStartSlotSelectChange(selectedStartTime: string) {
     this.timeStartSlotSelected = selectedStartTime;
+
     this.timeEndSlotSelectList = this.timeSlots.slice(
-      this.timeSlots.findIndex((slot) => slot.time === selectedStartTime) + 1
+      this.timeSlots.findIndex((slot) => slot.endTime === this.timeStartSlotSelected) + 1,
+      this.timeSlots.length
     ); // Update end time options
 
     // validate time slot
@@ -119,46 +152,61 @@ export class RoomComponent implements OnInit, AfterViewInit
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
   }
-  calculateTotalHours() {
-    const startTime = this.timeStartSlotSelected.split(':');
-    const endTime = this.timeEndSlotSelected.split(':');
-
-    const startHour = parseInt(startTime[0], 10);
-    const startMinute = parseInt(startTime[1], 10); // Fix: Use base 10
-    const endHour = parseInt(endTime[0], 10);
-    const endMinute = parseInt(endTime[1], 10); // Fix: Use base 10
-
-    const totalHours = endHour - startHour;
-    const totalMinutes = endMinute - startMinute;
-
-    this.totalHours = totalHours + totalMinutes / 60;
-
-    // console.log('Start Time:', startHour, startMinute);
-    // console.log('End Time:', endHour, endMinute);
-    // console.log('Total Hours:', this.totalHours);
-  }
-  private getMaxDate(): Date {
-    const currentDate = new Date();
-    currentDate.setMonth(currentDate.getMonth() + 3);
-    return currentDate;
-  }
-  onDateSelectChange(date: any)
-  {
-    console.log('Date Selected:', date);
-  }
-
-  protected readonly GlobalComponent = GlobalComponent;
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
     this.timeStartSlotSelectList = this.timeSlots.slice(
       0,
-      this.timeSlots.findIndex((slot) => slot.time === selectedEndTime)
+      this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
     ); // Update start time options
 
     // validate time slot
 
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
+
+    console.log('Time End Slot:', this.timeStartSlotSelectList);
+  }
+
+  fetchTimeSlot() {
+    // YYYY-MM-DD
+    const date = this.dateSelected.toISOString().split('T')[0];
+    this.slotTimeService.getTimeSlot(date, this.roomId).subscribe({
+      next: (response) => {
+        this.timeSlotsAvailable = response;
+        // console.log('Time Slot:', response);
+        this.timeSlots.push(...response.timeSlots);
+
+        this.onSelectTimeStartChange({target: {value: this.timeStartSlotSelected}});
+        this.onSelectTimeEndChange({target: {value: this.timeEndSlotSelected}});
+      },
+      error: (error) => {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  openBookingRoomForm(isVisible: boolean) {
+    this.isFormBookingVisible = isVisible;
+  }
+
+  onSelectTimeStartChange($event: any) {
+    console.log('Time Start value:', $event.target.value);
+    this.onTimeStartSlotSelectChange($event.target.value);
+  }
+
+  onSelectTimeEndChange($event: any) {
+    console.log('Time End value:', $event.target.value);
+    this.onTimeEndSlotSelectChange($event.target.value);
+  }
+
+  IsSlotTimeSelectedInRanges(startTime: string, endTime: string)
+  {
+    const start = new Date(`2021-01-01T${startTime}`);
+    const end = new Date(`2021-01-01T${endTime}`);
+    const selectedStart = new Date(`2021-01-01T${this.timeStartSlotSelected}`);
+    const selectedEnd = new Date(`2021-01-01T${this.timeEndSlotSelected}`);
+    // return selectedStart >= start && selectedEnd <= end;
+    return selectedStart <= start && selectedEnd >= end;
   }
 }

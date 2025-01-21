@@ -19,13 +19,13 @@
 <!--                  </div>-->
 <!--                </div>&lt;!&ndash;end col&ndash;&gt;-->
                 <div class="col-md">
-                  <h4 class="fw-semibold" id="ticket-title"># {{roomInfo.name}}</h4>
+                  <h4 class="fw-semibold" id="ticket-title"># {{ roomInfo == undefined ? 'Room' : roomInfo.name}}</h4>
                   <div class="hstack gap-3 flex-wrap">
                     <div class="text-muted"><i class="ri-building-line align-bottom me-1"></i> <span
                       id="ticket-client">Room</span></div>
                     <div class="vr"></div>
                     <div class="text-muted">Last Updated : <span class="fw-medium" id="create-date">
-                      {{ roomInfo.updatedAt | date: 'dd-MMM-yyyy HH:mm' }}
+                      {{ roomInfo == undefined ? 'date' : roomInfo.updatedAt | date: 'dd-MMM-yyyy HH:mm' }}
                     </span></div>
 
                   </div>
@@ -45,7 +45,7 @@
   <div class="col-xxl-9">
     <div class="card">
       <div class="card-header d-flex justify-content-between">
-        <h5 class="card-title mb-0">รายละเอียดห้องประชุม</h5>
+        <h5 class="card-title mb-0">{{ isFormBookingVisible ? 'โปรดกรอกรายละเอียดในการจองห้องประชุม':'รายละเอียดห้องประชุม' }}</h5>
         <div class="d-flex align-items-center">
           <!-- back button -->
           <a href="javascript:history.back()" class="btn btn-sm btn-primary">
@@ -53,6 +53,115 @@
           </a>
         </div>
       </div>
+      @if (isFormBookingVisible){
+        <div class="card-body p-4">
+          <form action="javascript:(0)">
+            <div class="row">
+              <!-- Date -->
+              <div class="col-xl-6">
+                <div class="mb-3">
+                  <label for="date" class="form-label">วันที่</label>
+                  <input type="text" class="form-control flatpickr-input" id="date" name="date" disabled [value]="dateSelected | date: 'dd-MMM-yyyy'">
+                </div>
+              </div>
+              <!-- Time start -->
+              <div class="col-xl-3">
+                <div class="mb-3">
+                  <label for="timeStart" class="form-label">เวลาเริ่ม</label>
+<!--                  <input type="text" class="form-control" id="timeStart" name="timeStart" disabled [value]="timeStartSlotSelected">-->
+
+                  <!-- Option -->
+                  <select class="form-select" id="timeStart" for="timeStart" (change)="onSelectTimeStartChange($event)">
+                    @for(timeSlot of timeStartSlotSelectList; track $index){
+                      <option [value]="timeSlot.startTime" [selected]="timeSlot.startTime == timeStartSlotSelected">
+                        {{ timeSlot.startTime }}
+                      </option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <!-- Time end -->
+              <div class="col-xl-3">
+                <div class="mb-3">
+                  <label for="timeEnd" class="form-label">เวลาสิ้นสุด</label>
+<!--                  <input type="text" class="form-control" id="timeEnd" name="timeEnd" disabled [value]="timeEndSlotSelected">-->
+                  <!-- Option -->
+                  <select class="form-select" id="timeEnd" for="timeEnd" (change)="onSelectTimeEndChange($event)">
+                    @for(timeSlot of timeEndSlotSelectList; track $index){
+                      <option [value]="timeSlot.endTime" [selected]="timeSlot.endTime == timeEndSlotSelected">
+                        {{ timeSlot.endTime }}
+                      </option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <!-- Name -->
+              <div class="col-xl-6">
+                <div class="mb-3">
+                  <label for="name" class="form-label">ชื่อ</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="ชื่อ" required>
+                </div>
+              </div>
+
+              <!-- Position -->
+              <div class="col-xl-6">
+                <div class="mb-3">
+                  <label for="position" class="form-label">ตำแหน่ง</label>
+                  <input type="text" class="form-control" id="position" name="position" placeholder="ตำแหน่ง" required>
+                </div>
+              </div>
+
+              <!-- Department -->
+              <div class="col-xl-6">
+                <div class="mb-3">
+                  <label for="department" class="form-label">แผนก</label>
+                  <input type="text" class="form-control" id="department" name="department" placeholder="แผนก" required>
+                </div>
+              </div>
+
+              <!-- Room -->
+              <div class="col-xl-6">
+                <div class="mb-3">
+                  <label for="room" class="form-label">ห้องประชุม</label>
+                  <input type="text" class="form-control" id="room" name="room" placeholder="ห้องประชุม" disabled [value]="roomInfo.name">
+                </div>
+              </div>
+
+              <!-- Title -->
+              <div class="col-xl-12">
+                <div class="mb-3">
+                  <label for="title" class="form-label">หัวข้อการประชุม</label>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="หัวข้อการประชุม" required>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="col-xl-12">
+                <div class="mb-3">
+                  <label for="description" class="form-label">รายละเอียดการประชุม</label>
+                  <textarea class="form-control" id="description" rows="3" name="description" placeholder="รายละเอียดการประชุม" required></textarea>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="card-body p-4">
+          <!-- Book button  -->
+          <div class="d-flex justify-content-center">
+            <a class="btn btn-success" href="javascript:void(0);" >
+              <i class=" ri-file-text-line me-2"></i> บันทึกข้อมูล
+            </a>
+            <div class="d-flex align-items-center">
+              <!-- Cancel button -->
+              <a href="javascript:(0)" class="btn btn-danger ms-3" (click)="openBookingRoomForm(false)">
+                <i class="ri-close-line me-2"></i>ยกเลิก </a>
+            </div>
+          </div>
+        </div>
+      } @else {
       <div class="card-body p-4">
         <div class="row">
           <!-- Image center-->
@@ -87,10 +196,11 @@
           </div>
         </div>
       </div><!--end card-body-->
+
       <div class="card-body p-4">
-        <!-- BUTTON จองห้อง -->
+        <!-- Book button  -->
         <div class="d-flex justify-content-center">
-          <a class="btn btn-success" href="javascript:void(0);" >
+          <a class="btn btn-success" href="javascript:void(0);" (click)="openBookingRoomForm(true)">
             <i class=" ri-file-text-line me-2"></i> จอง
           </a>
           <div class="d-flex align-items-center">
@@ -101,6 +211,7 @@
           </div>
         </div>
       </div>
+      }
       <!-- end card body -->
     </div><!--end card-->
 
@@ -131,35 +242,35 @@
                 <th scope="col">เวลาเริ่ม</th>
                 <th scope="col">เวลาสิ้นสุด</th>
                 <th scope="col">สถานะ</th>
-                <th scope="col">จัดการ</th>
+<!--                <th scope="col">จัดการ</th>-->
               </tr>
             </thead>
             <tbody>
-<!--              @for (booking of bookings; track $index)-->
-<!--              {-->
-<!--                <tr>-->
-<!--                  <td>{{ booking.date | date: 'dd-MM-yyyy' }}</td>-->
-<!--                  <td>{{ booking.timeStart }}</td>-->
-<!--                  <td>{{ booking.timeEnd }}</td>-->
-<!--                  <td>-->
-<!--                    @if(booking.status == 'pending'){-->
-<!--                      <span class="badge bg-warning">รอการอนุมัติ</span>-->
-<!--                    } @else if(booking.status == 'approved'){-->
-<!--                      <span class="badge bg-success">อนุมัติ</span>-->
-<!--                    } @else {-->
-<!--                      <span class="badge bg-danger">ไม่อนุมัติ</span>-->
-<!--                    }-->
-<!--                  </td>-->
-<!--                  <td>-->
-<!--                    <a href="javascript:void(0);" class="text-muted">-->
-<!--                      <i class="ri-pencil-line me-2"></i>แก้ไข-->
-<!--                    </a>-->
-<!--                    <a href="javascript:void(0);" class="text-muted ms-3">-->
-<!--                      <i class="ri-delete-bin-line me-2"></i>ลบ-->
-<!--                    </a>-->
-<!--                  </td>-->
-<!--                </tr>-->
-<!--              }-->
+            @if(timeSlotsAvailable != undefined){
+              @for (timeSlot of timeSlotsAvailable.timeSlots; track $index){
+                <tr>
+                  <td>{{ timeSlotsAvailable.date | date: 'dd-MMM-yyyy' }}</td>
+                  <td>{{ timeSlot.startTime }}</td>
+                  <td>{{ timeSlot.endTime }}</td>
+                  <td>
+                    <!-- สถานะ ว่าง, ไม่ว่าง-->
+                    @if(timeSlot.isAvailable){
+                      <span class="badge bg-success me-1">ว่าง</span>
+                    } @else {
+                      <span class="badge bg-danger me-1">ไม่ว่าง</span>
+                    }
+                    <!-- สถานะ เลือก -->
+                    @if(IsSlotTimeSelectedInRanges(timeSlot.startTime, timeSlot.endTime)){
+                      <span class="badge bg-primary me-1">กำลังเลือก</span>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="text-center">ไม่พบข้อมูล</td>
+                </tr>
+              }
+            }
             </tbody>
           </table>
         </div>

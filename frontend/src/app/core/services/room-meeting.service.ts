@@ -73,7 +73,7 @@ export interface Feature {
 
 export class RoomMeetingService {
 
-  constructor(private http: HttpClient,) { }
+  constructor(private http: HttpClient) { }
 
   imageFile: File | null = null;
 
