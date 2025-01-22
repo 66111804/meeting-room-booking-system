@@ -57,23 +57,38 @@
               <td>{{ bookings.startTime | date: 'hh:mm' }} ~ {{ bookings.endTime | date: 'hh:mm' }}</td>
               <td>
                 <!-- สถานะ การใช้งาน 1. จองแล้ว 2. กำลังใช้งาน[success] 3. ยกเลิก[warning] -->
-                <span class="badge fw-medium bg-success-subtle text-success">{{ bookings.status }}</span>
+                @if(bookings.status == 'confirmed' && !isCurrentDate(bookings.startTime)){
+                  <span class="badge fw-medium bg-success-subtle text-success">{{ bookings.status }}</span>
+                } @else if(bookings.status == 'cancelled'){
+                <span class="badge fw-medium bg-danger-subtle text-danger">{{ bookings.status }}</span>
+                } @else if(isFutureDate(bookings.startTime)) {
+                  @if(isCurrentDate(bookings.startTime)){
+                  <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }}</span>
+                  } @else
+                  {
+                    <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }} 1</span>
+                  }
+                } @else
+                {
+                  <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }} 2</span>
+                }
               </td>
               <td>
                 <div class="d-flex gap align-items-center justify-content-center text-center">
-
-                  <a href="javascript:void(0);" class="link-success ms-2" data-bs-toggle="modal" data-bs-target="#viewBookingModal">
-                    <i class="ri-eye-line me-2"></i>{{ "VIEW" | translate }}
-                  </a>
-
+                  @if(isFutureDate(bookings.startTime) && bookings.status == 'confirmed')
+                  {
                   <!-- edit booking -->
-                  <a href="javascript:void(0);" class="link-primary ms-2" data-bs-toggle="modal" data-bs-target="#editBookingModal" (click)="openEditBookingModal(editBookingModal, bookings)">
-                    <i class="ri-pencil-line me-2"></i>{{ "EDIT" | translate }}
-                  </a>
-
-                  <a href="javascript:void(0);" class="link-danger ms-2" data-bs-toggle="modal" data-bs-target="#cancelBookingModal">
+                    @if(!isCurrentDateTime(bookings.startTime)) {
+                    <!--  data-bs-toggle="modal" data-bs-target="#editBookingModal" (click)="openEditBookingModal(editBookingModal, bookings)" -->
+                    <a href="javascript:void(0);" class="link-primary ms-2">
+                      <i class="ri-pencil-line me-2"></i>{{ "EDIT" | translate }}
+                    </a>
+                  }
+                  <!-- cancel booking -->
+                  <a href="javascript:void(0);" class="link-danger ms-2" data-bs-toggle="modal" data-bs-target="#cancelBookingModal" (click)="confirm(cancelBookingModal, bookings)">
                     <i class="ri-close-line me-2"></i>{{ "CANCEL" | translate }}
                   </a>
+                  }
                 </div>
               </td>
             </tr>
@@ -172,21 +187,24 @@
 </ng-template>
 
 <!-- removeItemModal -->
-<ng-template #deleteRoomModel let-deleteRoomModel>
+<ng-template #cancelBookingModal let-cancelBookingModal>
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="deleteRecord-close" (click)="deleteRoomModel.dismiss('Cross click')"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="deleteRecord-close" (click)="cancelBookingModal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
       <div class="mt-2 text-center">
         <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
         <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>{{ 'You are about to delete a room' | translate }} ?</h4>
+          <!-- คุฯต้องการยกเลิกการจองห้องประชุมนี้หรือไม่ -->
+          <h4>{{ 'Are you sure you want to cancel this booking?' | translate }}</h4>
         </div>
       </div>
       <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button class="btn btn-link link-success fw-medium text-decoration-none" data-bs-dismiss="modal" id="delete" (click)="deleteRoomModel.close('Close click')"><i class="ri-close-line me-1 align-middle"></i> {{ 'Close'| translate }}</button>
-        <button type="button" class="btn w-sm btn-danger " id="delete-product" >{{ 'Yes, Delete It!' | translate }}</button>
+        <button class="btn btn-link link-success fw-medium text-decoration-none" data-bs-dismiss="modal" id="delete" (click)="cancelBookingModal.close('Close click')"><i class="ri-close-line me-1 align-middle"></i> {{ 'Close'| translate }}</button>
+        <button type="button" class="btn w-sm btn-danger " id="delete-product" (click)="cancelBooking()">
+          {{ 'Yes, Cancel It!' | translate }}
+        </button>
       </div>
     </div>
   </div><!-- /.modal-content -->

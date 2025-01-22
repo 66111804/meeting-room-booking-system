@@ -43,4 +43,9 @@ export class BookingRoomService {
   listMyBooking(page = 1, size = 10,searchTerm = '') {
     return this.http.get<IMyBookingsResponse>(`${GlobalComponent.API_URL}/booking-room/my-booking?page=${page}&size=${size}&searchTerm=${searchTerm}`);
   }
+
+  cancelBooking(id: number) {
+     // /api/booking-room/my-booking/:id/cancel
+    return this.http.delete(`${GlobalComponent.API_URL}/booking-room/my-booking/${id}/cancel`);
+  }
 }

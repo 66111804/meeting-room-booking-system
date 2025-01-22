@@ -19,5 +19,5 @@ router.post('/validate', IsValidateBookingRoom);
 
 // mybooking
 router.get('/my-booking', getMyBooking);
-router.post('/my-booking/:id/cancel', cancelMeetingRoomBooking);
+router.delete('/my-booking/:id/cancel', cancelMeetingRoomBooking);
 export default router;

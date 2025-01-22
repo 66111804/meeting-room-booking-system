@@ -123,5 +123,8 @@
   "ROOM-NAME": "ชื่อห้อง",
   "BOOKING-TIME": "เวลาที่จอง",
   "TITLE": "หัวข้อ",
-  "NO-RECORD-FOUND": "ไม่พบข้อมูล"
+  "NO-RECORD-FOUND": "ไม่พบข้อมูล",
+  "Are you sure you want to cancel this booking?" : "คุณแน่ใจหรือไม่ที่จะยกเลิกการจองนี้?",
+  "CANCEL-BOOKING": "ยกเลิกการจอง",
+  "Yes, Cancel It!": "ใช่ ยกเลิก"
 }

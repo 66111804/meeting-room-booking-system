@@ -39,7 +39,6 @@ import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
     FormsModule,
     FeaturesComponent,
     MatRadioModule,
-    CKEditorModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './meeting-room.component.html',
@@ -99,7 +98,10 @@ export class MeetingRoomComponent implements OnInit
   roomFormError!: boolean;
   nameSubject: Subject<string> = new Subject<string>();
   searchSubject: Subject<string> = new Subject<string>();
-  constructor(private modalService: NgbModal, private roomFeaturesService:RoomFeaturesService, private roomMeetingService:RoomMeetingService) {
+  constructor(private modalService: NgbModal,
+              private roomFeaturesService:RoomFeaturesService,
+              private roomMeetingService:RoomMeetingService
+  ) {
     this.breadCrumbItems = [
       { label: 'Meeting Room' },
       { label: 'Meeting Room', active: true },
@@ -364,7 +366,7 @@ export class MeetingRoomComponent implements OnInit
   meetingRoomInformation: MeetingRoom | undefined;
   showInformation(room: MeetingRoom) {
     this.isFeatures = false;
-   this.meetingRoomInformation = room;
+    this.meetingRoomInformation = room;
   }
 
   showImage(content:any) {
