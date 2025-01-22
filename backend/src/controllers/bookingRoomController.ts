@@ -7,6 +7,7 @@ import {
   listBookingRoom, myBooking,
   updateBookingRoom, validateBookingRoom
 } from "../service/bookingRoomService";
+import { uploadDir } from "../shared/uploadFile";
 const prisma = new PrismaClient();
 
 export const meetingRoomList = async (req: any, res: any) => {
@@ -64,7 +65,6 @@ export const meetingRoomList = async (req: any, res: any) => {
   }
 };
 
-
 export const createMeetingRoomBooking = async (req: any, res: any) => {
   try {
     const data:IBookingRoom = req.body;
@@ -112,19 +112,19 @@ export const updateMeetingRoomBooking = async (req: any, res: any) => {
   }
 };
 
-export const cancelMeetingRoomBooking = async (req: any, res: any) => {
-  try {
-    const { id } = req.params;
-    if(!id){
-      return res.status(400).json({ message: "Id is required" });
-    }
-    const booking = await cancelBookingRoom(parseInt(id));
-    return res.status(200).json(booking);
-  } catch (error:any) {
-    console.log(error.message);
-    return res.status(400).json({ message: error.message });
-  }
-}
+// export const cancelMeetingRoomBooking = async (req: any, res: any) => {
+//   try {
+//     const { id } = req.params;
+//     if(!id){
+//       return res.status(400).json({ message: "Id is required" });
+//     }
+//     const booking = await cancelBookingRoom(parseInt(id));
+//     return res.status(200).json(booking);
+//   } catch (error:any) {
+//     console.log(error.message);
+//     return res.status(400).json({ message: error.message });
+//   }
+// }
 
 export const IsValidateBookingRoom = async (req: any, res: any) => {
   try {
@@ -149,5 +149,40 @@ export const getMyBooking = async (req: any, res: any) => {
   } catch (error:any) {
     console.log(error.message);
     return res.status(500).json({ message: error.message });
+  }
+};
+
+
+// ------------------------ cancel booking ------------------------ //
+export const cancelMeetingRoomBooking = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;          // booking id
+    const { reason } = req.body;        // เหตุผลการยกเลิก (optional)
+    const userId = req.user.id;         // id ของผู้ใช้ที่ต้องการยกเลิก
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking ID is required"
+      });
+    }
+
+    const result = await cancelBookingRoom({
+      bookingId: parseInt(id),
+      userId,
+      reason
+    });
+
+    return res.status(200).json({
+      success: true,
+      ...result
+    });
+
+  } catch (error: any) {
+    console.error('Error cancelling booking:', error);
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
   }
 };

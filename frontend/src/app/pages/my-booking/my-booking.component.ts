@@ -93,6 +93,10 @@ export class MyBookingComponent implements OnInit
     console.log('searchInput');
   }
 
+  confirm(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+
   private getMaxDate(): Date {
     const currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() + 3);

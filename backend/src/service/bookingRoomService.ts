@@ -271,16 +271,16 @@ export const listBookingRoom = async (meetingRoomId:number,date:string) => {
 };
 
 
-export const cancelBookingRoom = async (id: number) => {
-  return prisma.meetingRoomBooking.update({
-    where:{
-      id
-    },
-    data:{
-      status: 'cancelled'
-    }
-  })
-};
+// export const cancelBookingRoom = async (id: number) => {
+//   return prisma.meetingRoomBooking.update({
+//     where:{
+//       id
+//     },
+//     data:{
+//       status: 'cancelled'
+//     }
+//   })
+// };
 
 export const updateBookingRoom = async (id: number, data: IBookingRoom) => {
   const startTime = dayjs(data.startTime).tz("Asia/Bangkok").format();
@@ -371,4 +371,83 @@ export const myBooking = async (userId: number, page: number, limit: number, sea
     totalPages,
     current: page
   };
+};
+
+interface CancelBookingParams {
+  bookingId: number;
+  userId: number; // current user id
+  reason?: string; // optional
+}
+
+export const cancelBookingRoom = async ({ bookingId, userId, reason }: CancelBookingParams) =>
+{
+  try {
+    // 1. check if booking exists
+    const booking = await prisma.meetingRoomBooking.findUnique({
+      where: { id: bookingId },
+      include: {
+        MeetingRoom: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
+
+    if (!booking) {
+      throw new Error('Booking not found');
+    }
+
+    // 2. ตรวจสอบสถานะการจอง
+    if (booking.status === 'cancelled') {
+      throw new Error('Booking is already cancelled');
+    }
+
+    // 3. ตรวจสอบว่าเป็นการจองในอนาคต
+    const now = dayjs();
+    const bookingStartTime = dayjs(booking.startTime);
+
+    if (bookingStartTime.isBefore(now)) {
+      throw new Error('Cannot cancel past bookings');
+    }
+
+    // 4. ตรวจสอบสิทธิ์ (ต้องเป็นเจ้าของการจองเท่านั้น)
+    if (booking.userId !== userId) {
+      throw new Error('You do not have permission to cancel this booking');
+    }
+
+    // 5. ทำการยกเลิกการจอง
+    const cancelledBooking = await prisma.meetingRoomBooking.update({
+      where: { id: bookingId },
+      data: {
+        status: 'cancelled',
+        description: reason ?
+          `${booking.description || ''}\n\nCancellation reason: ${reason}` :
+          booking.description
+      },
+      include: {
+        MeetingRoom: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        User: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+
+    return {
+      message: `Successfully cancelled booking for ${booking.MeetingRoom.name}`,
+      booking: cancelledBooking
+    };
+
+  } catch (error) {
+    throw error;
+  }
 };
