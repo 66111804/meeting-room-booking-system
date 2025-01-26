@@ -34,19 +34,11 @@ import {ITimeSlotResponse, SlotTimeService, TimeSlot} from '../../core/services/
 export class BookingRoomComponent implements OnInit
 {
   breadCrumbItems!: Array<{}>;
-  // Every 30 minutes
-  // timeSlots: string[] = [
-  //   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-  //   '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-  //   '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
-  //   '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
-  //   '20:00', '20:30', '21:00', '21:30', '22:00', '23:30',
-  // ];
 
   timeSlots: TimeSlot[] = [];
 
   datePickerOptions: FlatpickrDefaultsInterface = {
-    minDate: new Date(),
+    minDate: this.getMinDate(),
     maxDate: this.getMaxDate(),
     dateFormat: 'Y-m-d',
   };
@@ -87,23 +79,13 @@ export class BookingRoomComponent implements OnInit
       { label: 'Dashboard' },
       { label: 'Booking Room', active: true }
     ];
-
-    // this.timeSlots = [
-    //   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-    //   '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-    //   '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
-    //   '17:00', '17:30', '18:00'
-    // ];
-
-    this.dateSelected = new Date();
+    this.dateSelected = this.getMinDate();
     this.meetingRooms = {
       meetingRooms: [],
       total: 0,
       totalPages: 0,
       current: 0
     }
-
-
 
     // check time slot is out of range and set datePickerOptions to next day
     const now = new Date();
@@ -130,17 +112,17 @@ export class BookingRoomComponent implements OnInit
 
     // Find the nearest time slot for the current time
     const formattedCurrentTime = `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`;
-    // const currentTimeSlotIndex = this.timeSlots.indexOf(formattedCurrentTime);
+
     const slotTimeTemp = this.slotTimeService.getSlotTimeTemp();
+
     this.timeStartSlotSelected = slotTimeTemp ? slotTimeTemp.startTime : '08:00';
     this.timeEndSlotSelected = slotTimeTemp ? slotTimeTemp.endTime : '08:30';
 
-    // Initialize the selectable time slot lists
     this.timeStartSlotSelectList = this.timeSlots.slice(0, 1);
     this.timeEndSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
 
     // Calculate the initial total hours
-    this.calculateTotalHours();
+    // this.calculateTotalHours();
 
 
     this.searchSubject.pipe(
@@ -151,11 +133,12 @@ export class BookingRoomComponent implements OnInit
       this.fetchMeetingRooms();
     });
 
-    // this.fetchTimeSlot();
+    this.fetchTimeSlot();
   }
 
   fetchMeetingRooms() {
-    this.roomMeetingService.getAllBooking(this.page, this.limit,this.searchTerm).subscribe({
+    this.roomMeetingService.getAllBooking(this.page, this.limit,this.searchTerm, this.dateSelected.toISOString(), this.timeStartSlotSelected, this.timeEndSlotSelected)
+      .subscribe({
       next: (response) => {
         this.meetingRooms = response;
         this.cdr.detectChanges();
@@ -183,6 +166,8 @@ export class BookingRoomComponent implements OnInit
         endTime: this.timeEndSlotSelected
       }
     );
+
+    this.fetchMeetingRooms();
   }
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
@@ -203,9 +188,11 @@ export class BookingRoomComponent implements OnInit
       }
     );
 
+    this.fetchMeetingRooms();
   }
 
   calculateTotalHours() {
+    // Calculate total hours
     const startTime = this.timeStartSlotSelected.split(':');
     const endTime = this.timeEndSlotSelected.split(':');
 
@@ -221,13 +208,23 @@ export class BookingRoomComponent implements OnInit
   }
 
   onDateSelectChange(date: any) {
-    this.roomSelected = undefined;
+    // this.roomSelected = undefined;
+    this.fetchMeetingRooms();
   }
 
 
   changePage() {
     this.roomSelected = undefined;
     this.fetchMeetingRooms();
+  }
+
+  private getMinDate(): Date {
+    const currentDate = new Date();
+    // if time > 15:00, set min date to next day
+    if(currentDate.getHours() >= 17){
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return currentDate;
   }
 
   private getMaxDate(): Date {
@@ -268,10 +265,8 @@ export class BookingRoomComponent implements OnInit
   }
 
 
+  /*
   openBookingModal(content: any) {
-    // console.log(this.dateSelected);
-    // console.log(this.timeStartSlotSelected);
-    // console.log(this.timeEndSlotSelected);
     const startDateTime = new Date(this.dateSelected);
     // set the time
     const startTime = this.timeStartSlotSelected.split(':');
@@ -296,7 +291,7 @@ export class BookingRoomComponent implements OnInit
 
     this.modalService.open(content, { size: 'lg', centered: true });
   }
-
+  */
   onSubmit() {
     console.log(this.bookingRoomForm);
     if(this.bookingRoomForm.meetingRoomId === 0){
@@ -318,26 +313,9 @@ export class BookingRoomComponent implements OnInit
       this.toastr.error('Please enter description');
       return;
     }
-
-    // this.bookingRoomService.createBookingRoom(this.bookingRoomForm).subscribe({
-    //   next: (response) => {
-    //     console.log(response);
-    //     this.toastr.success('จองห้องสำเร็จแล้ว');
-    //     if(this.roomSelected !== undefined){
-    //       this.fetchTimeSlots(this.roomSelected);
-    //     }
-    //     this.modalService.dismissAll();
-    //   },
-    //   error: (error) => {
-    //     console.log(error);
-    //     this.toastr.error(error.error.message);
-    //   }
-    // });
-    // this.modalService.dismissAll();
   }
 
   openBookingRoomModal(room: MeetingRoom) {
-
     this.router.navigate(['/booking-room', room.id, 'info'], {
       queryParams: {
         date: this.dateSelected.toISOString(),
@@ -360,7 +338,7 @@ export class BookingRoomComponent implements OnInit
               {
                 start: new Date(),
                 end: new Date(),
-                title: 'Test1'
+                title: '---'
               }
             ]
           }
@@ -389,12 +367,10 @@ export class BookingRoomComponent implements OnInit
   }
 
   onSelectTimeStartChange($event: any) {
-    console.log('Time Start value:', $event.target.value);
     this.onTimeStartSlotSelectChange($event.target.value);
   }
 
   onSelectTimeEndChange($event: any) {
-    console.log('Time End value:', $event.target.value);
     this.onTimeEndSlotSelectChange($event.target.value);
   }
 }

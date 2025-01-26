@@ -24,9 +24,8 @@
             <div>
               <!-- วันที่ -->
               <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
-              <label for="inputDate" class="form-label">วันที่</label>
             </div>
-
+              <label for="inputDate" class="form-label">วันที่</label>
           </div>
           <div class="col-xxl-2 col-sm-6">
             <div>
@@ -55,6 +54,12 @@
             </div>
             <label for="inputTimeEnd" class="form-label mt-2">เวลาสิ้นสุด</label>
           </div>
+          <div class="col-xxl-2 col-sm-6">
+            <div>
+              <button class="btn btn-success mt-0" (click)="searchInput()">ค้นหาห้อง</button>
+            </div>
+          </div>
+
           <!--end col-->
         </div><!--end row-->
       </div>

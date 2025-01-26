@@ -144,8 +144,8 @@ export class RoomMeetingService {
   /**
    * Get all meeting room booking
    */
-  getAllBooking(page = 1, size = 10, searchTerm = '') {
-    return this.http.get<MeetingRoomResponse>(`${GlobalComponent.API_URL}/booking-room?page=${page}&limit=${size}&search=${searchTerm}`)
+  getAllBooking(page = 1, size = 10, searchTerm = '', date = '',timeStart = '',timeEnd = '') {
+    return this.http.get<MeetingRoomResponse>(`${GlobalComponent.API_URL}/booking-room?page=${page}&limit=${size}&search=${searchTerm}&date=${date}&timeStart=${timeStart}&timeEnd=${timeEnd}`)
   }
 
 }

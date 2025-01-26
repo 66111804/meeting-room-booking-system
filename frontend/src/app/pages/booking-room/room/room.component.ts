@@ -50,7 +50,7 @@ export class RoomComponent implements OnInit, AfterViewInit
   breadCrumbItems!: Array<{}>;
 
   searchTerm: string = '';
-  dateSelected!:Date;
+  dateSelected:Date;
   datePickerOptions: FlatpickrDefaultsInterface = {
     minDate: this.getMinDate(),
     maxDate: this.getMaxDate(),
@@ -829,6 +829,14 @@ export class RoomComponent implements OnInit, AfterViewInit
           }
       ],
     }
+    // get query params from URL date
+    const date = this.route.snapshot.queryParamMap.get('date');
+    if(date){
+      this.dateSelected = new Date(date);
+    }else{
+      this.dateSelected = this.getMinDate();
+    }
+    console.log(this.dateSelected);
   }
 
   ngOnInit() {
@@ -836,13 +844,8 @@ export class RoomComponent implements OnInit, AfterViewInit
     this.timeStartSlotSelected = this.route.snapshot.queryParamMap.get('startTime') || '08:00';
     this.timeEndSlotSelected = this.route.snapshot.queryParamMap.get('endTime') || '08:30';
     this.formBookingData.meetingRoomId = this.roomId;
-    // get query params from URL date
-    const date = this.route.snapshot.queryParamMap.get('date');
-    if(date){
-      this.dateSelected = new Date(date);
-    }else{
-      this.dateSelected = new Date();
-    }
+
+
     this.events = [{
       title: 'Meeting',
       start: new Date('2024-01-24T10:30:00'),
@@ -883,7 +886,7 @@ export class RoomComponent implements OnInit, AfterViewInit
   private getMinDate(){
     let currentDate = new Date();
     const currentHour = currentDate.getHours();
-    if(currentHour >= 17){
+    if(currentHour > 17){
       currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
     }
     return currentDate;
