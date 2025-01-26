@@ -45,7 +45,6 @@ export class RoomComponent implements OnInit, AfterViewInit
 {
   roomId: number = 0;
   breadCrumbItems!: Array<{}>;
-
   searchTerm: string = '';
   dateSelected:Date;
   datePickerOptions: FlatpickrDefaultsInterface = {
@@ -71,11 +70,8 @@ export class RoomComponent implements OnInit, AfterViewInit
   timeEndSlotSelected = '8:30';
   timeEndSlotSelectList:TimeSlot[] = [];
   totalHours = 0;
-
   isFormBookingVisible = false;
-
   userInformation:LogInResponse;
-
   formBookingData:IBookingRoom = {
     title: '',
     description: '',
@@ -851,6 +847,7 @@ export class RoomComponent implements OnInit, AfterViewInit
 
     this.fetchTimeSlot();
   }
+
   fetchRoomInfo() {
     this.roomMeetingService.getRoomById(this.roomId).subscribe(
       {

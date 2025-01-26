@@ -353,13 +353,12 @@ export const getAvailableTimeSlotsV2 = async (
     const checkDate = new Date(date as string);
     const dayStart = startOfDay(checkDate);
     const _startOfWeek = startOfWeek(checkDate, { weekStartsOn: 0 });
+    const meetingRoomId = req.query.meetingRoomId as string; // optional
 
     const weekDays = Array.from({ length: 7 }, (_, i) => {
       const currentDate = addDays(_startOfWeek, i);
       return format(currentDate, "yyyy-MM-dd");
     });
-
-    // console.log(weekDays);
 
     // find all bookings for the day and week
     const timeSlots = await prisma.slotTime.findMany({
@@ -375,6 +374,7 @@ export const getAvailableTimeSlotsV2 = async (
       const dayStart = startOfDay(new Date(day));
       const dayEnd = endOfDay(new Date(day));
 
+      // noinspection DuplicatedCode
       const bookings = await prisma.meetingRoomBooking.findMany({
         where: {
           startTime: {
@@ -383,6 +383,7 @@ export const getAvailableTimeSlotsV2 = async (
           endTime: {
             lte: dayEnd
           },
+          ...(meetingRoomId ? { meetingRoomId: parseInt(meetingRoomId) } : {}),
           status: "confirmed"
         },
         include: {
@@ -401,6 +402,7 @@ export const getAvailableTimeSlotsV2 = async (
       });
 
       // format time slots
+      // noinspection DuplicatedCode
       const formattedSlots = timeSlots.map(slot => {
         const slotStartTime = format(slot.startTime, "HH:mm");
         const slotEndTime = format(slot.endTime, "HH:mm");
@@ -415,6 +417,7 @@ export const getAvailableTimeSlotsV2 = async (
             (bookingStartTime >= slotStartTime && bookingStartTime < slotEndTime)
           );
         });
+
         // return formatted slot
         return {
           id: slot.id,
