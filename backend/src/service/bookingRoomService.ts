@@ -451,3 +451,33 @@ export const cancelBookingRoom = async ({ bookingId, userId, reason }: CancelBoo
     throw error;
   }
 };
+
+/**
+ * Check user is a owner of the booking
+ */
+
+export const isOwnerOfBooking = async (userId: number, bookingId: number) => {
+  const booking = await prisma.meetingRoomBooking.findFirst({
+    where:{
+      id: bookingId,
+      userId: userId
+    }
+  });
+  // true if booking is found, false if not found
+  return !!booking;
+}
+
+/**
+ * Get booking by id
+ * @param bookingId
+ */
+export const bookingById = async (bookingId: number) =>
+{
+  return prisma.meetingRoomBooking.findUnique({
+    where: { id: bookingId },
+    include: {
+      User: true,
+      MeetingRoom: true
+    }
+  });
+};

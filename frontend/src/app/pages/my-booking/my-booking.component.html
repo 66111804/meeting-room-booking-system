@@ -80,7 +80,7 @@
                   <!-- edit booking -->
                     @if(!isCurrentDateTime(bookings.startTime)) {
                     <!--  data-bs-toggle="modal" data-bs-target="#editBookingModal" (click)="openEditBookingModal(editBookingModal, bookings)" -->
-                    <a href="javascript:void(0);" class="link-primary ms-2">
+                    <a routerLink="{{ getLink(bookings.id) }}" class="link-primary ms-2">
                       <i class="ri-pencil-line me-2"></i>{{ "EDIT" | translate }}
                     </a>
                   }

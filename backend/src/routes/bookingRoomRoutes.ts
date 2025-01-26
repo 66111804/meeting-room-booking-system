@@ -20,4 +20,6 @@ router.post('/validate', IsValidateBookingRoom);
 // mybooking
 router.get('/my-booking', getMyBooking);
 router.delete('/my-booking/:id/cancel', cancelMeetingRoomBooking);
+router.get('/my-booking/:id/info', updateMeetingRoomBooking);
+
 export default router;

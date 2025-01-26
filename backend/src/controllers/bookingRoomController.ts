@@ -2,8 +2,9 @@
 
 import { PrismaClient } from "@prisma/client";
 import {
+  bookingById,
   cancelBookingRoom,
-  createBookingRoom, IBookingRoom,
+  createBookingRoom, IBookingRoom, isOwnerOfBooking,
   listBookingRoom, myBooking,
   updateBookingRoom, validateBookingRoom
 } from "../service/bookingRoomService";
@@ -152,7 +153,6 @@ export const getMyBooking = async (req: any, res: any) => {
   }
 };
 
-
 // ------------------------ cancel booking ------------------------ //
 export const cancelMeetingRoomBooking = async (req: any, res: any) => {
   try {
@@ -164,6 +164,16 @@ export const cancelMeetingRoomBooking = async (req: any, res: any) => {
       return res.status(400).json({
         success: false,
         message: "Booking ID is required"
+      });
+    }
+
+    // check if userId is the owner of the booking
+
+    const isOwner = isOwnerOfBooking(userId, parseInt(id));
+    if (!isOwner) {
+      return res.status(401).json({
+        success: false,
+        message: "You are not the owner of this booking"
       });
     }
 
@@ -180,6 +190,32 @@ export const cancelMeetingRoomBooking = async (req: any, res: any) => {
 
   } catch (error: any) {
     console.error('Error cancelling booking:', error);
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// ------------------------ get booking by id ------------------------ //
+export const getBookingById = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking ID is required"
+      });
+    }
+    const booking = await bookingById(parseInt(id));
+    return res.status(200).json({
+      success: true,
+      booking
+    });
+
+  } catch (error: any) {
+    console.error('Error getting booking:', error);
     return res.status(400).json({
       success: false,
       message: error.message

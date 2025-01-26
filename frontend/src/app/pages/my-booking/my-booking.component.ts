@@ -8,6 +8,7 @@ import {IMyBookingsResponse, MeetingRoom, MyBooking} from '../booking-room/room.
 import {DatePipe} from '@angular/common';
 import {NgbModal, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {ToastrService} from 'ngx-toastr';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-my-booking',
@@ -18,7 +19,8 @@ import {ToastrService} from 'ngx-toastr';
     FormsModule,
     TranslatePipe,
     DatePipe,
-    NgbPagination
+    NgbPagination,
+    RouterLink
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './my-booking.component.html',
@@ -191,5 +193,9 @@ export class MyBookingComponent implements OnInit
     const currentDate = new Date();
     const selectedDate = new Date(date);
     return currentDate > selectedDate;
+  }
+
+  getLink(id: number) {
+    return `/my-booking/${id}/edit`;
   }
 }

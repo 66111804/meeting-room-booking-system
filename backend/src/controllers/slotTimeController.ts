@@ -359,7 +359,7 @@ export const getAvailableTimeSlotsV2 = async (
       return format(currentDate, "yyyy-MM-dd");
     });
 
-    console.log(weekDays);
+    // console.log(weekDays);
 
     // find all bookings for the day and week
     const timeSlots = await prisma.slotTime.findMany({

@@ -48,4 +48,8 @@ export class BookingRoomService {
      // /api/booking-room/my-booking/:id/cancel
     return this.http.delete(`${GlobalComponent.API_URL}/booking-room/my-booking/${id}/cancel`);
   }
+
+  getBookingInfo(id: number) {
+    return this.http.get<IBookingRoom>(`${GlobalComponent.API_URL}/booking-room/my-booking/${id}/info`);
+  }
 }

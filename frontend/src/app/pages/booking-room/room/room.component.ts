@@ -103,7 +103,6 @@ export class RoomComponent implements OnInit, AfterViewInit
       { label: 'Detail', active: true }
     ];
     this.userInformation = this.tokenStorageService.getUser();
-
     this.timeSlotsAvailable = {
       days: [
         {
@@ -855,7 +854,6 @@ export class RoomComponent implements OnInit, AfterViewInit
 
     this.fetchTimeSlot();
   }
-
   fetchRoomInfo() {
     this.roomMeetingService.getRoomById(this.roomId).subscribe(
       {
@@ -870,7 +868,6 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
   ngAfterViewInit() {
   }
-
   calculateTotalHours() {
     const startTime = this.timeStartSlotSelected.split(':');
     const endTime = this.timeEndSlotSelected.split(':');
