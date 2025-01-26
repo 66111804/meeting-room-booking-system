@@ -7,6 +7,7 @@ import {
   IMyBookingsResponse,
   ITimeSlot
 } from '../../pages/booking-room/room.module';
+import {IBookingRoomInfoResponse} from '../../pages/my-booking/edit-booking/edit-booking.module';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,6 @@ export class BookingRoomService {
   }
 
   getBookingInfo(id: number) {
-    return this.http.get<IBookingRoom>(`${GlobalComponent.API_URL}/booking-room/my-booking/${id}/info`);
+    return this.http.get<IBookingRoomInfoResponse>(`${GlobalComponent.API_URL}/booking-room/my-booking/${id}/info`);
   }
 }

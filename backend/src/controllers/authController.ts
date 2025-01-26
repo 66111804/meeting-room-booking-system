@@ -30,7 +30,7 @@ export const singIn = async (req: any, res: any) => {
       department: user.department,
       dateEmployment: user.dateEmployment,
       avatar: user.avatar
-    }, JWT_SECRET, { expiresIn: "2h", algorithm: "HS256" });
+    }, JWT_SECRET, { expiresIn: "24h", algorithm: "HS256" });
 
     return res.status(200).json({
       message: "Sign in success", user: {

@@ -336,8 +336,11 @@ export class BookingRoomComponent implements OnInit
             isAvailable: false,
             bookings: [
               {
-                start: new Date(),
-                end: new Date(),
+                id: 0,
+                bookedBy: '',
+                roomName: '',
+                startTime: '',
+                endTime: '',
                 title: '---'
               }
             ]

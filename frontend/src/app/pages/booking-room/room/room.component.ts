@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
+  CUSTOM_ELEMENTS_SCHEMA, Input,
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
@@ -21,6 +21,7 @@ import {LogInResponse} from '../../../core/services/auth.service';
 import {BookingRoomService} from '../../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import {format} from 'date-fns';
 
 
 // noinspection DuplicatedCode
@@ -29,12 +30,9 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [
     BreadcrumbsComponent,
-    TranslatePipe,
     FormsModule,
     FlatpickrDirective,
     DatePipe,
-    SlicePipe,
-    NgSwitch
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.scss',
@@ -43,6 +41,10 @@ import Swal from 'sweetalert2';
 })
 export class RoomComponent implements OnInit, AfterViewInit
 {
+  @Input() isEdit = false;
+  @Input() bookingId = 0;
+  @Input() bookingInfo: IBookingRoom | null = null;
+
   roomId: number = 0;
   breadCrumbItems!: Array<{}>;
   searchTerm: string = '';
@@ -832,22 +834,36 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
 
   ngOnInit() {
-    this.roomId = Number(this.route.snapshot.paramMap.get('id'));
-    this.timeStartSlotSelected = this.route.snapshot.queryParamMap.get('startTime') || '08:00';
-    this.timeEndSlotSelected = this.route.snapshot.queryParamMap.get('endTime') || '08:30';
-    this.formBookingData.meetingRoomId = this.roomId;
+    if(!this.isEdit) {
+      this.roomId = Number(this.route.snapshot.paramMap.get('id'));
+      this.timeStartSlotSelected = this.route.snapshot.queryParamMap.get('startTime') || '08:00';
+      this.timeEndSlotSelected = this.route.snapshot.queryParamMap.get('endTime') || '08:30';
+      this.formBookingData.meetingRoomId = this.roomId;
 
+    }else {
+      this.roomId = this.bookingInfo?.meetingRoomId || 0;
+      this.formBookingData.meetingRoomId = this.roomId;
 
-    this.events = [{
-      title: 'Meeting',
-      start: new Date('2024-01-24T10:30:00'),
-      end: new Date('2024-01-24T12:30:00')
-    }];
+      this.timeStartSlotSelected = this.convertTime(this.bookingInfo?.startTime || '');
+      this.timeEndSlotSelected = this.convertTime(this.bookingInfo?.endTime || '');
+
+      this.formBookingData.title = this.bookingInfo?.title || '';
+      this.formBookingData.description = this.bookingInfo?.description || '';
+      this.dateSelected = new Date(this.bookingInfo?.startTime || this.getMinDate());
+    }
+
     this.fetchRoomInfo();
-
     this.fetchTimeSlot();
   }
 
+  ngAfterViewInit() {
+
+  }
+
+  convertTime(dateTimeStr: string): string {
+    const date = new Date(dateTimeStr);
+    return format(date, 'HH:mm');
+  }
   fetchRoomInfo() {
     this.roomMeetingService.getRoomById(this.roomId).subscribe(
       {
@@ -859,8 +875,6 @@ export class RoomComponent implements OnInit, AfterViewInit
         }
       });
 
-  }
-  ngAfterViewInit() {
   }
   calculateTotalHours() {
     const startTime = this.timeStartSlotSelected.split(':');
@@ -944,9 +958,12 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
 
   openBookingRoomForm(isVisible: boolean) {
+
     this.isFormBookingVisible = isVisible;
-    this.formBookingData.title = '';
-    this.formBookingData.description = '';
+    if(!this.isEdit){
+      this.formBookingData.title = '';
+      this.formBookingData.description = '';
+    }
   }
 
   onSelectTimeStartChange($event: any) {
@@ -961,7 +978,7 @@ export class RoomComponent implements OnInit, AfterViewInit
     const slotDate = new Date(date);
     const selectedDate = new Date(this.dateSelected);
 
-    // ถ้าต่างวันกัน return false
+    //
     if (slotDate.toDateString() !== selectedDate.toDateString()) {
       return false;
     }
@@ -972,7 +989,7 @@ export class RoomComponent implements OnInit, AfterViewInit
     const selectedEnd = new Date(`${date}T${this.timeEndSlotSelected}`);
 
     // เช็คว่า slot ที่เลือกคาบเกี่ยวกับช่วงเวลาที่ต้องการไหม
-    return selectedStart <= end && selectedEnd >= start;
+    return selectedStart < end && selectedEnd > start;
   }
 
   onSubmitBookingRoom() {
@@ -1008,29 +1025,34 @@ export class RoomComponent implements OnInit, AfterViewInit
     }
 
 
+    if(this.isEdit){
+      console.log('edit');
+      console.log(formData);
 
-    this.bookingRoomService.createBookingRoom(formData).subscribe({
-      next: (response) => {
-        this.toastr.success('การจองห้องสำเร็จ', 'Success');
-        this.openBookingRoomForm(false);
-        this.fetchTimeSlot();
-        Swal.fire({
-          title: 'การจองห้องสำเร็จ',
-          icon: 'success',
-          confirmButtonText: 'ปิด',
-          timer: 2000
-        });
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.toastr.error('การจองห้องไม่สำเร็จ กรุณาตรวจสอบข้อมูล', 'Error');
-        Swal.fire({
-          title: 'การจองห้องไม่สำเร็จ กรุณาตรวจสอบข้อมูล',
-          icon: 'error',
-          confirmButtonText: 'ปิด'
-        });
-      } // Fix: Add error handling
-    });
+    }else {
+      this.bookingRoomService.createBookingRoom(formData).subscribe({
+        next: (response) => {
+          this.toastr.success('การจองห้องสำเร็จ', 'Success');
+          this.openBookingRoomForm(false);
+          this.fetchTimeSlot();
+          Swal.fire({
+            title: 'การจองห้องสำเร็จ',
+            icon: 'success',
+            confirmButtonText: 'ปิด',
+            timer: 2000
+          });
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.toastr.error('การจองห้องไม่สำเร็จ กรุณาตรวจสอบข้อมูล', 'Error');
+          Swal.fire({
+            title: 'การจองห้องไม่สำเร็จ กรุณาตรวจสอบข้อมูล',
+            icon: 'error',
+            confirmButtonText: 'ปิด'
+          });
+        } // Fix: Add error handling
+      });
+    }
   }
 
 

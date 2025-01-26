@@ -213,7 +213,8 @@ export const getBookingById = async (req: any, res: any) => {
     const booking = await bookingById(parseInt(id));
     return res.status(200).json({
       success: true,
-      booking
+      booking,
+      message: "Information retrieved successfully"
     });
 
   } catch (error: any) {

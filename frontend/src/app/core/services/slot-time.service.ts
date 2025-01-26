@@ -16,18 +16,18 @@ export interface TimeSlot {
   startTime: string
   endTime: string
   isAvailable: boolean
-  bookings: any[]
+  bookings: BookingDataInfo[]
 }
 
-interface CalendarEvent {
-  start: Date
-  end: Date
+export interface BookingDataInfo {
+  id: number
   title: string
-  color?: {
-    primary: string
-    secondary: string
-  }
+  roomName: string
+  bookedBy: string
+  startTime: string
+  endTime: string
 }
+
 export interface Slot{
   startTime: string
   endTime: string
