@@ -1028,9 +1028,30 @@ export class RoomComponent implements OnInit, AfterViewInit
     if(this.isEdit){
       console.log('edit');
       console.log(formData);
-
+      this.bookingRoomService.createOrUpdateBookingRoom(formData, this.bookingId).subscribe({
+        next: (response) => {
+          this.toastr.success('อัพเดทข้อมูลสำเร็จ', 'Success');
+          // this.openBookingRoomForm(false);
+          this.fetchTimeSlot();
+          Swal.fire({
+            title: 'อัพเดทข้อมูลสำเร็จ',
+            icon: 'success',
+            confirmButtonText: 'ปิด',
+            timer: 2000
+          });
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.toastr.error('การจองห้องไม่สำเร็จ กรุณาตรวจสอบข้อมูล', 'Error');
+          Swal.fire({
+            title: 'การจองห้องไม่สำเร็จ กรุณาตรวจสอบข้อมูล',
+            icon: 'error',
+            confirmButtonText: 'ปิด'
+          });
+        } // Fix: Add error handling
+      });
     }else {
-      this.bookingRoomService.createBookingRoom(formData).subscribe({
+      this.bookingRoomService.createOrUpdateBookingRoom(formData).subscribe({
         next: (response) => {
           this.toastr.success('การจองห้องสำเร็จ', 'Success');
           this.openBookingRoomForm(false);

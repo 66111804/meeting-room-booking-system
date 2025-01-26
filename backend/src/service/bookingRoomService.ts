@@ -25,13 +25,20 @@ export interface IBookingRoomValidation {
 }
 
 
-export const createBookingRoom = async (data: IBookingRoom) => {
+export const createOrUpdateBookingRoom = async (data: IBookingRoom , bookingId:number = 0) => {
 
+  if(bookingId > 0) {
+    const existingBooking = await prisma.meetingRoomBooking.findUnique({
+      where: { id: bookingId }
+    });
+
+    if(!existingBooking) {
+      throw new Error('Booking not found');
+    }
+  }
 
   const startTime = dayjs(data.startTime);
   const endTime = dayjs(data.endTime);
-
-  console.table(data.startTime);
 
   // check if start time is before end time
   if (startTime.isAfter(endTime)) {
@@ -100,6 +107,7 @@ export const createBookingRoom = async (data: IBookingRoom) => {
       ]
     }
   });
+
   if(overlappingSlots.length === 0){
     throw new Error('Booking time must match with available time slots');
   }
@@ -107,6 +115,7 @@ export const createBookingRoom = async (data: IBookingRoom) => {
   const conflicts = await prisma.meetingRoomBooking.findMany({
     where: {
       meetingRoomId: data.meetingRoomId,
+      id: {not: bookingId}, // exclude current booking
       status: 'confirmed',
       OR: [
         {
@@ -141,6 +150,30 @@ export const createBookingRoom = async (data: IBookingRoom) => {
     throw new Error(`Room "${conflictRoom}" is already booked during this time period`);
   }
 
+
+  if(bookingId > 0){
+    return prisma.meetingRoomBooking.update({
+      where: { id: bookingId },
+      data: {
+        ...data,
+        startTime: startTime.toDate(),
+        endTime: endTime.toDate(),
+        status: 'confirmed'
+      },
+      include: {
+        MeetingRoom: true,
+        User: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true
+          }
+        }
+      }
+    });
+  }
+
   return prisma.meetingRoomBooking.create({
     data: {
       ...data,
@@ -160,44 +193,6 @@ export const createBookingRoom = async (data: IBookingRoom) => {
       }
     }
   });
-
-  // create booking
-  /*
-  // remove endTime -1 minute
-  const endTimeSub = dayjs(data.endTime).tz("Asia/Bangkok").subtract(1, 'minute').format();
-
-  console.table({startTime, endTimeSub});
-  const conflicts = await prisma.meetingRoomBooking.findMany({
-    where:{
-      meetingRoomId: data.meetingRoomId,
-      status: 'confirmed',
-      OR: [
-        {
-          startTime: { gte: startTime },
-          endTime: { lte: endTimeSub },
-        },
-      ]
-    }
-  })
-
-  console.table({conflicts});
-
-    if(conflicts.length > 0){
-      throw new Error('This room is already booked for this time');
-    }
-
-    // add status confirmed
-    data.status = 'confirmed';
-
-    return prisma.meetingRoomBooking.create({
-      data:{
-        ...data,
-        startTime,
-        endTime
-      }
-    });
-
-   */
 };
 
 export const listBookingRoom = async (meetingRoomId:number,date:string) => {
@@ -237,13 +232,6 @@ export const listBookingRoom = async (meetingRoomId:number,date:string) => {
     });
   });
 
-
-  // export const baseTimeSlots: string[] = [
-  //   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-  //   '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-  //   '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
-  //   '17:00', '17:30', '18:00'
-  // ];
   booking.forEach(book => {
     const start = dayjs(book.startTime).tz("Asia/Bangkok").format('HH:mm');
     const end = dayjs(book.endTime).tz("Asia/Bangkok").format('HH:mm');
@@ -266,52 +254,39 @@ export const listBookingRoom = async (meetingRoomId:number,date:string) => {
     }
   });
 
-  // console.table(timeSlots);
   return timeSlots;
 };
 
-
-// export const cancelBookingRoom = async (id: number) => {
+// export const updateBookingRoom = async (id: number, data: IBookingRoom) => {
+//   const startTime = dayjs(data.startTime).tz("Asia/Bangkok").format();
+//   const endTime = dayjs(data.endTime).tz("Asia/Bangkok").format();
+//   const conflicts = await prisma.meetingRoomBooking.findMany({
+//     where:{
+//       meetingRoomId: data.meetingRoomId,
+//       status: 'confirmed',
+//       OR: [
+//         {
+//           startTime: { gte: startTime }, // greater than or equal
+//           endTime: { lte: endTime }, // less than or equal
+//         },
+//       ],
+//       NOT:{
+//         id
+//       }
+//     }
+//   })
+//
+//   if(conflicts.length > 0){
+//     throw new Error('This room is already booked for this time');
+//   }
+//
 //   return prisma.meetingRoomBooking.update({
 //     where:{
 //       id
 //     },
-//     data:{
-//       status: 'cancelled'
-//     }
-//   })
+//     data
+//   });
 // };
-
-export const updateBookingRoom = async (id: number, data: IBookingRoom) => {
-  const startTime = dayjs(data.startTime).tz("Asia/Bangkok").format();
-  const endTime = dayjs(data.endTime).tz("Asia/Bangkok").format();
-  const conflicts = await prisma.meetingRoomBooking.findMany({
-    where:{
-      meetingRoomId: data.meetingRoomId,
-      status: 'confirmed',
-      OR: [
-        {
-          startTime: { gte: startTime }, // greater than or equal
-          endTime: { lte: endTime }, // less than or equal
-        },
-      ],
-      NOT:{
-        id
-      }
-    }
-  })
-
-  if(conflicts.length > 0){
-    throw new Error('This room is already booked for this time');
-  }
-
-  return prisma.meetingRoomBooking.update({
-    where:{
-      id
-    },
-    data
-  });
-};
 
 export const validateBookingRoom = async (data: IBookingRoomValidation) => {
 

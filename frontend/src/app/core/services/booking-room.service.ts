@@ -20,7 +20,10 @@ export class BookingRoomService {
     return this.http.get<ITimeSlot[]>(`${GlobalComponent.API_URL}/booking-room/list-time-slot/${id}?date=${date}`);
   }
 
-  createBookingRoom(data: IBookingRoom) {
+  createOrUpdateBookingRoom(data: IBookingRoom,bookingId: number = 0) {
+    if (bookingId > 0) {
+      return this.http.put(`${GlobalComponent.API_URL}/booking-room/my-booking/${bookingId}/update`, data);
+    }
     return this.http.post(`${GlobalComponent.API_URL}/booking-room/create`, data);
   }
 
