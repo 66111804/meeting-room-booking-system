@@ -1,0 +1,35 @@
+.table {
+  td, th {
+    border-right: 1px solid #dee2e6;
+    padding: 0.75rem;
+
+    &:hover {
+      background-color: rgba(0,0,0,0.075);
+      cursor: pointer;
+    }
+  }
+}
+
+.table-responsive {
+  &::-webkit-scrollbar {
+    height: 8px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #666;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+}
+
+
+

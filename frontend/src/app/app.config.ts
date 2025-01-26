@@ -19,6 +19,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {authInterceptorProviders} from './core/helpers/auth.interceptor';
 import {provideToastr} from 'ngx-toastr';
 import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
+import {CalendarModule, DateAdapter} from 'angular-calendar';
+import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,6 +40,7 @@ export const appConfig: ApplicationConfig = {
       }),
       FeatherModule.pick(allIcons),
       CKEditorModule,
+      CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
     ]),
 
     provideRouter(routes),

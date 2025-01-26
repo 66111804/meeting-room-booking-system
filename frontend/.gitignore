@@ -44,3 +44,6 @@ Thumbs.db
 .vscode
 .idea
 
+# Ignore the license config file
+license-config.ts
+syncfusion-license.txt

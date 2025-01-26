@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {GlobalComponent} from '../../global-component';
+
 export interface ITimeSlotResponse {
+  days: DaySlot[]
+  timeSlots: TimeSlot[]
+}
+interface DaySlot {
   date: string
   timeSlots: TimeSlot[]
-  totalSlots: number
-  availableSlots: number
-  bookedSlots: number
 }
 
 export interface TimeSlot {
@@ -17,10 +19,21 @@ export interface TimeSlot {
   bookings: any[]
 }
 
+interface CalendarEvent {
+  start: Date
+  end: Date
+  title: string
+  color?: {
+    primary: string
+    secondary: string
+  }
+}
 export interface Slot{
   startTime: string
   endTime: string
 }
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +42,7 @@ export class SlotTimeService {
   constructor(private http: HttpClient) { }
 
     getTimeSlot(date: string,id: number = 0) {
-    let url = `${GlobalComponent.API_URL}/slot-time/available-slots?date=${date}`;
+    let url = `${GlobalComponent.API_URL}/slot-time/v2/available-slots?date=${date}`;
     if (id > 0) {
       url += `&meetingRoomId=${id}`;
     }

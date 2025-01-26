@@ -234,7 +234,57 @@
       </div><!--end card-body-->
     </div><!--end card-->
   </div><!--end col-->
+
+
   <div class="col-xxl-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title mb-0">รายการที่จองแล้ว</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-centered table-nowrap  mb-0 ">
+            <thead class="bg-danger-subtle">
+              <tr>
+                <th scope="col">วันที่ / เวลา</th>
+                <!-- For loop 8:00 - 18:00 split 30 min -->
+                @for(timeSlot of timeSlotsAvailable.timeSlots; track $index){
+                  <th scope="col">{{ timeSlot.startTime }} - {{ timeSlot.endTime }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+            <!-- Colum 1 days and date = 1 week start Monday -->
+            @for (day of timeSlotsAvailable.days; track $index){
+              <tr>
+                <td>{{ day.date | date: 'EE dd/MMM/yy' }}</td>
+                <!-- Colum 2-15 time slot -->
+                @for (timeSlot of day.timeSlots; track $index)
+                {
+                  @if(timeSlot.bookings.length > 0){
+                    <!-- ถ้ามีการจองแล้ว -->
+                    <td class="bg-danger">
+                    </td>
+                  } @else {
+                    @if(IsSlotTimeSelectedInRanges(day.date ,timeSlot.startTime, timeSlot.endTime)){
+                      <!-- กำลังลือก -->
+                      <td class="bg-dark-subtle"></td>
+                    } @else {
+                      <!-- ว่าง -->
+                      <td></td>
+                    }
+                  }
+                }
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+  <div class="col-xxl-12 d-none">
     <div class="card">
       <div class="card-header d-flex justify-content-between">
         <h5 class="card-title mb-0">รายการที่จองแล้ว</h5>
@@ -254,8 +304,8 @@
             <tbody>
             @if(timeSlotsAvailable != undefined){
               @for (timeSlot of timeSlotsAvailable.timeSlots; track $index){
-                <tr class="{{ IsSlotTimeSelectedInRanges(timeSlot.startTime, timeSlot.endTime)?'bg-light':''}}">
-                  <td>{{ timeSlotsAvailable.date | date: 'dd-MMM-yyyy' }}</td>
+                <tr class="">
+                  <td>---</td>
                   <td>{{ timeSlot.startTime }}</td>
                   <td>{{ timeSlot.endTime }}</td>
                   <td>
@@ -266,9 +316,9 @@
                       <span class="badge bg-danger me-1">ไม่ว่าง</span>
                     }
                     <!-- สถานะ เลือก -->
-                    @if(IsSlotTimeSelectedInRanges(timeSlot.startTime, timeSlot.endTime)){
-                      <span class="badge bg-primary me-1">คุณกำลังเลือก</span>
-                    }
+<!--                    @if(IsSlotTimeSelectedInRanges(timeSlot.startTime, timeSlot.endTime)){-->
+<!--                      <span class="badge bg-primary me-1">คุณกำลังเลือก</span>-->
+<!--                    }-->
                   </td>
                 </tr>
               } @empty {
@@ -284,6 +334,12 @@
     </div>
 
   </div>
+
+
+
+  </div>
+
+
 </div><!--end row-->
 
 

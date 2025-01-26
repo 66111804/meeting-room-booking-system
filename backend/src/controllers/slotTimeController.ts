@@ -1,7 +1,7 @@
 // src/controllers/slotTimeController.ts
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { addMinutes, parse, format, startOfDay, endOfDay } from "date-fns";
+import { addMinutes, parse, format, startOfDay, endOfDay, startOfWeek, addDays } from "date-fns";
 
 const prisma = new PrismaClient();
 
@@ -342,3 +342,120 @@ export const getAvailableTimeSlots = async (
     });
   }
 };
+
+
+export const getAvailableTimeSlotsV2 = async (
+  req: Request<{}, {}, {}, CheckAvailabilityQuery>,
+  res: Response
+): Promise<any>  => {
+  try {
+    const { date } = req.query;
+    const checkDate = new Date(date as string);
+    const dayStart = startOfDay(checkDate);
+    const _startOfWeek = startOfWeek(checkDate, { weekStartsOn: 0 });
+
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
+      const currentDate = addDays(_startOfWeek, i);
+      return format(currentDate, "yyyy-MM-dd");
+    });
+
+    console.log(weekDays);
+
+    // find all bookings for the day and week
+    const timeSlots = await prisma.slotTime.findMany({
+      where: {
+        isActive: true
+      },
+      orderBy: {
+        startTime: "asc"
+      }
+    });
+
+    const days = await Promise.all(weekDays.map(async (day) => {
+      const dayStart = startOfDay(new Date(day));
+      const dayEnd = endOfDay(new Date(day));
+
+      const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+          startTime: {
+            gte: dayStart
+          },
+          endTime: {
+            lte: dayEnd
+          },
+          status: "confirmed"
+        },
+        include: {
+          MeetingRoom: {
+            select: {
+              name: true
+            }
+          },
+          User: {
+            select: {
+              name: true,
+              lastName: true
+            }
+          }
+        }
+      });
+
+      // format time slots
+      const formattedSlots = timeSlots.map(slot => {
+        const slotStartTime = format(slot.startTime, "HH:mm");
+        const slotEndTime = format(slot.endTime, "HH:mm");
+
+        // find overlapping bookings
+        const overlappingBookings = bookings.filter(booking => {
+          const bookingStartTime = format(booking.startTime, "HH:mm");
+          const bookingEndTime = format(booking.endTime, "HH:mm");
+
+          return (
+            (bookingStartTime <= slotStartTime && bookingEndTime > slotStartTime) ||
+            (bookingStartTime >= slotStartTime && bookingStartTime < slotEndTime)
+          );
+        });
+        // return formatted slot
+        return {
+          id: slot.id,
+          startTime: slotStartTime,
+          endTime: slotEndTime,
+          isAvailable: overlappingBookings.length === 0,
+          bookings: overlappingBookings.map(booking => ({
+            id: booking.id,
+            title: booking.title,
+            roomName: booking.MeetingRoom.name,
+            bookedBy: `${booking.User.name} ${booking.User.lastName}`,
+            startTime: format(booking.startTime, "HH:mm"),
+            endTime: format(booking.endTime, "HH:mm")
+          }))
+        };
+      });
+
+      return {
+        date: day,
+        timeSlots: formattedSlots
+      };
+    }));
+    // send response
+    const headerTimeSlots = timeSlots.map(slot => ({
+      id: slot.id,
+      startTime: format(slot.startTime, 'HH:mm'),
+      endTime: format(slot.endTime, 'HH:mm'),
+      isAvailable: true,
+      bookings: []
+    }));
+
+
+    res.status(200).json({
+      days: days,
+      timeSlots: headerTimeSlots
+    });
+  }catch (error) {
+    console.error("Error checking time slots availability:", error);
+     res.status(500).json({
+      error: "Failed to check time slots availability",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+}

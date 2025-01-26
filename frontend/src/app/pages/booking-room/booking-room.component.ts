@@ -151,7 +151,7 @@ export class BookingRoomComponent implements OnInit
       this.fetchMeetingRooms();
     });
 
-    this.fetchTimeSlot();
+    // this.fetchTimeSlot();
   }
 
   fetchMeetingRooms() {
@@ -347,12 +347,29 @@ export class BookingRoomComponent implements OnInit
     });
   }
   timeSlotsAvailable: ITimeSlotResponse ={
-    date: '',
+    days: [
+      {
+        date: '',
+        timeSlots: [
+          {
+            id: 0,
+            startTime: '',
+            endTime: '',
+            isAvailable: false,
+            bookings: [
+              {
+                start: new Date(),
+                end: new Date(),
+                title: 'Test1'
+              }
+            ]
+          }
+        ]
+      }
+    ],
     timeSlots: [],
-    totalSlots: 0,
-    availableSlots: 0,
-    bookedSlots: 0
   }
+
   fetchTimeSlot() {
     // YYYY-MM-DD
     const date = this.dateSelected.toISOString().split('T')[0];
