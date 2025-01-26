@@ -11,13 +11,6 @@
           <div class="row">
             <div class="col-md">
               <div class="row align-items-center">
-<!--                <div class="col-md-auto">-->
-<!--                  <div class="avatar-md mb-md-0 mb-4">-->
-<!--                    <div class="avatar-title bg-white rounded-circle">-->
-<!--                      <img src="assets/images/companies/img-4.png" alt="" class="avatar-sm" />-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>&lt;!&ndash;end col&ndash;&gt;-->
                 <div class="col-md">
                   <h4 class="fw-semibold" id="ticket-title"># {{ roomInfo == undefined ? 'Room' : roomInfo.name}}</h4>
                   <div class="hstack gap-3 flex-wrap">
@@ -25,7 +18,7 @@
                       id="ticket-client">Room</span></div>
                     <div class="vr"></div>
                     <div class="text-muted">Last Updated : <span class="fw-medium" id="create-date">
-                      {{ roomInfo == undefined ? 'date' : roomInfo.updatedAt | date: 'dd-MMM-yyyy HH:mm' }}
+                      {{ roomInfo == undefined ? 'date' : roomInfo.updatedAt | date: 'dd-MMM-yyyy' }}
                     </span></div>
 
                   </div>
@@ -222,6 +215,7 @@
     </div><!--end card-->
 
   </div><!--end col-->
+
   <div class="col-xxl-3">
     <div class="card">
       <div class="card-header">

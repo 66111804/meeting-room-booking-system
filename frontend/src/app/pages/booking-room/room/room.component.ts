@@ -21,9 +21,7 @@ import {LogInResponse} from '../../../core/services/auth.service';
 import {BookingRoomService} from '../../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
 import Swal from 'sweetalert2';
-import {
-  CalendarModule,
-} from 'angular-calendar';
+
 
 // noinspection DuplicatedCode
 @Component({
@@ -36,7 +34,6 @@ import {
     FlatpickrDirective,
     DatePipe,
     SlicePipe,
-    CalendarModule,
     NgSwitch
   ],
   templateUrl: './room.component.html',

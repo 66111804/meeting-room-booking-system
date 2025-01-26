@@ -208,6 +208,8 @@ export const getBookingById = async (req: any, res: any) => {
         message: "Booking ID is required"
       });
     }
+    console.log({id, userId});
+
     const booking = await bookingById(parseInt(id));
     return res.status(200).json({
       success: true,

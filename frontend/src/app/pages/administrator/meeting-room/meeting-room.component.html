@@ -266,16 +266,16 @@
           <div class="col-lg-12">
             <div class="mb-3">
               <label for="description" class="form-label fw-medium">{{ "DESCRIPTION" | translate }}</label>
-<!--              <textarea class="form-control"  id="description" rows="3"  name="description" [ngClass]="{'is-invalid' : roomFormControls.description.valid }"  [(ngModel)]="roomFormControls.description.data"  placeholder="{{ 'DESCRIPTION' | translate }}"></textarea>-->
-              <ckeditor
-                id="description"
-                [editor]="Editor"
-                [data]="editorData"
-                [config]="editorConfig"
-                (change)="onEditorChange($event)"
-                [ngClass]="{'is-invalid' : roomFormControls.description.valid }"
-              >
-              </ckeditor>
+              <textarea class="form-control"  id="description" rows="3"  name="description" [ngClass]="{'is-invalid' : roomFormControls.description.valid }"  [(ngModel)]="roomFormControls.description.data"  placeholder="{{ 'DESCRIPTION' | translate }}"></textarea>
+<!--              <ckeditor-->
+<!--                id="description"-->
+<!--                [editor]="Editor"-->
+<!--                [data]="editorData"-->
+<!--                [config]="editorConfig"-->
+<!--                (change)="onEditorChange($event)"-->
+<!--                [ngClass]="{'is-invalid' : roomFormControls.description.valid }"-->
+<!--              >-->
+<!--              </ckeditor>-->
             </div>
           </div>
           <div class="col-lg-12">

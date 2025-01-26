@@ -473,11 +473,13 @@ export const isOwnerOfBooking = async (userId: number, bookingId: number) => {
  */
 export const bookingById = async (bookingId: number) =>
 {
-  return prisma.meetingRoomBooking.findUnique({
+  const info = await prisma.meetingRoomBooking.findUnique({
     where: { id: bookingId },
     include: {
       User: true,
       MeetingRoom: true
     }
   });
+
+  return info;
 };
