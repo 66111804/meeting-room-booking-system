@@ -1,1 +1,97 @@
-<p>setting works!</p>
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="Booking Room" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+
+<!-- User Profile Setting -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="text-center mt-3">
+              <img src="assets/images/users/avatar-7.jpg" class="avatar avatar-xl rounded-circle" alt="profile-image">
+              <h5 class="mt-2 mb-0">John Smith</h5>
+              <p class="text-muted mb-0">UI/UX Designer</p>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            <div class="mt-4">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="mb-4">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" value="John">
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" value="John@email.com" disabled>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" class="form-control" value="EMP-001" disabled>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="mb-4">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" value="Smith">
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Position</label>
+                    <input type="text" class="form-control" value="UI/UX Designer" disabled>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Department</label>
+                    <input type="text" class="form-control" value="IT" disabled>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <button type="button" class="btn btn-primary">Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end row -->
+
+<!-- Change Password -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title mb-4">Change Password</h4>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label for="inputPassword1" class="form-label">Current Password</label>
+              <input type="password" class="form-control" id="inputPassword1" placeholder="Enter current password">
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label for="inputPassword2" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="inputPassword2" placeholder="Enter new password">
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label for="inputPassword3" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="inputPassword3" placeholder="Enter confirm password">
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="mt-4">
+              <button type="button" class="btn btn-primary">Change Password</button>
+            </div> <!-- end col -->
+          </div>
+        </div> <!-- end row -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end row -->
