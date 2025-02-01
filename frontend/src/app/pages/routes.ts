@@ -10,6 +10,7 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {LogoutComponent} from './auth/logout/logout.component';
 import {RoomComponent} from './booking-room/room/room.component';
 import {EditBookingComponent} from './my-booking/edit-booking/edit-booking.component';
+import {ContactUsComponent} from './contact-us/contact-us.component';
 
 const Routing: Routes = [
   {
@@ -55,8 +56,8 @@ const Routing: Routes = [
     ]
   },
   {
-    path: 'logout',
-    component: LogoutComponent,
+    path: 'contact-us',
+    component: ContactUsComponent,
   }
 ];
 export {Routing}

@@ -1,0 +1,123 @@
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="Contact Us" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+<!--  -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="text-center">
+              <h4 class="mb-4">ติดต่อเรา</h4>
+              <p class="text-muted mb-4">หากคุณมีคำถามหรือข้อสงสัยใดๆ กรุณาติดต่อเรา</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="text-center">
+              <div class="mt-4">
+                <div class="contact-icon">
+                  <i class="ri-mail-line"></i>
+                </div>
+                <div class="mt-3">
+                  <h5>อีเมล</h5>
+                  <p class="text-muted">
+                    <a href="mailto:{{email}}" class="text-muted">{{ email }}</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="text-center">
+              <div class="mt-4">
+                <div class="contact-icon">
+                  <i class="ri-phone-line"></i>
+                </div>
+                <div class="mt-3">
+                  <h5>โทรศัพท์</h5>
+                  <p class="text-muted">
+                    <a href="tel:{{phone}}" class="text-muted">{{ phone }}</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="text-center">
+              <div class="mt-4">
+                <div class="contact-icon">
+                  <i class="ri-map-pin-line"></i>
+                </div>
+                <div class="mt-3">
+                  <h5>ที่อยู่</h5>
+                  <p class="text-muted">{{ address }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end row -->
+
+<!-- Form contact -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="text-center">
+              <h4 class="mb-4">ส่งข้อความถึงเรา</h4>
+              <p class="text-muted mb-4">กรุณากรอกข้อมูลของคุณเพื่อส่งข้อความถึงเรา</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <form [formGroup]="contactForm" (ngSubmit)="submitForm()">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">ชื่อ</label>
+                    <input type="text" class="form-control" id="name" placeholder="ชื่อ" value="{{ userInfo.user.name }}" disabled>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="mb-3">
+                    <label for="email" class="form-label">อีเมล</label>
+                    <input type="email" class="form-control" id="email" placeholder="อีเมล" value="{{userInfo.user.email}}" disabled>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="mb-3">
+                    <label for="subject" class="form-label">หัวข้อ</label>
+                    <input type="text" class="form-control" id="subject" formControlName="subject" placeholder="หัวข้อ" required>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="mb-3">
+                    <label for="message" class="form-label">ข้อความ</label>
+                    <textarea class="form-control" id="message" formControlName="message" rows="3" placeholder="ข้อความ" required></textarea>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">ส่งข้อความ</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end row -->
+

@@ -15,12 +15,12 @@ export const MENU: MenuItem[] = [
   {
     id: 3,
     label: 'MENUITEMS.BOOKING-ROOM.TEXT',
-    icon: 'ri-dashboard-2-line',
+    icon: 'ri-bookmark-line',
     link: '/booking-room'
   },{
     id: 4,
     label: 'MENUITEMS.MY-BOOKING.TEXT',
-    icon: 'ri-dashboard-2-line',
+    icon: 'ri-bookmark-fill',
     link: '/my-booking'
   },
   {
@@ -53,5 +53,11 @@ export const MENU: MenuItem[] = [
         parentId: 6
       }
     ]
+  },
+  {
+    id: 10,
+    label: 'MENUITEMS.CONTACT-US.TEXT',
+    icon: 'ri-contacts-line',
+    link: '/contact-us'
   }
 ];
