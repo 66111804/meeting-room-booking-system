@@ -16,6 +16,7 @@ import slotTimeRoutes from './routes/slotTimeRoutes';
 // ----------------- Auto call routes -----------------
 // create time slots for booking room
 import * as slots from "./controllers/slotTimeController";
+import userRouter from "./routes/userRouter";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -63,7 +64,8 @@ app.get("/api", (req, res) => {
 
 // ----------------- Routes -----------------
 app.use('/api/auth',auth);
-app.use('/api/admin',administrator);
+app.use('/api/user-profile',authMiddleware , userRouter);
+app.use('/api/admin',authMiddleware,administrator);
 app.use('/api/booking-room',authMiddleware,bookingRoom);
 app.use('/api/slot-time', slotTimeRoutes);
 
@@ -79,12 +81,9 @@ try {
               headers: headers}
         ).then(
           res => res.json()
-        ).then(
-          data => console.log('create slots time:')
-        ).catch(
+        ).then().catch(
           error => console.error(error)
         )
-
     }, 2000);
 }catch (error) {
     console.error(error);

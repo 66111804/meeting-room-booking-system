@@ -46,7 +46,10 @@ export class LoginComponent implements OnInit,AfterViewInit
     try {
       this.service.isAuthenticated().subscribe(
         {
-          next: (response) => {
+          next: (res) => {
+            this.store.dispatch(loginSuccess({ user: res.user }));
+            this.tokenStorageService.saveToken(res.token);
+            this.tokenStorageService.saveUser(res);
             this.router.navigateByUrl('app').then();
           },
           error: (error) => {
@@ -81,9 +84,9 @@ export class LoginComponent implements OnInit,AfterViewInit
       .subscribe({
         next: (res:LogInResponse) => {
           this.store.dispatch(loginSuccess({ user: res.user }));
-          // this.currentUserSubject.next(res);
           this.tokenStorageService.saveToken(res.token);
           this.tokenStorageService.saveUser(res);
+          // this.currentUserSubject.next(res);
           Swal.fire(
             {
               icon: 'success',

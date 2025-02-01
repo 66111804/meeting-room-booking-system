@@ -200,6 +200,7 @@ export const updateUser = async (req: any, res: any) => {
     const { id } = req.params;
     let { name, lastName, employeeId, email, password, position, department, status, roles } = req.body;
 
+    // noinspection DuplicatedCode
     if(!name) return res.status(400).json({ message: "Name is required" });
     if(!lastName) return res.status(400).json({ message: "Last name is required" });
     if(!employeeId) return res.status(400).json({ message: "Employee ID is required" });

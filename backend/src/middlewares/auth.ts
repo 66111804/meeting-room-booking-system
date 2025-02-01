@@ -12,6 +12,7 @@ const authMiddleware = (req: any, res: any, next: any) => {
 
     try {
         req.user = jwt.verify(token, JWT_SECRET);
+        req.token = token;
     } catch (error) {
         return res.status(401).json({ message: "Access denied. Invalid token" });
     }

@@ -90,7 +90,7 @@ export class AuthenticationService {
      */
     isAuthenticated() {
       const headerToken = { 'Authorization': `Bearer ` + this.tokenStorageService.getToken() };
-      return this.http.get(GlobalComponent.AUTH_API + '/is-login');
+      return this.http.get<LogInResponse>(GlobalComponent.AUTH_API + '/is-login');
     }
 
     /**

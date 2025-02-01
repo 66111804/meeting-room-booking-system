@@ -130,3 +130,50 @@ export const logout = async (req: any, res: any) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const isLogin = async (req: any, res: any) =>
+{
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id
+      }
+    });
+
+    const token = req.token;
+    if (!token) {
+      return res.status(401).json({ message: "Access denied. No token provided." });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // update token
+    const newToken = jwt.sign({
+      id: user.id,
+      employeeId: user.employeeId,
+      email: user.email,
+      name: user.name,
+      lastName: user.lastName,
+      dateEmployment: user.dateEmployment,
+      avatar: user.avatar
+    }, JWT_SECRET, { expiresIn: "24h", algorithm: "HS256" });
+
+    return res.status(200).json({ message: "OK" , user: {
+      id: user.id,
+      employeeId: user.employeeId,
+      email: user.email,
+      name: user.name,
+      lastName: user.lastName,
+      avatar: user.avatar,
+      position: user.position,
+      department: user.department,
+      dateEmployment: user.dateEmployment
+      }, token: newToken });
+
+  }catch (e) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}

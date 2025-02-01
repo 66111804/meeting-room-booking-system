@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {LogInResponse} from './auth.service';
 
 const TOKEN_KEY = "auth-token";
 const USER_KEY = "currentUser";
@@ -28,11 +29,20 @@ export class TokenStorageService {
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  public getUser(): any {
+  public getUser(): LogInResponse {
     const user = window.sessionStorage.getItem(USER_KEY);
     if(user){
       return JSON.parse(user);
     }
-    return {};
+    return {} as LogInResponse;
+  }
+
+  /**
+   * Update user from backend
+   * @param user
+   */
+  public updateUser(user: LogInResponse): void {
+    window.sessionStorage.removeItem(USER_KEY);
+    window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 }

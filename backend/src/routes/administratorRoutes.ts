@@ -62,7 +62,7 @@ router.post('/meeting-room-create', upload.single('image') ,async (req, res) => 
     await createMeetingRoom(req, res);
 });
 
-router.put('/meeting-room/:id/update',upload.single('image'), async (req, res) => {
+router.put('/meeting-room/:id/update', upload.single('image'), async (req, res) => {
     await updateMeetingRoom(req, res);
 });
 

@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import {BreadcrumbsComponent} from '../../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -143,9 +145,9 @@ export class UserComponent implements OnInit {
       return;
     }
     if(this.userEdit !== null){
+      // Update user
       this.userProfileService.updateUser(this.userForm.value, this.userEdit.id).subscribe({
         next: (res) => {
-          console.log(res);
           modal.close('Close click');
           const triggerButton = document.getElementById('triggerButton');
           if (triggerButton) {
@@ -155,7 +157,7 @@ export class UserComponent implements OnInit {
           this.fetchUsers();
         },
         error: (err) => {
-          console.log(err);
+          console.error(err);
         }
       });
 

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import {GlobalComponent} from '../../global-component';
 import {TokenStorageService} from './token-storage.service';
 import {ValidateResponse} from '../../shared/utils/date-utils';
+import {LogInResponse} from './auth.service';
 export interface UserList {
   users:      User[];
   total:      number;
@@ -48,7 +49,7 @@ export class UserProfileService {
     }
 
     /**
-     * Create or Update User
+     * Create or Update User (admin)
      * @param dataForm
      * @param id
      */
@@ -77,7 +78,7 @@ export class UserProfileService {
     }
 
     /**
-     * Get User by Id
+     * Get User by ID
      * @param id
      */
     getUserById(id: number) {
@@ -90,5 +91,21 @@ export class UserProfileService {
      */
     deleteUser(id: number) {
       return this.http.delete(`${GlobalComponent.API_URL}/admin/user/${id}/delete`);
+    }
+
+    // ------------------ User Profile ------------------
+    /**
+     * update user profile
+     * @param dataForm
+     *
+     */
+    updateProfile(dataForm: any) {
+      let formData = new FormData();
+      formData.append('name', dataForm.name);
+      formData.append('lastName', dataForm.lastName);
+      if (this.imageFile !== null) {
+        formData.append('avatar', this.imageFile);
+      }
+      return this.http.post<LogInResponse>(`${GlobalComponent.API_URL}/user-profile/update`, formData);
     }
 }

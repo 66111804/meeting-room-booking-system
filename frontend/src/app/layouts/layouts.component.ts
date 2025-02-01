@@ -18,6 +18,8 @@ import {FooterComponent} from './footer/footer.component';
 import {TwoColumnSidebarComponent} from './two-column-sidebar/two-column-sidebar.component';
 import {LanguageService} from '../core/services/language.service';
 import {AuthenticationService} from '../core/services/auth.service';
+import {loginSuccess} from '../store/Authentication/authentication.actions';
+import {TokenStorageService} from '../core/services/token-storage.service';
 
 
 @Component({
@@ -46,7 +48,12 @@ export class LayoutsComponent implements OnInit
 {
   layoutType!: string;
 
-  constructor(private store: Store<RootReducerState>, private service: AuthenticationService, private router: Router) { }
+  constructor(
+    private store: Store<RootReducerState>,
+    private service: AuthenticationService, private router: Router,
+    private tokenStorageService: TokenStorageService
+
+  ) { }
 
   ngOnInit(): void {
     this.store.select('layout').subscribe((data) => {
@@ -66,8 +73,10 @@ export class LayoutsComponent implements OnInit
 
     this.service.isAuthenticated().subscribe(
       {
-        next: (response) => {
-          // console.log(response);
+        next: (res) => {
+          this.store.dispatch(loginSuccess({ user: res.user }));
+          this.tokenStorageService.saveToken(res.token);
+          this.tokenStorageService.saveUser(res);
         },
         error: (error) => {
           // console.log(error);

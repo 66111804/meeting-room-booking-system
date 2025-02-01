@@ -3,7 +3,7 @@ import {DOCUMENT, NgClass} from '@angular/common';
 import { EventService } from '../../core/services/event.service';
 //Logout
 import { environment } from '../../../environments/environment';
-import { AuthenticationService } from '../../core/services/auth.service';
+import {AuthenticationService, LogInResponse} from '../../core/services/auth.service';
 import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import {Router, RouterLink} from '@angular/router';
 import { TokenStorageService } from '../../core/services/token-storage.service';
@@ -26,6 +26,7 @@ import {
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {SimplebarAngularModule} from 'simplebar-angular';
 import {FormsModule} from '@angular/forms';
+import {GlobalComponent} from '../../global-component';
 
 
 
@@ -60,23 +61,25 @@ export class TopbarComponent implements OnInit  {
   valueset: any;
   countryName: any;
   cookieValue: any;
-  userData: any;
+  userInfo: LogInResponse;
   total = 0;
   cart_length: any = 0;
   totalNotify: number = 0;
-  newNotify: number = 0;
-  readNotify: number = 0;
   isDropdownOpen = false;
   @ViewChild('removenotification') removenotification !: TemplateRef<any>;
   notifyId: any;
 
+  imageSrc: any;
+
 
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
               public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
-              private router: Router, private TokenStorageService: TokenStorageService) { }
+              private router: Router, private TokenStorageService: TokenStorageService) {
+    this.userInfo = this.TokenStorageService.getUser();
+    this.imageSrc = this.userInfo.user.avatar ? `${GlobalComponent.SERVE_URL}/files/uploads/${this.userInfo.user.avatar}` : 'assets/images/users/avatar-1.jpg';
+  }
 
   ngOnInit() {
-    this.userData = this.TokenStorageService.getUser();
     this.element = document.documentElement;
 
     // Cookies wise Language set
@@ -183,13 +186,6 @@ export class TopbarComponent implements OnInit  {
   listLang = [
     { text: 'English', flag: 'assets/images/flags/us.svg', lang: 'en' },
     { text: 'Thai', flag: 'assets/images/flags/th.svg', lang: 'th' },
-    // { text: 'Española', flag: 'assets/images/flags/spain.svg', lang: 'es' },
-    // { text: 'Deutsche', flag: 'assets/images/flags/germany.svg', lang: 'de' 1},
-    // { text: 'Italiana', flag: 'assets/images/flags/italy.svg', lang: 'it' },
-    // { text: 'русский', flag: 'assets/images/flags/russia.svg', lang: 'ru' },
-    // { text: '中国人', flag: 'assets/images/flags/china.svg', lang: 'ch' },
-    // { text: 'français', flag: 'assets/images/flags/french.svg', lang: 'fr' },
-    // { text: 'Arabic', flag: 'assets/images/flags/ar.svg', lang: 'ar' },
   ];
 
   /***
@@ -202,12 +198,18 @@ export class TopbarComponent implements OnInit  {
     this.languageService.setLanguage(lang);
   }
 
+  confirmLogout(model:any) {
+    this.modalService.open(model, { centered: true });
+  }
   /**
    * Logout the user
    */
   logout() {
     this.authService.logout();
     this.router.navigateByUrl('login');
+
+    this.TokenStorageService.sigOut();
+    this.modalService.dismissAll();
   }
 
   windowScroll() {
