@@ -108,4 +108,16 @@ export class UserProfileService {
       }
       return this.http.post<LogInResponse>(`${GlobalComponent.API_URL}/user-profile/update`, formData);
     }
+
+    /**
+     * update Password
+     * @param dataForm
+     */
+    updatePassword(dataForm: any) {
+      const body = {
+        password: dataForm.password,
+        newPassword: dataForm.newPassword
+      };
+      return this.http.post(`${GlobalComponent.API_URL}/user-profile/update-password`, body);
+    }
 }

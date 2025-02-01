@@ -96,6 +96,7 @@
                                 | translate}}</span>}
                             </a>
                           }
+
                         </li>
                       }
                     </ul>
@@ -111,6 +112,14 @@
               </li>
             }
           }
+
+          <!-- logout -->
+          <li class="nav-item">
+            <a href="javascript:void(0);" class="nav-link menu-link" (click)="confirmLogout(logoutModal)">
+              <i class="ri-logout-box-line icon nav-icon"></i>
+              <span class=""> {{ 'MENUITEMS.LOGOUT.TEXT' | translate }} </span>
+            </a>
+          </li>
         </ul>
       </ngx-simplebar>
     </div>
@@ -122,3 +131,20 @@
 
 <!-- Vertical Overlay-->
 <div class="vertical-overlay" (click)="SidebarHide()"></div>
+
+<!-- Logout Modal -->
+<ng-template #logoutModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Logout</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p>คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.dismiss('Cross click')">ยกเลิก</button>
+      <button type="button" class="btn btn-primary" (click)="logout()">ออกจากระบบ</button>
+    </div>
+  </div>
+</ng-template>

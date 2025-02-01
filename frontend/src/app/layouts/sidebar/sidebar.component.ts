@@ -7,9 +7,10 @@ import { environment } from '../../../environments/environment';
 import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
-import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapse, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SimplebarAngularModule} from 'simplebar-angular';
 import {findActiveMenuItem, isRouteMatching} from '../../shared/utils/sidebar';
+import {AuthenticationService} from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -34,7 +35,10 @@ export class SidebarComponent implements OnInit {
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(private router: Router,
+              public translate: TranslateService,
+              private modalService: NgbModal,
+              private authService: AuthenticationService) {
     translate.setDefaultLang('en');
   }
 
@@ -222,6 +226,17 @@ export class SidebarComponent implements OnInit {
    */
   SidebarHide() {
     document.body.classList.remove('vertical-sidebar-enable');
+  }
+
+  confirmLogout(modal: any) {
+    this.modalService.open(modal, { centered: true });
+  }
+
+  logout(){
+    this.modalService.dismissAll();
+    this.authService.logout();
+
+    this.router.navigate(['/login']).then();
   }
 }
 // Compare this snippet from src/app/layouts/sidebar/sidebar.component.html:

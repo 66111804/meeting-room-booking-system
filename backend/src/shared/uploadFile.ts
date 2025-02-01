@@ -9,10 +9,14 @@ export const storage = multer.diskStorage({
   },
 
   filename: function (req, file, cb) {
-    const ext = file.originalname.split('.').pop();
-    const uuid = Math.random().toString(36).substring(2, 15);
-    const originalName = file.originalname.split('.').slice(0, -1).join('.').trim().replace(/\s+/g, "");
-    cb(null, `${originalName}-${Date.now()}-${uuid}.${ext}`);
+    try {
+      const ext = file.originalname.split('.').pop();
+      const uuid = Math.random().toString(36).substring(2, 15);
+      const originalName = file.originalname.split('.').slice(0, -1).join('.').trim().replace(/\s+/g, "");
+      cb(null, `${originalName}-${Date.now()}-${uuid}.${ext}`);
+    } catch (error:any) {
+      cb(new Error('Error processing filename: ' + error.message), '');
+    }
   }
 });
 
