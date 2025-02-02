@@ -65,7 +65,7 @@ export class BookingRoomComponent implements OnInit
     title: '',
     description: ''
   }
-
+  isSelectMultipleRoom: boolean = false;
   searchSubject: Subject<string> = new Subject<string>();
   protected readonly GlobalComponent = GlobalComponent;
   constructor(private roomMeetingService: RoomMeetingService,
@@ -123,7 +123,6 @@ export class BookingRoomComponent implements OnInit
 
     // Calculate the initial total hours
     // this.calculateTotalHours();
-
 
     this.searchSubject.pipe(
       debounceTime(500),

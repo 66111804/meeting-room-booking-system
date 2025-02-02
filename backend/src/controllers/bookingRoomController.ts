@@ -9,15 +9,51 @@ import {
   validateBookingRoom
 } from "../service/bookingRoomService";
 import { uploadDir } from "../shared/uploadFile";
+import dayjs from "dayjs";
+import { startOfDay } from "date-fns";
 const prisma = new PrismaClient();
+
+const isTimeOverlap = (existingBooking: any, searchTimeStart: string, searchTimeEnd: string) => {
+
+  const bookingStart = dayjs(existingBooking.startTime).format('HH:mm');
+  const bookingEnd = dayjs(existingBooking.endTime).format('HH:mm');
+
+  const [searchStartHour, searchStartMin] = searchTimeStart.split(':').map(Number);
+  const [searchEndHour, searchEndMin] = searchTimeEnd.split(':').map(Number);
+  const [bookingStartHour, bookingStartMin] = bookingStart.split(':').map(Number);
+  const [bookingEndHour, bookingEndMin] = bookingEnd.split(':').map(Number);
+
+  const searchStartMinutes = searchStartHour * 60 + searchStartMin;
+  const searchEndMinutes = searchEndHour * 60 + searchEndMin;
+  const bookingStartMinutes = bookingStartHour * 60 + bookingStartMin;
+  const bookingEndMinutes = bookingEndHour * 60 + bookingEndMin;
+
+  return !(searchEndMinutes <= bookingStartMinutes || searchStartMinutes >= bookingEndMinutes);
+};
 
 export const meetingRoomList = async (req: any, res: any) => {
   try {
-    let { page, limit, search } = req.query;
+    // noinspection DuplicatedCode
+    let { page, limit, search ,date , timeStart , timeEnd} = req.query;
     const { id } = req.params;
     // const token = req.headers.authorization.split(" ")[1];
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
+    date = date || dayjs().format("YYYY-MM-DD"); // default today
+
+    const selectedDate = dayjs(date);
+    const startOfDay = selectedDate.startOf('day');
+
+    const searchStartTime = startOfDay
+      .add(parseInt("8"), 'hour')
+      .add(parseInt("00"), 'minute')
+      .toDate();
+
+    const searchEndTime = startOfDay
+      .add(parseInt("18"), 'hour')
+      .add(parseInt("00"), 'minute')
+      .toDate();
+
     let where = {};
     if (search) {
       where = {
@@ -34,6 +70,7 @@ export const meetingRoomList = async (req: any, res: any) => {
         id: parseInt(id),
       }
     }
+
     // add where status = active
     where = {
       ...where,
@@ -42,24 +79,85 @@ export const meetingRoomList = async (req: any, res: any) => {
 
     const meetingRoomsList = await prisma.meetingRoom.findMany({
       where,
-      include:{
-        roomHasFeatures:{
-          include:{
+      include: {
+        roomHasFeatures: {
+          include: {
             feature: true
-          },
+          }
         },
+        meetingRoomBooking: {
+          where: {
+            AND: [
+              {
+                status: 'confirmed'
+              },{
+                startTime: {
+                  gte: selectedDate.toDate(),
+                  lt: selectedDate.add(1, 'day').toDate()
+                }
+              }
+            ]
+          },
+          include: {
+            User: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        }
       },
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
-        updatedAt: "desc",
-      },
+        updatedAt: 'desc'
+      }
+    });
+
+    const formattedRooms = meetingRoomsList.map(room => {
+      const hasOverlap = room.meetingRoomBooking.some(booking =>
+        isTimeOverlap(booking, timeStart, timeEnd)
+      );
+
+      const isAvailable = !hasOverlap; // if there is no overlap, then it's available
+
+      const bookings = room.meetingRoomBooking.map(booking => ({
+        id: booking.id,
+        title: booking.title,
+        startTime: dayjs(booking.startTime).format('HH:mm'),
+        endTime: dayjs(booking.endTime).format('HH:mm'),
+        bookedBy: booking.User.name
+      }));
+
+      return {
+        id: room.id,
+        name: room.name,
+        description: room.description,
+        capacity: room.capacity,
+        imageUrl: room.imageUrl,
+        status: room.status,
+        isAvailable,
+        bookings,
+        roomHasFeatures: room.roomHasFeatures.map(f => ({
+          id: f.feature.id,
+          name: f.feature.name
+        }))
+      };
     });
 
     const total = await prisma.meetingRoom.count({ where });
     const totalPages = Math.ceil(total / limit);
+    return res.status(200).json(
+      {
+        meetingRooms:formattedRooms,
+        total,
+        totalPages,
+        current: page ,
+        date: date
+      });
 
-    return res.status(200).json({ meetingRooms:meetingRoomsList, total, totalPages, current: page });
   } catch (error:any) {
     console.error(error.message);
     return res.status(500).json({ message: error.message });

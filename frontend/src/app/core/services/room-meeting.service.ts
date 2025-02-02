@@ -45,9 +45,19 @@ export interface MeetingRoom {
   capacity?: number
   imageUrl?: string
   status: string
+  isAvailable: boolean
   createdAt: string
   updatedAt: string
+  bookings: Booking[]
   roomHasFeatures: RoomHasFeature[]
+}
+
+export interface Booking {
+  id: number
+  title: string
+  startTime: string
+  endTime: string
+  bookedBy: string
 }
 
 export interface RoomHasFeature {

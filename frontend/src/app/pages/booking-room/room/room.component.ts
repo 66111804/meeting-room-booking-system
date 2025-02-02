@@ -61,7 +61,9 @@ export class RoomComponent implements OnInit, AfterViewInit
     description: '',
     status: '',
     createdAt: '',
+    isAvailable: true,
     updatedAt: '',
+    bookings: [],
     roomHasFeatures: []
   }
 
