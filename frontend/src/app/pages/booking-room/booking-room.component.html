@@ -75,13 +75,15 @@
       </div>
       <div>
         <div class="d-flex align-items-center">
-          <!-- จองห้อง -->
-          <button class="btn btn-primary me-3" >
-            <i class="ri-add-line me-2"></i> จองห้อง
-          </button>
+          @if(isSelectMultipleRoom){
+            <!-- จองห้อง -->
+            <button class="btn btn-primary btn-sm me-3">
+              <i class="ri-add-line me-2"></i> จองห้อง
+            </button>
+          }
           <!-- เลือกหลายห้อง -->
           <div class="form-check form-switch form-check-inline">
-            <input class="form-check-input" type="checkbox" id="selectMultipleRoom">
+            <input class="form-check-input" type="checkbox" id="selectMultipleRoom" (change)="onSelectMultipleRoomChange($event)">
             <label class="form-check label" for="selectMultipleRoom">เลือกหลายห้อง</label>
           </div>
       </div>
@@ -105,9 +107,21 @@
             </p>
             <div>
               @if(room.isAvailable){
+                <!-- ว่าง -->
+                @if(isSelectMultipleRoom){
+                  <button class="btn {{ isRoomSelected(room) ?'btn-warning' : 'btn-success' }} m-1" (click)="onSelectMultipleRoomSelected(room)">
+                    @if(isRoomSelected(room)){
+                      <i class="ri-close-line"></i> ยกเลิก <i class="ri-close-line"></i>
+                    } @else {
+                      <i class="ri-pencil-line"></i> เลือก
+                    }
+                  </button>
+                } @else {
                 <a class="btn btn-success m-1" href="javascript:void(0);" (click)="openBookingRoomModal(room)">
                     <i class="ri-arrow-right-double-line"></i> เลือก <i class="ri-arrow-left-double-line"></i>
-                  </a>
+                </a>
+                }
+
               } @else {
                 <!-- ถูกจองแล้ว -->
                 <a class="btn btn-danger m-1" href="javascript:void(0);" disabled>

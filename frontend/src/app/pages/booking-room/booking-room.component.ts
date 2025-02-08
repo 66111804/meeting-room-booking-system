@@ -66,6 +66,8 @@ export class BookingRoomComponent implements OnInit
     description: ''
   }
   isSelectMultipleRoom: boolean = false;
+  selectedMultipleRooms: MeetingRoom[] = [];
+
   searchSubject: Subject<string> = new Subject<string>();
   protected readonly GlobalComponent = GlobalComponent;
   constructor(private roomMeetingService: RoomMeetingService,
@@ -120,9 +122,6 @@ export class BookingRoomComponent implements OnInit
 
     this.timeStartSlotSelectList = this.timeSlots.slice(0, 1);
     this.timeEndSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
-
-    // Calculate the initial total hours
-    // this.calculateTotalHours();
 
     this.searchSubject.pipe(
       debounceTime(500),
@@ -263,34 +262,6 @@ export class BookingRoomComponent implements OnInit
     });
   }
 
-
-  /*
-  openBookingModal(content: any) {
-    const startDateTime = new Date(this.dateSelected);
-    // set the time
-    const startTime = this.timeStartSlotSelected.split(':');
-    startDateTime.setHours(parseInt(startTime[0], 10));
-    //  Sat Dec 21 2024 08:33:30 GMT+0700 (Indochina Time) to  Sat Dec 21 2024 08:30:00 GMT+0700 (Indochina Time)
-    startDateTime.setMinutes(parseInt(startTime[1], 10));
-    startDateTime.setSeconds(0);
-
-
-    const endDateTime = new Date(this.dateSelected);
-
-    const endTime = this.timeEndSlotSelected.split(':');
-    endDateTime.setHours(parseInt(endTime[0], 10));
-    endDateTime.setMinutes(parseInt(endTime[1], 10));
-    endDateTime.setSeconds(0);
-
-    console.log('Start Date:', startDateTime);
-    console.log('End Date:', endDateTime);
-
-    this.bookingRoomForm.startTime =  startDateTime.toISOString();
-    this.bookingRoomForm.endTime = endDateTime.toISOString();
-
-    this.modalService.open(content, { size: 'lg', centered: true });
-  }
-  */
   onSubmit() {
     console.log(this.bookingRoomForm);
     if(this.bookingRoomForm.meetingRoomId === 0){
@@ -374,5 +345,21 @@ export class BookingRoomComponent implements OnInit
 
   onSelectTimeEndChange($event: any) {
     this.onTimeEndSlotSelectChange($event.target.value);
+  }
+
+  onSelectMultipleRoomChange($event: any) {
+    this.isSelectMultipleRoom = $event.target.checked;
+  }
+
+  onSelectMultipleRoomSelected(room: MeetingRoom) {
+    if (this.selectedMultipleRooms.includes(room)) {
+      this.selectedMultipleRooms = this.selectedMultipleRooms.filter((selectedRoom) => selectedRoom !== room);
+    } else {
+      this.selectedMultipleRooms.push(room);
+    }
+  }
+
+  isRoomSelected(room: MeetingRoom):boolean {
+    return this.selectedMultipleRooms.includes(room); // true if room is selected else false
   }
 }

@@ -320,7 +320,19 @@ export const myBooking = async (userId: number, page: number, limit: number, sea
   // ({ meetingRooms:meetingRoomsList, total, totalPages, current: page });
   const myBooking = await prisma.meetingRoomBooking.findMany({
     where:{
-      userId
+      userId,
+      OR:[
+        {
+          title: {
+            contains: searchTerm,
+          }
+        },
+        {
+          description: {
+            contains: searchTerm,
+          }
+        }
+      ]
     },
     include:{
       MeetingRoom: true
@@ -334,7 +346,19 @@ export const myBooking = async (userId: number, page: number, limit: number, sea
 
   const total = await prisma.meetingRoomBooking.count({
     where:{
-      userId
+      userId,
+      OR:[
+        {
+          title: {
+            contains: searchTerm,
+          }
+        },
+        {
+          description: {
+            contains: searchTerm,
+          }
+        }
+      ]
     }
   });
 

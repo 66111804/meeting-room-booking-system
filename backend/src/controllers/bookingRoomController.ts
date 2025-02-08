@@ -44,16 +44,6 @@ export const meetingRoomList = async (req: any, res: any) => {
     const selectedDate = dayjs(date);
     const startOfDay = selectedDate.startOf('day');
 
-    const searchStartTime = startOfDay
-      .add(parseInt("8"), 'hour')
-      .add(parseInt("00"), 'minute')
-      .toDate();
-
-    const searchEndTime = startOfDay
-      .add(parseInt("18"), 'hour')
-      .add(parseInt("00"), 'minute')
-      .toDate();
-
     let where = {};
     if (search) {
       where = {
@@ -90,11 +80,20 @@ export const meetingRoomList = async (req: any, res: any) => {
             AND: [
               {
                 status: 'confirmed'
-              },{
-                startTime: {
-                  gte: selectedDate.toDate(),
-                  lt: selectedDate.add(1, 'day').toDate()
-                }
+              },
+              {OR: [
+                  {
+                    startTime: {
+                      gte: startOfDay.toDate(),
+                      lt: startOfDay.add(1, 'day').toDate()
+                    }
+                  },
+                  {
+                    AND: [
+                      { startTime: { lt: startOfDay.toDate() } },
+                      { endTime: { gt: startOfDay.toDate() } }
+                    ]
+                  }]
               }
             ]
           },
@@ -116,10 +115,14 @@ export const meetingRoomList = async (req: any, res: any) => {
       }
     });
 
+    // console.log('Raw query result:', JSON.stringify(meetingRoomsList, null, 2));
+
     const formattedRooms = meetingRoomsList.map(room => {
       const hasOverlap = room.meetingRoomBooking.some(booking =>
         isTimeOverlap(booking, timeStart, timeEnd)
       );
+
+      console.log({hasOverlap});
 
       const isAvailable = !hasOverlap; // if there is no overlap, then it's available
 
@@ -196,34 +199,6 @@ export const getMeetingRoomBooking = async (req: any, res: any) => {
     return res.status(400).json({ message: error.message });
   }
 }
-//
-// export const updateMeetingRoomBooking = async (req: any, res: any) => {
-//   try {
-//     const { id } = req.params;
-//     if(!id){
-//       return res.status(400).json({ message: "Id is required" });
-//     }
-//     const booking = await createOrUpdateBookingRoom(parseInt(id), req.body);
-//     return res.status(200).json(booking);
-//   } catch (error:any) {
-//     console.error(error.message);
-//     return res.status(400).json({ message: error.message });
-//   }
-// };
-
-// export const cancelMeetingRoomBooking = async (req: any, res: any) => {
-//   try {
-//     const { id } = req.params;
-//     if(!id){
-//       return res.status(400).json({ message: "Id is required" });
-//     }
-//     const booking = await cancelBookingRoom(parseInt(id));
-//     return res.status(200).json(booking);
-//   } catch (error:any) {
-//     console.log(error.message);
-//     return res.status(400).json({ message: error.message });
-//   }
-// }
 
 export const IsValidateBookingRoom = async (req: any, res: any) => {
   try {
@@ -240,10 +215,10 @@ export const IsValidateBookingRoom = async (req: any, res: any) => {
 export const getMyBooking = async (req: any, res: any) => {
   try {
     const { userId } = req.user;
-    let { page, limit, search } = req.query;
+    let { page, limit, searchTerm } = req.query;
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
-    const bookings = await myBooking(userId, page, limit, search);
+    const bookings = await myBooking(userId, page, limit, searchTerm);
     return res.status(200).json(bookings);
   } catch (error:any) {
     console.error(error.message);

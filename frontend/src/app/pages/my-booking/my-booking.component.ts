@@ -9,6 +9,7 @@ import {DatePipe} from '@angular/common';
 import {NgbModal, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {ToastrService} from 'ngx-toastr';
 import {RouterLink} from '@angular/router';
+import {debounceTime, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-my-booking',
@@ -50,7 +51,7 @@ export class MyBookingComponent implements OnInit
     title: '',
     description: '',
   };
-
+  searchSubject: Subject<string> = new Subject<string>();
   constructor(private bookingRoomService:BookingRoomService,
               private modalService: NgbModal,
               private toastr: ToastrService
@@ -77,6 +78,13 @@ export class MyBookingComponent implements OnInit
       totalPages: 0,
       current: 0
     }
+
+
+    this.searchSubject.pipe(debounceTime(500))
+      .subscribe((searchTerm) => {
+      this.searchTerm = searchTerm;
+      this.fetchMyBooking();
+    });
   }
 
 
@@ -95,12 +103,8 @@ export class MyBookingComponent implements OnInit
     });
   }
   searchInput() {
-    console.log('searchInput');
+    this.searchSubject.next(this.searchTerm);
   }
-
-  // confirm(content: any) {
-  //   this.modalService.open(content, { centered: true });
-  // }
 
   private getMaxDate(): Date {
     const currentDate = new Date();
@@ -108,9 +112,6 @@ export class MyBookingComponent implements OnInit
     return currentDate;
   }
 
-  onDateSelectChange(event: any) {
-    console.log('onDateSelectChange');
-  }
 
   changePage() {
     this.fetchMyBooking();
