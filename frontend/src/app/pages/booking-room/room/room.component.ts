@@ -960,7 +960,6 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
 
   openBookingRoomForm(isVisible: boolean) {
-
     this.isFormBookingVisible = isVisible;
     if(!this.isEdit){
       this.formBookingData.title = '';
@@ -1028,8 +1027,6 @@ export class RoomComponent implements OnInit, AfterViewInit
 
 
     if(this.isEdit){
-      console.log('edit');
-      console.log(formData);
       this.bookingRoomService.createOrUpdateBookingRoom(formData, this.bookingId).subscribe({
         next: (response) => {
           this.toastr.success('อัพเดทข้อมูลสำเร็จ', 'Success');

@@ -5,7 +5,7 @@ import {DatePipe, NgForOf, SlicePipe} from '@angular/common';
 import {FlatpickrDefaultsInterface, FlatpickrDirective} from 'angularx-flatpickr';
 import {FormsModule} from '@angular/forms';
 import {NgbModal, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, forkJoin, Subject} from 'rxjs';
 import {MeetingRoom, MeetingRoomResponse, RoomMeetingService} from '../../core/services/room-meeting.service';
 import {GlobalComponent} from '../../global-component';
 import {IBookingRoom, ITimeSlot} from './room.module';
@@ -206,8 +206,9 @@ export class BookingRoomComponent implements OnInit
   }
 
   onDateSelectChange(date: any) {
-    // this.roomSelected = undefined;
+    this.dateSelected = date.selectedDates[0];
     this.fetchMeetingRooms();
+
   }
 
 
@@ -263,7 +264,6 @@ export class BookingRoomComponent implements OnInit
   }
 
   onSubmit() {
-    console.log(this.bookingRoomForm);
     if(this.bookingRoomForm.meetingRoomId === 0){
       this.toastr.error('Please select a room');
       return;
@@ -362,4 +362,123 @@ export class BookingRoomComponent implements OnInit
   isRoomSelected(room: MeetingRoom):boolean {
     return this.selectedMultipleRooms.includes(room); // true if room is selected else false
   }
+
+  onBookAlready(room: MeetingRoom) {
+    this.toastr.error('ห้องนี้ถูกจองแล้ว กรุณาเลือกห้องอื่น');
+  }
+
+  openBookingMultipleRoomModal(content: any) {
+    this.bookingRoomForm.meetingRoomId = 0;
+    this.bookingRoomForm.startTime = this.timeStartSlotSelected;
+    this.bookingRoomForm.endTime = this.timeEndSlotSelected;
+    this.bookingRoomForm.title = '';
+    this.bookingRoomForm.description = '';
+    this.modalService.open(content, { centered: true , size: 'lg', scrollable: true});
+  }
+
+  /*
+  onBookingMultipleRoom(){
+    // noinspection DuplicatedCode
+    this.selectedMultipleRooms.forEach((room) => {
+      const bookingRoomForm = {
+        ...this.bookingRoomForm,
+        meetingRoomId: room.id
+      }
+
+      const date = new Date(this.dateSelected); // type: Date
+      date.setHours(0, 0, 0, 0);
+      // this.timeStartSlotSelected = 8:00
+      // this.timeEndSlotSelected = 8:30
+      const [startHours, startMinutes] = this.timeStartSlotSelected.split(':').map(Number);
+      const [endHours, endMinutes] = this.timeEndSlotSelected.split(':').map(Number);
+
+      const startTime = new Date(date);
+      startTime.setHours(startHours, startMinutes, 0, 0);
+
+      const endTime = new Date(date);
+      endTime.setHours(endHours, endMinutes, 0, 0);
+
+      const formData:IBookingRoom = this.bookingRoomForm;
+
+      formData.startTime = startTime.toISOString();
+      formData.endTime = endTime.toISOString();
+      formData.meetingRoomId = room.id;
+
+      console.log('Booking Room:', formData);
+
+      // const response = this.bookingRoomService.createOrUpdateBookingRoom(formData).subscribe();
+
+      this.bookingRoomService.createOrUpdateBookingRoom(formData).subscribe({
+        next: (response) => {
+          console.log('Booking Success:', response);
+        },
+        error: (error) => {
+          console.error('Booking Error:', error);
+        }
+      });
+    },() => {
+      console.log("booking multiple room completed");
+    });
+    console.log("booking multiple room completed ----------");
+
+  // Close the modal
+    this.modalService.dismissAll();
+    this.toastr.success('จองห้องสำเร็จ');
+    // clear selected rooms
+    this.selectedMultipleRooms = [];
+
+  }
+  */
+
+  onBookingMultipleRoom() {
+    // Create an array to store all booking observables
+    const bookingRequests = this.selectedMultipleRooms.map(room => {
+      // noinspection DuplicatedCode
+      const date = new Date(this.dateSelected);
+      date.setHours(0, 0, 0, 0);
+
+      const [startHours, startMinutes] = this.timeStartSlotSelected.split(':').map(Number);
+      const [endHours, endMinutes] = this.timeEndSlotSelected.split(':').map(Number);
+
+      const startTime = new Date(date);
+      startTime.setHours(startHours, startMinutes, 0, 0);
+
+      const endTime = new Date(date);
+      endTime.setHours(endHours, endMinutes, 0, 0);
+
+      const formData: IBookingRoom = {
+        ...this.bookingRoomForm,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        meetingRoomId: room.id
+      };
+
+      return this.bookingRoomService.createOrUpdateBookingRoom(formData);
+    });
+
+    // Wait for all booking requests to complete
+    forkJoin(bookingRequests).subscribe({
+      next: (responses) => {
+        // console.log('All bookings completed successfully:', responses);
+        this.modalService.dismissAll();
+        this.toastr.success('จองห้องสำเร็จ');
+        this.selectedMultipleRooms = [];
+
+        // Reload your data here
+        this.fetchMeetingRooms();
+
+      },
+      error: (error) => {
+        console.error('Error in booking:', error);
+        this.toastr.error('เกิดข้อผิดพลาดในการจองห้อง');
+      },
+      complete: () => {
+        console.log('Booking process completed');
+      }
+    });
+  }
+
+  /**
+   * ---------------
+   */
 }

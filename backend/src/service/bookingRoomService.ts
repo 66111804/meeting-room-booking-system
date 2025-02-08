@@ -174,6 +174,7 @@ export const createOrUpdateBookingRoom = async (data: IBookingRoom , bookingId:n
     });
   }
 
+  console.table({data});
   return prisma.meetingRoomBooking.create({
     data: {
       ...data,
@@ -340,7 +341,7 @@ export const myBooking = async (userId: number, page: number, limit: number, sea
     skip: (page - 1) * limit,
     take: limit,
     orderBy:{
-      updatedAt: 'desc'
+      createdAt: 'desc'
     }
   });
 

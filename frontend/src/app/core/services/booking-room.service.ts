@@ -22,8 +22,10 @@ export class BookingRoomService {
 
   createOrUpdateBookingRoom(data: IBookingRoom,bookingId: number = 0) {
     if (bookingId > 0) {
+      // Update
       return this.http.put(`${GlobalComponent.API_URL}/booking-room/my-booking/${bookingId}/update`, data);
     }
+    // Create
     return this.http.post(`${GlobalComponent.API_URL}/booking-room/create`, data);
   }
 

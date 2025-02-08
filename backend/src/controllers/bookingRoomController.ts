@@ -122,8 +122,6 @@ export const meetingRoomList = async (req: any, res: any) => {
         isTimeOverlap(booking, timeStart, timeEnd)
       );
 
-      console.log({hasOverlap});
-
       const isAvailable = !hasOverlap; // if there is no overlap, then it's available
 
       const bookings = room.meetingRoomBooking.map(booking => ({

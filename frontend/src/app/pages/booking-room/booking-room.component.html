@@ -1,4 +1,5 @@
 <!-- Start Breadcrumbs -->
+<!--suppress CheckImageSize -->
 <app-breadcrumbs title="Booking Room" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 <!-- End Breadcrumbs -->
 
@@ -18,14 +19,14 @@
               <input type="text" class="form-control search" id="searchRoom" placeholder="ค้นหาห้อง..." (input)="searchInput()"  [(ngModel)]="searchTerm">
               <i class="ri-search-line search-icon"></i>
             </div>
-              <label for="searchRoom" class="form-label">ค้นหาห้อง</label>
+              <label for="searchRoom" class="form-label mt-2">ค้นหาห้อง</label>
           </div>
           <div class="col-xxl-3 col-sm-6">
             <div>
               <!-- วันที่ -->
               <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
             </div>
-              <label for="inputDate" class="form-label">วันที่</label>
+              <label for="inputDate" class="form-label mt-2">วันที่</label>
           </div>
           <div class="col-xxl-2 col-sm-6">
             <div>
@@ -75,9 +76,9 @@
       </div>
       <div>
         <div class="d-flex align-items-center">
-          @if(isSelectMultipleRoom){
+          @if(isSelectMultipleRoom && selectedMultipleRooms.length > 0){
             <!-- จองห้อง -->
-            <button class="btn btn-primary btn-sm me-3">
+            <button class="btn btn-primary btn-sm me-3" (click)="openBookingMultipleRoomModal(bookingMultipleRoomModal)">
               <i class="ri-add-line me-2"></i> จองห้อง
             </button>
           }
@@ -97,8 +98,10 @@
           <div class="card card-body text-center">
             <div class="mb-2 h-150 d-flex justify-content-center align-items-center">
               @if (room.imageUrl) {
+                <!--suppress AngularNgOptimizedImage -->
                 <img src="{{ GlobalComponent.SERVE_URL }}/files/uploads/{{ room.imageUrl }}" class="rounded img-hover" alt="lead-image" width="250" (click)="onRoomSelect(room)" >
               } @else {
+                <!--suppress CheckImageSize, AngularNgOptimizedImage -->
                 <img src="assets/images/dummy-image-square.jpg" class="rounded img-hover" alt="lead-image" width="250" (click)="onRoomSelect(room)" >
               }
             </div>
@@ -123,8 +126,8 @@
                 }
 
               } @else {
-                <!-- ถูกจองแล้ว -->
-                <a class="btn btn-danger m-1" href="javascript:void(0);" disabled>
+                <!-- ไม่ว่าง -->
+                <a class="btn btn-danger m-1" href="javascript:void(0);"  (click)="onBookAlready(room)">
                   <i class="ri-close-line"></i> ไม่ว่าง <i class="ri-close-line"></i>
                 </a>
 
@@ -164,66 +167,86 @@
       <!-- End Pagination -->
     </div>
   </div>
-
-
 </div>
 
-
-<ng-template #bookingRoomModal let-bookingModal>
-  <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="addMeetingRoom">
-      <i class="ri-add-line me-2"></i> จองห้องประชุม {{ roomSelected?.name }}
-    </h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="bookingModal.dismiss('Cross click')"></button>
-
-  </div>
-  <div class="modal-body p-4">
-    <form (ngSubmit)="onSubmit()" >
-      <div class="row g-3">
-        <div class="col-lg-12">
-          <div class="mb-3">
-            <label for="inputDate" class="form-label">วันที่</label>
-            <input type="text" class="form-control" id="inputDate" placeholder="วันที่" name="date" value="{{ dateSelected | date: 'dd-MMMM-yyyy' }}" disabled>
+  <!-- BookingMultipleRoomModal -->
+  <ng-template #bookingMultipleRoomModal let-bookingMultipleModal>
+    <div class="modal-header bg-info-subtle p-3">
+      <h5 class="modal-title" id="addMeetingRoom">
+        <i class="ri-add-line me-2"></i> จองห้องประชุม
+      </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="bookingMultipleModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body p-4">
+      <form>
+        <div class="row">
+          <!-- Title and description -->
+          <div class="col-lg-12">
+            <div class="mb-3">
+              <label for="inputTitle" class="form-label">หัวข้อการประชุม</label>
+              <input type="text" class="form-control" id="inputTitle" placeholder="หัวข้อการประชุม" name="title" [(ngModel)]="bookingRoomForm.title" required>
+            </div>
           </div>
-        </div>
-        <!--end col-->
-
-        <div class="col-lg-6">
-          <div class="mb-3">
-            <label for="inputTimeStart" class="form-label">เวลาเริ่ม</label>
-            <input type="text" class="form-control" id="inputTimeStart" placeholder="เวลาเริ่ม" name="timeStart" value="{{ timeStartSlotSelected }}" disabled>
-           </div>
-        </div>
-        <!--end col-->
-
-        <div class="col-lg-6">
-          <div class="mb-3">
-            <label for="inputTimeEnd" class="form-label">เวลาสิ้นสุด</label>
-            <input type="text" class="form-control" id="inputTimeEnd" placeholder="เวลาสิ้นสุด" name="timeEnd" value="{{ timeEndSlotSelected }}" disabled>
+          <!--end col-->
+          <!-- Description -->
+          <div class="col-lg-12">
+            <div class="mb-3">
+              <label for="inputDescription" class="form-label">รายละเอียดการประชุม</label>
+              <textarea class="form-control" id="inputDescription" rows="3" placeholder="รายละเอียดการประชุม" name="description" [(ngModel)]="bookingRoomForm.description" required></textarea>
+            </div>
           </div>
+          <!--end col-->
         </div>
-        <!--end col-->
+        <!--end row-->
 
         <div class="col-lg-12">
-          <div class="mb-3">
-            <label for="inputTitle" class="form-label">หัวข้อการประชุม</label>
-            <input type="text" class="form-control" id="inputTitle" placeholder="หัวข้อการประชุม" name="title" [(ngModel)]="bookingRoomForm.title" required>
-          </div>
+          <hr>
         </div>
-        <!--end col-->
-        <!-- Description -->
-        <div class="col-lg-12">
-          <div class="mb-3">
-            <label for="inputDescription" class="form-label">รายละเอียดการประชุม</label>
-            <textarea class="form-control" id="inputDescription" rows="3" placeholder="รายละเอียดการประชุม" name="description" [(ngModel)]="bookingRoomForm.description" required></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer p-0">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="bookingModal.dismiss('Cross click')">ยกเลิก</button>
-        <button type="submit" class="btn btn-success">บันทึก</button>
-      </div>
-    </form>
-  </div>
+        @for(room of selectedMultipleRooms; track $index){
+          <div class="row g-3">
+            <div class="col-lg-4">
+              <div class="mb-1">
+                <label for="inputRoom" class="form-label">ห้องประชุม</label>
+                <input type="text" class="form-control" id="inputRoom" placeholder="ห้องประชุม" name="room" value="{{ room.name }}" disabled>
+              </div>
+            </div>
+            <!--end col-->
 
-</ng-template>
+            <div class="col-lg-4">
+              <div class="mb-1">
+                <label for="inputDate" class="form-label">วันที่</label>
+                <input type="text" class="form-control" id="inputDate" placeholder="วันที่" name="date" value="{{ dateSelected | date: 'dd-MMMM-yyyy' }}" disabled>
+              </div>
+            </div>
+            <!--end col-->
+
+            <div class="col-lg-2">
+              <div class="mb-1">
+                <label for="inputTimeStart" class="form-label">เวลาเริ่ม</label>
+                <input type="text" class="form-control" id="inputTimeStart" placeholder="เวลาเริ่ม" name="timeStart" value="{{ timeStartSlotSelected }}" disabled>
+              </div>
+            </div>
+
+            <div class="col-lg-2">
+              <div class="mb-1">
+                <label for="inputTimeEnd" class="form-label">เวลาสิ้นสุด</label>
+                <input type="text" class="form-control" id="inputTimeEnd" placeholder="เวลาสิ้นสุด" name="timeEnd" value="{{ timeEndSlotSelected }}" disabled>
+              </div>
+            </div>
+          </div>
+          <!--end col-->
+          <div class="col-lg-12">
+            <hr>
+          </div>
+          <!--end col-->
+        }
+
+        <!-- button -->
+        <div class="modal-footer p-0">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="bookingMultipleModal.dismiss('Cross click')">ยกเลิก</button>
+          <button type="button" class="btn btn-success" (click)="onBookingMultipleRoom()">จองห้อง</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+</div>
