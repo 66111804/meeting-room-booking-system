@@ -994,7 +994,6 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
 
   onSubmitBookingRoom() {
-
     const date = new Date(this.dateSelected); // type: Date
     date.setHours(0, 0, 0, 0);
     // this.timeStartSlotSelected = 8:00

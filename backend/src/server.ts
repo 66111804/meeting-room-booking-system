@@ -17,6 +17,8 @@ import slotTimeRoutes from './routes/slotTimeRoutes';
 // create time slots for booking room
 import * as slots from "./controllers/slotTimeController";
 import userRouter from "./routes/userRouter";
+import { generateDefaultSlotsSafe } from "./controllers/slotTimeController";
+import { generateDefaultPermissionsService } from "./service/rolePermissionService";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -59,7 +61,7 @@ app.get("/", (req:Request, res:Response) => {
 });
 
 app.get("/api", (req, res) => {
-    res.json({ status: "server is running96" });
+    res.json({ status: "server is running" });
 });
 
 // ----------------- Routes -----------------
@@ -75,15 +77,8 @@ const headers = {
 };
 try {
     setTimeout(() => {
-        fetch(`http://localhost:${PORT}/api/slot-time/generate-slots-safe`,
-          {
-              method: "POST",
-              headers: headers}
-        ).then(
-          res => res.json()
-        ).then().catch(
-          error => console.error(error)
-        )
+        generateDefaultSlotsSafe().then().catch();
+        generateDefaultPermissionsService().then().catch((error) => console.error(error));
     }, 2000);
 }catch (error) {
     console.error(error);

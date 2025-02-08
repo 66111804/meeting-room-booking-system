@@ -17,6 +17,12 @@ import {
     updateMeetingRoom, getRoomFeatures
 } from "../controllers/administrator/meetingRoomController";
 import { upload } from "../shared/uploadFile";
+import {
+    createRole,
+    getAllPermissions,
+    getAllRoles,
+    permissionAssign, revokePermission
+} from "../controllers/administrator/rolePermissionController";
 
 const router = Router();
 
@@ -110,6 +116,15 @@ router.get('/feature-validate', async (req, res) => {
 router.get('/feature/:id/validate', async (req, res) => {
     await isValidateFeatureWithId(req, res);
 });
+
+// ----------- Role and Permission ------------
+router.get('/roles', getAllRoles);
+router.post('/role-create', createRole);
+router.post('/role-assign-permission',permissionAssign);
+router.post('/role-revoke-permission',revokePermission);
+
+router.get('/permissions', getAllPermissions);
+
 
 
 export default router;

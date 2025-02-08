@@ -174,7 +174,6 @@ export const createOrUpdateBookingRoom = async (data: IBookingRoom , bookingId:n
     });
   }
 
-  console.table({data});
   return prisma.meetingRoomBooking.create({
     data: {
       ...data,
@@ -239,8 +238,6 @@ export const listBookingRoom = async (meetingRoomId:number,date:string) => {
 
     const indexStart = baseTimeSlots.indexOf(start);
     const indexEnd = baseTimeSlots.indexOf(end);
-
-    console.table({start, end, indexStart, indexEnd});
 
     for(let i = indexStart; i < indexEnd; i++){
       timeSlots[i].available = false;

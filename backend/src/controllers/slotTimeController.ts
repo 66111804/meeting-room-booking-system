@@ -152,7 +152,7 @@ export const generateDefaultSlots = async (req: Request, res: Response) => {
   }
 };
 
-export const generateDefaultSlotsSafe = async (req: Request, res: Response) => {
+export const generateDefaultSlotsSafe = async () => {
   try {
     const startTime = parse("08:00", "HH:mm", new Date());
     const endTime = parse("18:00", "HH:mm", new Date());
@@ -204,30 +204,16 @@ export const generateDefaultSlotsSafe = async (req: Request, res: Response) => {
     });
 
     // ดึงข้อมูล slots ทั้งหมดที่มีในระบบมาแสดง
-    const allSlots = await prisma.slotTime.findMany({
-      orderBy: {
-        startTime: "asc"
-      }
-    });
+    // const allSlots = await prisma.slotTime.findMany({
+    //   orderBy: {
+    //     startTime: "asc"
+    //   }
+    // });
 
-    res.status(201).json({
-      message: "Time slots generated successfully",
-      newSlotsAdded: createdSlots.count,
-      totalSlots: allSlots.length,
-      slots: allSlots.map(slot => ({
-        id: slot.id,
-        startTime: format(slot.startTime, "HH:mm"),
-        endTime: format(slot.endTime, "HH:mm"),
-        isActive: slot.isActive
-      }))
-    });
+    return true;
 
   } catch (error) {
     console.error("Error generating time slots:", error);
-    res.status(500).json({
-      error: "Failed to generate time slots",
-      details: error instanceof Error ? error.message : "Unknown error"
-    });
   }
 };
 

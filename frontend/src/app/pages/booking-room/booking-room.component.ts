@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,} from '@angular/core';
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -455,11 +457,9 @@ export class BookingRoomComponent implements OnInit
 
       return this.bookingRoomService.createOrUpdateBookingRoom(formData);
     });
-
     // Wait for all booking requests to complete
     forkJoin(bookingRequests).subscribe({
       next: (responses) => {
-        // console.log('All bookings completed successfully:', responses);
         this.modalService.dismissAll();
         this.toastr.success('จองห้องสำเร็จ');
         this.selectedMultipleRooms = [];

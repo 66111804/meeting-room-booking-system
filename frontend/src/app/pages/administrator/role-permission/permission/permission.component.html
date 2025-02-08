@@ -1,1 +1,96 @@
-<p>permission works!</p>
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="จัดการสิทธิ์" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row g-3 justify-content-between d-flex">
+          <div class="col-md-4">
+            <div class="search-box">
+              <input type="text" name="searchTerm" class="form-control" placeholder="Search for permission">
+              <i class="ri-search-line search-icon"></i>
+            </div>
+          </div>
+          <div class="col-md-auto ms-auto">
+            <!-- back button -->
+            <button class="btn btn-info add-btn ms-2" (click)="backToRoleList()">
+              <i class="ri-arrow-left-line me-2"></i> ย้อนกลับ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Permission List -->
+<div class="row">
+  <div class="col-xxl-12">
+    <div class="card">
+      <div class="card-header border-0 p-4 pb-0">
+        <div class="justify-content-between d-flex align-items-center m-0">
+          <h4 class=" pb-1 text-decoration-underline">จัดการสิทธิ์ให้บทบาท : {{ role.name }} </h4>
+          <div class="col-md-auto ms-auto">
+            <div class="">
+             <!-- เลือกทั้งหมด -->
+              <button class="btn btn-info add-btn ms-2" (click)="selectAllPermissions()">
+                <i class="ri-add-line me-2"></i> เลือกทั้งหมด
+              </button>
+              <!-- ยกเลิกทั้งหมด -->
+              <button class="btn btn-warning add-btn ms-2" (click)="unselectAllPermissions()">
+                <i class="ri-close-line me-2"></i>
+                ยกเลิกทั้งหมด
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <div>
+          <div class="table-responsive table-card mb-2">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width: 50px;">#</th>
+                  <th>Permission</th>
+                  <th>Last Updated</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+               @for (permission of permissions.data.permissions; track $index){
+                  <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td>{{ permission.name }}</td>
+                    <td>{{ permission.updatedAt }}</td>
+                    <td class="text-center">
+<!--                      <button class="btn btn-warning btn-sm me-2" >-->
+<!--                        <i class="ri-pencil-line"></i>-->
+<!--                      </button>-->
+                      @if(isRoleHasPermission(permission.name) && role.id != 1) {
+                      <button class="btn btn-danger btn-sm" (click)="togglePermission(permission.name, permission.id)">
+                        <!-- Unassign permission -->
+                        <i class="ri-close-line"></i> Unassign
+                      </button>
+                      } @else if (role.id != 1) {
+                      <button class="btn btn-success btn-sm" (click)="togglePermission(permission.name, permission.id)">
+                        <!-- Assign permission -->
+                        <i class="ri-add-line"></i> Assign
+                      </button>
+                      } @else {
+                      <button class="btn btn-warning btn-sm" disabled>
+                        <!-- Cannot assign permission -->
+                        <i class="ri-add-line"></i> Not Allowed
+                      </button>
+                      }
+                    </td>
+                  }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

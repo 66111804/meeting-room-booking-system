@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 
 
 import { MENU } from './menu';
@@ -27,7 +27,8 @@ import {AuthenticationService} from '../../core/services/auth.service';
   styleUrl: './sidebar.component.scss'
 })
 
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, AfterViewInit
+{
 
   menu: any;
   toggle: any = true;
@@ -60,7 +61,7 @@ export class SidebarComponent implements OnInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.initActiveMenu();
-    }, 0);
+    }, 100);
   }
 
   removeActivation(items: any) {
@@ -173,11 +174,11 @@ export class SidebarComponent implements OnInit {
         // }
 
         const itemPath =  environment.production ? x.pathname.replace('/velzon/angular/default', '') : x.pathname;
-
         return isRouteMatching(pathName, itemPath);
-
       });
+
       if (matchingMenuItem) {
+        this.toggleItem(activeItem);
         this.activateParentDropdown(matchingMenuItem);
       }
     }

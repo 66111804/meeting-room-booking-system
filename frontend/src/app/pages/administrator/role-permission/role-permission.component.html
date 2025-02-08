@@ -1,1 +1,132 @@
-<p>role-permission works!</p>
+@if(!roleSelected){
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="จัดการบทบาท" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+
+<!-- Role List -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="search-box">
+              <input type="text" name="searchTerm" class="form-control" placeholder="Search for role" [(ngModel)]="searchTerm" (input)="searchInput()">
+              <i class="ri-search-line search-icon"></i>
+            </div>
+          </div>
+          <div class="col-md-auto ms-auto">
+            <div class="">
+
+              <button class="btn btn-info add-btn ms-2" (click)="openModal(createRole)">
+                <i class="ri-add-line me-2"></i> เพิ่มบทบาท
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end col-->
+</div>
+<!-- Role List -->
+<div class="row">
+  <div class="col-xxl-12">
+    <div class="card">
+      <div class="card-header border-0 p-4 pb-0">
+        <div class="justify-content-between d-flex align-items-center m-0">
+          <h4 class=" pb-1 text-decoration-underline">รายการบทบาท</h4>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <div>
+          <div class="table-responsive table-card mb-2">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width: 50px;">#</th>
+                  <th>Role</th>
+                  <th>
+                    Permissions
+                  </th>
+                  <th>Last Updated</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (role of rolesResponse.data.roles; track $index){
+                <tr>
+                  <td class="text-center">{{ $index + 1 }}</td>
+                  <td>{{ role.name }}</td>
+                  <td>
+                    <!-- For limit 3 permissions after ... -->
+                    @for (permission of role.permissions.slice(0, 3); track $index){
+                      <span class="badge bg-success me-1">{{ permission }}</span>
+                    }
+                    @if(role.permissions.length > 3){
+                      <span class="badge bg-success me-1">...</span>
+                    }
+                  </td>
+                  <td>{{ role.updatedAt | date: 'dd-MMM-yy HH:mm:ss' }}</td>
+
+                  <td class="text-center">
+                    <button class="btn btn-warning btn-sm me-1" (click)="selectRole(role)">
+                      <i class="ri-pencil-line"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm me-1" >
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </td>
+                } @empty {
+                <tr>
+                  <td colspan="5" class="text-center">No data found</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+          <div class="d-flex align-items-center">
+            <span class="me-2">Showing {{ rolesResponse.data.roles.length }} of {{ rolesResponse.data.total }} roles</span>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <ngb-pagination
+              [collectionSize]="rolesResponse.data.total"
+              [pageSize]="rolesResponse.data.limit"
+              [(page)]="page"
+              [maxSize]="5"
+              [rotate]="true"
+              [boundaryLinks]="true"
+              (pageChange)="getRoles($event)"
+            ></ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Create Role -->
+<ng-template #createRole let-createRoleModal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="createRoleModalLabel">Create Role</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="createRoleModal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <label for="roleName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Enter role name" [(ngModel)]="roleName">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="createRoleModal.dismiss()"> Close</button>
+    <button type="button" class="btn btn-primary" (click)="onCreateRole()"> Save</button>
+  </div>
+</ng-template>
+
+} @else {
+<!-- Role Permission -->
+  <app-permission [role]="roleSelected" (roleChange)="roleChange($event)"  (backToRoleListChange)="backToRoleListChange()"></app-permission>
+}

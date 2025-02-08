@@ -46,30 +46,7 @@ import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
 })
 export class MeetingRoomComponent implements OnInit
 {
-  public Editor = ClassicEditor;
   public editorData:string = '';
-  // config + image
-  public editorConfig = {
-    toolbar: {
-      items: [
-        'heading',
-        '|',
-        'bold',
-        'italic',
-        'link',
-        '|',
-        'bulletedList',
-        'numberedList',
-        '|',
-        'insertTable',
-        '|',
-        'undo',
-        'redo'
-      ],
-      shouldNotGroupWhenFull: true
-    }
-  };
-
   breadCrumbItems!: Array<{}>;
   searchTerm: string = '';
   page = 1;
@@ -103,7 +80,7 @@ export class MeetingRoomComponent implements OnInit
               private roomMeetingService:RoomMeetingService
   ) {
     this.breadCrumbItems = [
-      { label: 'Meeting Room' },
+      { label: 'Administrator' },
       { label: 'Meeting Room', active: true },
     ];
     this.isFeatures = false;
