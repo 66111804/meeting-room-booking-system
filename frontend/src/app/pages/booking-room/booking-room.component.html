@@ -97,7 +97,7 @@
       @for (room of meetingRooms.meetingRooms; track $index){
         <div class="col-xxl-3 col-lg-6 col-xl-4">
           <div class="card card-body text-center">
-            <div class="mb-2 h-150 d-flex justify-content-center align-items-center">
+            <div class="mb-2 h-150 d-flex justify-content-center align-items-center overflow-hidden">
               @if (room.imageUrl) {
                 <!--suppress AngularNgOptimizedImage -->
                 <img src="{{ GlobalComponent.SERVE_URL }}/files/uploads/{{ room.imageUrl }}" class="rounded img-hover" alt="lead-image" width="250" (click)="onRoomSelect(room)" >
@@ -180,31 +180,22 @@
     </div>
     <div class="modal-body p-4">
       <form>
-        <div class="row">
-          <!-- Title and description -->
-          <div class="col-lg-12">
-            <div class="mb-3">
-              <label for="inputTitle" class="form-label">หัวข้อการประชุม</label>
-              <input type="text" class="form-control" id="inputTitle" placeholder="หัวข้อการประชุม" name="title" [(ngModel)]="bookingRoomForm.title" required>
-            </div>
-          </div>
-          <!--end col-->
-          <!-- Description -->
-          <div class="col-lg-12">
-            <div class="mb-3">
-              <label for="inputDescription" class="form-label">รายละเอียดการประชุม</label>
-              <textarea class="form-control" id="inputDescription" rows="3" placeholder="รายละเอียดการประชุม" name="description" [(ngModel)]="bookingRoomForm.description" required></textarea>
-            </div>
-          </div>
-          <!--end col-->
-        </div>
-        <!--end row-->
-
-        <div class="col-lg-12">
-          <hr>
-        </div>
         @for(room of selectedMultipleRooms; track $index){
           <div class="row g-3">
+            <div class="col-lg-4">
+              <div class="mb-1">
+                <label for="inputTitle-{{$index}}" class="form-label">หัวข้อการประชุม</label>
+                <input type="text" class="form-control" id="inputTitle-{{$index}}" placeholder="หัวข้อการประชุม" name="title" [(ngModel)]="room.titleBooking" required>
+              </div>
+            </div>
+            <!--end col-->
+            <div class="col-lg-8">
+              <div class="mb-1">
+                <label for="inputDescription-{{$index}}" class="form-label">รายละเอียดการประชุม</label>
+                <textarea class="form-control" id="inputDescription-{{$index}}" rows="1" placeholder="รายละเอียดการประชุม" name="description" [(ngModel)]="room.descriptionBooking" required></textarea>
+              </div>
+            </div>
+            <!--end col-->
             <div class="col-lg-4">
               <div class="mb-1">
                 <label for="inputRoom" class="form-label">ห้องประชุม</label>

@@ -375,6 +375,11 @@ export class BookingRoomComponent implements OnInit
     this.bookingRoomForm.endTime = this.timeEndSlotSelected;
     this.bookingRoomForm.title = '';
     this.bookingRoomForm.description = '';
+    this.selectedMultipleRooms.forEach((room) => {
+      // clear titleBooking and descriptionBooking
+      room.titleBooking = '';
+      room.descriptionBooking = '';
+    });
     this.modalService.open(content, { centered: true , size: 'lg', scrollable: true});
   }
 
@@ -449,7 +454,8 @@ export class BookingRoomComponent implements OnInit
       endTime.setHours(endHours, endMinutes, 0, 0);
 
       const formData: IBookingRoom = {
-        ...this.bookingRoomForm,
+        title: room.titleBooking ?? '-',
+        description: room.descriptionBooking,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         meetingRoomId: room.id

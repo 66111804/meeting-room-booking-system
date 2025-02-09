@@ -66,11 +66,12 @@
                   <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }}</span>
                   } @else
                   {
-                    <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }} 1</span>
+                    <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }}</span>
                   }
                 } @else
                 {
-                  <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }} 2</span>
+                  <!-- ใช้งานแล้ว -->
+                  <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }} <i class="ri-check-line ms-1"></i></span>
                 }
               </td>
               <td>

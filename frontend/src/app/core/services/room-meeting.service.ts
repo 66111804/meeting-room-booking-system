@@ -48,6 +48,8 @@ export interface MeetingRoom {
   isAvailable: boolean
   createdAt: string
   updatedAt: string
+  titleBooking?: string
+  descriptionBooking?: string
   bookings: Booking[]
   roomHasFeatures: RoomHasFeature[]
 }
