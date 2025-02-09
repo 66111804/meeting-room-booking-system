@@ -212,9 +212,34 @@ export const generateDefaultPermissionsService = async () => {
     return prisma.rolePermission.createMany({
       data: rolePermissions,
     });
-  }
+  }else{
+    // since we have all permissions, we can assign all permissions to admin role
+    const permissions = await prisma.permission.findMany();
+    const rolePermissions = permissions.map((perm) => {
+      return {
+        roleId: roleExist.id,
+        permissionId: perm.id,
+      };
+    });
 
-  return permissionToAdd;
+    // Check if permission already assigned to role
+    for (const perm of rolePermissions) {
+      // Check if permission already assigned to role
+      const rolePermissionExist = await prisma.rolePermission.findFirst({
+        where: {
+          roleId: perm.roleId,
+          permissionId: perm.permissionId,
+        },
+      });
+      // Add permission to role if not exist
+      if (!rolePermissionExist) {
+        // Add permission to role
+        await prisma.rolePermission.create({
+          data: perm,
+        });
+      }
+    }
+  }
 };
 
 
