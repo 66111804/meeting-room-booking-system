@@ -5,10 +5,6 @@ import {BackComponent} from './pages/back/back.component';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  },{
     path: 'login',
     component: LoginComponent
   },
@@ -20,5 +16,10 @@ export const routes: Routes = [
     path: '',
     component: LayoutsComponent,
     loadChildren: ()=> import('./pages/routes').then(m => m.Routing)
-  }
+  },
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
 ];

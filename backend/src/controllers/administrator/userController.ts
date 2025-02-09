@@ -2,71 +2,18 @@ import { PrismaClient } from "@prisma/client";
 import { ValidateResponse } from "../../shared/Validate";
 import * as bcrypt from "bcrypt";
 import { uploadDir } from "../../shared/uploadFile";
-import path from "path";
+import {
+  getUserService,
+  getUsersService,
+  revokeRoleUserService,
+  roleAssignUserService
+} from "../../service/administrator/userService";
 
 const prisma = new PrismaClient();
 
-
 export const getUsers = async (req: any, res: any) => {
   try {
-    let { page, limit, search } = req.query;
-    // const token = req.headers.authorization.split(" ")[1];
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 10;
-
-    let where = {};
-    if (search) {
-      where = {
-        OR: [
-          { name: { startsWith: search } },
-          { lastName: { startsWith: search } },
-          { email: { startsWith: search } },
-          { employeeId: { startsWith: search } },
-          { position: { startsWith: search } },
-          { department: { startsWith: search } },
-        ]
-      };
-    }
-
-    const users = await prisma.user.findMany({
-      include: {
-        roles: {
-          include: {
-            Role: {
-              include: {
-                permissions: {
-                  include: {
-                    Permission: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy:{
-        updatedAt:"desc"
-      }
-    });
-
-    const total = await prisma.user.count({ where });
-    const totalPages = Math.ceil(total / limit);
-    const usersWithoutPassword = users.map(({ password, ...rest }) => rest);
-    const formattedUsers = usersWithoutPassword.map((user) => ({
-      ...user,
-      permissions: [
-        ...new Set(
-          user.roles.flatMap((role) =>
-            role.Role.permissions.map((perm) => perm.Permission.name)
-          )
-        ),
-      ],
-    }));
-
-    return res.status(200).json({ users:formattedUsers, total, totalPages,current:page });
+    return getUsersService(req, res);
   } catch (error) {
     console.error("Error fetching users:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -75,48 +22,10 @@ export const getUsers = async (req: any, res: any) => {
 
 export const getUser = async (req: any, res: any) => {
   try {
-    const { id } = req.params;
-    const user = await prisma.user.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-      include: {
-        roles: {
-          include: {
-            Role: {
-              include: {
-                permissions: {
-                  include: {
-                    Permission: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const userWithoutPassword = { ...user, password: undefined };
-    const formattedUser = {
-      ...userWithoutPassword,
-      permissions: [
-        ...new Set(
-          user.roles.flatMap((role) =>
-            role.Role.permissions.map((perm) => perm.Permission.name)
-          )
-        ),
-      ],
-    };
-
-    return res.status(200).json({ user: formattedUser });
+   return await getUserService(req, res);
   } catch (error) {
     console.error("Error fetching user:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(400).json({ message: "Internal server error" });
   }
 };
 
@@ -208,21 +117,24 @@ export const updateUser = async (req: any, res: any) => {
     if(!position) return res.status(400).json({ message: "Position is required" });
     if(!department) return res.status(400).json({ message: "Department is required" });
 
+    if(parseInt(id) === 1){
+      if(req.user.id !== 1){
+        return res.status(400).json({ message: "Cannot update default user" });
+      }
+    }
    const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
       },
     });
 
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     const file = req.file;
     const avatar = file ? file.filename : user.avatar;
-
     const hash = password ? await bcrypt.hash(password, 12) : user.password;
-
     status = status || user.status;
     const updatedUser = await prisma.user.update({
       where: {
@@ -238,19 +150,14 @@ export const updateUser = async (req: any, res: any) => {
         avatar,
         department,
         status: status || "active",
-        roles: {
-          set: roles ? roles.map((id:number) => ({ id })) : [],
-        },
       },
     });
-
     const userWithoutPassword = { ...updatedUser, password: undefined };
-
     return res.status(200).json({ user: userWithoutPassword });
   }
   catch (error) {
     console.error("Error updating user:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(400).json({ message: "Internal server error" });
   }
 };
 
@@ -300,6 +207,21 @@ export const deleteUser = async (req: any, res: any) => {
 
 };
 
+export const assignRoleUser = async (req: any, res: any) => {
+  try {
+    return await roleAssignUserService(req, res);
+  }catch (e:any) {
+    return res.status(500).json({ message: e.message });
+  }
+};
+
+export const revokeRoleUser = async (req: any, res: any) => {
+  try {
+    return await revokeRoleUserService(req, res);
+  }catch (e:any) {
+    return res.status(500).json({ message: e.message });
+  }
+}
 
 const validateData = (data: any) => {
   const { name, lastName, employeeId, email, password, position, department } = data;

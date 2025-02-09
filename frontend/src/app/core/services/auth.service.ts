@@ -5,11 +5,9 @@ import {BehaviorSubject, catchError, map, Observable, of, throwError} from 'rxjs
 import {Store} from '@ngrx/store';
 import {loginFailure, loginSuccess, logout} from '../../store/Authentication/authentication.actions';
 import {getFirebaseBackend} from '../../authUtils';
-import Swal from 'sweetalert2';
 import {Router} from '@angular/router';
 import {TokenStorageService} from './token-storage.service';
-
-// export const AUTH_API = GlobalComponent.AUTH_API;
+import {User} from '../../store/Authentication/auth.models';
 
 export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -20,19 +18,6 @@ export interface LogInResponse {
   user:    User;
   token:   string;
 }
-
-export interface User {
-  id:             number;
-  employeeId:     string;
-  email:          string;
-  name:           string;
-  lastName:       string;
-  position?:      string;
-  department?:    string;
-  avatar:         null;
-  dateEmployment: Date;
-}
-
 
 @Injectable({ providedIn: 'root' })
 
@@ -58,7 +43,6 @@ export class AuthenticationService {
      */
 
     login(employeeId: string, password: string) {
-      // Login Api
       return this.http.post<LogInResponse>(GlobalComponent.AUTH_API + '/sign-in', {
               employeeId,
               password
@@ -76,11 +60,11 @@ export class AuthenticationService {
      * Logout the user
      */
     logout() {
-        const headerToken = { 'Authorization': `Bearer ` + sessionStorage.getItem('token') };
+        // const headerToken = { 'x-access-token': `` + sessionStorage.getItem('token') };
         this.store.dispatch(logout());
 
         this.tokenStorageService.sigOut();
-        this.http.post(GlobalComponent.AUTH_API + '/sign-out', {}, { headers: headerToken }).subscribe();
+        // this.http.post(GlobalComponent.AUTH_API + '/sign-out', {}, { headers: headerToken }).subscribe();
         this.currentUserSubject.next(null!);
         return of(undefined).pipe();
     }
@@ -89,8 +73,8 @@ export class AuthenticationService {
      * Check if the user is authenticated
      */
     isAuthenticated() {
-      const headerToken = { 'Authorization': `Bearer ` + this.tokenStorageService.getToken() };
-      return this.http.get<LogInResponse>(GlobalComponent.AUTH_API + '/is-login');
+      const headerToken = { 'x-access-token': ""+this.tokenStorageService.getToken() };
+      return this.http.get<LogInResponse>(GlobalComponent.AUTH_API + '/is-login', { headers: headerToken });
     }
 
     /**

@@ -2,51 +2,16 @@ import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../core/config";
+import { singInService } from "../service/authService";
 
 const prisma = new PrismaClient();
 
 export const singIn = async (req: any, res: any) => {
   try {
-    const { employeeId, password } = req.body;
-    const user = await prisma.user.findUnique({
-      where: {
-        employeeId: employeeId
-      }
-    });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    let isPasswordValid = await bcrypt.compare(password, user.password ?? "");
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Password is not valid" });
-    }
-    const token = jwt.sign({
-      id: user.id,
-      employeeId: user.employeeId,
-      email: user.email,
-      name: user.name,
-      lastName: user.lastName,
-      position: user.position,
-      department: user.department,
-      dateEmployment: user.dateEmployment,
-      avatar: user.avatar
-    }, JWT_SECRET, { expiresIn: "24h", algorithm: "HS256" });
-
-    return res.status(200).json({
-      message: "Sign in success", user: {
-        id: user.id,
-        employeeId: user.employeeId,
-        email: user.email,
-        name: user.name,
-        lastName: user.lastName,
-        avatar: user.avatar,
-        position: user.position,
-        department: user.department,
-        dateEmployment: user.dateEmployment
-      }, token: token
-    });
-  }catch (e) {
-    return res.status(500).json({ message: "Internal server error" });
+    const result = await singInService(req.body.employeeId, req.body.password);
+    return res.status(200).json(result);
+  }catch (e:any) {
+    return res.status(400).json({ message: e.message });
   }
 };
 

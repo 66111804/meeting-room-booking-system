@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-
+import * as bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 
@@ -238,6 +238,54 @@ export const generateDefaultPermissionsService = async () => {
           data: perm,
         });
       }
+    }
+  }
+
+  // Create user and assign admin role
+  const userExist = await prisma.user.findFirst({
+    where: {
+      email: "admin@booking.com",
+    },
+  });
+
+  if (!userExist) {
+    const user = await prisma.user.create({
+      data: {
+        email: "admin@booking.com",
+        password: await bcrypt.hash("admin", 12),
+        name: "Admin",
+        lastName: "Super",
+        employeeId: "ADM001",
+        position: "Super Admin",
+        department: "IT",
+        dateEmployment: new Date(),
+      },
+    });
+
+    // Assign admin role to user
+    await prisma.userRole.create({
+      data: {
+        userId: user.id,
+        roleId: roleExist.id,
+      },
+    });
+  }else{
+    // Assign admin role to user if not exist
+    const userRoleExist = await prisma.userRole.findFirst({
+      where: {
+        userId: userExist.id,
+        roleId: roleExist.id,
+      },
+    });
+
+    if (!userRoleExist) {
+
+      await prisma.userRole.create({
+        data: {
+          userId: userExist.id,
+          roleId: roleExist.id,
+        },
+      });
     }
   }
 };

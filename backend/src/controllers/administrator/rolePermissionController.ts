@@ -67,12 +67,3 @@ export const revokePermission = async (req: any, res: any) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-// export const generateDefaultPermissions = async (req: any, res: any) => {
-//     try {
-//        const permissions = await generateDefaultPermissionsService();
-//         res.json({ message: "success", data: permissions });
-//     }catch (error:any) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };

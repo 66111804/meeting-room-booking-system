@@ -56,4 +56,12 @@ export class RolePermissionService {
   revokePermission(roleId: number, permissionId: number) {
     return this.http.post(GlobalComponent.API_URL + '/admin/role-revoke-permission', {roleId, permissionId});
   }
+
+  assignRoleToUser(roleId: number, userId: number) {
+    return this.http.post(GlobalComponent.API_URL + '/admin/role-assign-user', {roleId, userId});
+  }
+
+  revokeRoleFromUser(roleId: number, userId: number) {
+    return this.http.post(GlobalComponent.API_URL + '/admin/role-revoke-user', {roleId, userId});
+  }
 }

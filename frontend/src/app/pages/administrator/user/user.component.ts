@@ -5,14 +5,15 @@ import {BreadcrumbsComponent} from '../../../shared/breadcrumbs/breadcrumbs.comp
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {NgbModal, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {User, UserList, UserProfileService} from '../../../core/services/user.service';
+import {UserProfileService} from '../../../core/services/user.service';
 import {debounceTime, distinctUntilChanged, of, Subject} from 'rxjs';
-import {formatDateGlobal} from '../../../shared/utils/date-utils';
 import {DatePipe, NgClass} from '@angular/common';
-import {switchMap} from 'rxjs/operators';
 import {GlobalComponent} from '../../../global-component';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {ToastrService} from 'ngx-toastr';
+import {AuthenticationService} from '../../../core/services/auth.service';
+import {UserRoleComponent} from './user-role/user-role.component';
+import {User, UserList} from '../../../store/Authentication/auth.models';
 
 @Component({
   selector: 'app-user',
@@ -26,7 +27,8 @@ import {ToastrService} from 'ngx-toastr';
     ReactiveFormsModule,
     NgClass,
     MatRadioButton,
-    MatRadioGroup
+    MatRadioGroup,
+    UserRoleComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './user.component.html',
@@ -41,36 +43,33 @@ export class UserComponent implements OnInit {
   pageSize = 10;
   users: User[] = [];
   totalUsers = 0;
-
+  selectUserId = 0;
   useList: UserList = {
     users: [],
     total: 0,
     totalPages: 0,
     current: 0
   }
-  userForm!: UntypedFormGroup;
-
+  userForm: UntypedFormGroup;
   protected readonly GlobalComponent = GlobalComponent;
-
   userShow:User | null = null;
   userEdit:User | null = null;
-
   imageSrc: any = 'assets/images/users/user-dummy-img.jpg';
   searchSubject: Subject<string> = new Subject<string>();
   employeeSubject: Subject<string> = new Subject<string>();
+
+  userRoleSelected!: User | null;
+
   constructor(private userProfileService: UserProfileService,
               private modalService: NgbModal,
               private formBuilder: UntypedFormBuilder,
-              private toastr: ToastrService
+              private toastr: ToastrService,
+              private authenticationService:AuthenticationService
               ) {
     this.breadCrumbItems = [
       {label: 'Administrator'},
       {label: 'User', active: true},
     ];
-  }
-
-  ngOnInit() {
-    document.getElementById('elmLoader')?.classList.add('d-none');
     this.userForm = this.formBuilder.group({
       _id: [''],
       name: ['', [Validators.required]],
@@ -85,6 +84,11 @@ export class UserComponent implements OnInit {
       role: ['', ],
       status: ['active'],
     });
+  }
+
+  ngOnInit() {
+    document.getElementById('elmLoader')?.classList.add('d-none');
+
     this.fetchUsers();
 
     this.searchSubject.pipe(
@@ -117,10 +121,6 @@ export class UserComponent implements OnInit {
     });
   }
 
-  formatDate(date: string) {
-    return formatDateGlobal(date);
-  }
-
   updateUser(content: any) {
     this.imageSrc = 'assets/images/users/user-dummy-img.jpg';
     this.userForm.reset();
@@ -128,17 +128,16 @@ export class UserComponent implements OnInit {
     this.empHasValid = false;
     this.userProfileService.imageFile = null; // reset image file
     this.userEdit = null;
+    this.selectUserId = 0;
     this.modalService.open(content, {size: 'lg', centered: true});
   }
 
   searchUser() {
     this.searchSubject.next(this.searchTerm);
   }
-
   changePage() {
     this.fetchUsers();
   }
-
   onSubmit(modal: any) {
     this.submitted = true;
     if (this.userForm.invalid) {
@@ -153,11 +152,12 @@ export class UserComponent implements OnInit {
           if (triggerButton) {
             triggerButton.focus();
           }
-
+          this.toastr.success('อัพเดทข้อมูลสำเร็จ');
           this.fetchUsers();
         },
         error: (err) => {
           console.error(err);
+          this.toastr.error('เกิดข้อผิดพลาดในการอัพเดทข้อมูล');
         }
       });
 
@@ -175,23 +175,23 @@ export class UserComponent implements OnInit {
 
       this.userProfileService.updateUser(this.userForm.value).subscribe({
         next: (res) => {
-          console.log(res);
+          // console.log(res);
           modal.close('Close click');
 
           const triggerButton = document.getElementById('triggerButton');
           if (triggerButton) {
             triggerButton.focus();
           }
-
+          this.toastr.success('เพิ่มผู้ใช้งานสำเร็จ');
           this.fetchUsers();
         },
         error: (err) => {
           console.log(err);
+          this.toastr.error('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้งาน');
         }
       });
     }
   }
-
   fileChange(event: any) {
     if(event.target.files.length === 0) {
       return;
@@ -230,8 +230,7 @@ export class UserComponent implements OnInit {
   get form() {
     return this.userForm.controls;
   }
-
-  editUser(content: any,user: User,) {
+  editUser(content: any,user: User) {
     this.imageSrc = user.avatar ? `${GlobalComponent.SERVE_URL}/files/uploads/${user.avatar}` : 'assets/images/users/user-dummy-img.jpg';
     this.userEdit = user;
     this.userForm.reset();
@@ -244,10 +243,9 @@ export class UserComponent implements OnInit {
       position: user.position,
       department: user.department,
       status: user.status,
-      role: user.roles.map(role => role.id),
+      role: user.roles,
     });
-    console.log(this.userForm.get('status')?.value);
-    console.log(this.form['status'].value);
+    this.selectUserId = user.id;
     this.modalService.open(content, {size: 'lg', centered: true});
   }
 
@@ -292,5 +290,20 @@ export class UserComponent implements OnInit {
         this.modalService.dismissAll();
       }
     });
+  }
+
+  isSuperAdmin(): boolean {
+    // true if user is super admin or user is the same as selected user
+
+    return this.authenticationService.getUser().user.id === 1 && this.selectUserId === 1;
+  }
+
+  roleChange(user: User) {
+    this.userRoleSelected = user;
+  }
+
+  backToUserList(event: any) {
+    this.userRoleSelected = null;
+    this.fetchUsers();
   }
 }

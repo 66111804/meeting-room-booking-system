@@ -1,5 +1,13 @@
 import { Router } from "express";
-import { createUser, deleteUser, employeeIdValidation, getUsers, updateUser } from "../controllers/administrator/userController";
+import {
+    assignRoleUser,
+    createUser,
+    deleteUser,
+    employeeIdValidation,
+    getUser,
+    getUsers, revokeRoleUser,
+    updateUser
+} from "../controllers/administrator/userController";
 import {
     createFeature,
     createMeetingRoom,
@@ -32,6 +40,10 @@ router.get('', (req, res) => {
 //----------- Users ------------
 router.get('/users', async (req, res) => { await getUsers(req, res) });
 
+router.get('/user/:id', async (req, res) => {
+    await getUser(req, res);
+});
+
 //----------- User EmployeeId Validation ------------
 router.get('/user-validate', async (req, res) => {
     await employeeIdValidation(req, res);
@@ -54,6 +66,7 @@ router.put('/user/:id/update', upload.single('avatar'), async (req, res) => {
 router.delete('/user/:id/delete', async (req, res) => {
     await deleteUser(req, res);
 });
+
 
 //---------- Meeting Rooms ------------
 router.get('/meeting-rooms', async (req, res) => {
@@ -125,6 +138,7 @@ router.post('/role-revoke-permission',revokePermission);
 
 router.get('/permissions', getAllPermissions);
 
-
-
+// ----------- Role and User ------------
+router.post('/role-assign-user', assignRoleUser);
+router.post('/role-revoke-user', revokeRoleUser);
 export default router;

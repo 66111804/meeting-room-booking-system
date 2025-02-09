@@ -27,9 +27,7 @@ try {
     fs.writeFileSync(envFilePath, data);
   }
 
-
   console.table({JWT_SECRET, APP_SECRET});
-
   console.log("Secrets generated and saved to .env file");
 }catch (e) {
   console.log("Error generating secrets");

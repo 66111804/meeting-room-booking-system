@@ -3,7 +3,7 @@ import {BreadcrumbsComponent} from "../../shared/breadcrumbs/breadcrumbs.compone
 import {TokenStorageService} from '../../core/services/token-storage.service';
 import {LogInResponse} from '../../core/services/auth.service';
 import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import {User, UserProfileService} from '../../core/services/user.service';
+import {UserProfileService} from '../../core/services/user.service';
 import {GlobalComponent} from '../../global-component';
 import {ToastrService} from 'ngx-toastr';
 import {Router} from '@angular/router';

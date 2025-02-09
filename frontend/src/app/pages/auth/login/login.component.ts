@@ -7,6 +7,7 @@ import {AuthenticationService, LogInResponse} from '../../../core/services/auth.
 import {loginFailure, loginSuccess} from '../../../store/Authentication/authentication.actions';
 import {Store} from '@ngrx/store';
 import {TokenStorageService} from '../../../core/services/token-storage.service';
+import * as AuthActions from '../../../store/Authentication/authentication.actions';
 
 @Component({
   selector: 'app-login',
@@ -29,9 +30,9 @@ export class LoginComponent implements OnInit,AfterViewInit
   returnUrl!: string;
   // set the current year
   year: number = new Date().getFullYear();
-
-  constructor(private formBuilder: UntypedFormBuilder, private router: Router, private service: AuthenticationService,private store: Store,private tokenStorageService:TokenStorageService) { }
-
+  constructor(private formBuilder: UntypedFormBuilder, private router: Router, private service: AuthenticationService,private store: Store,private tokenStorageService:TokenStorageService) {
+    this.fieldTextType = false;
+  }
   isDisabled = false;
   ngOnInit(): void {
 
@@ -44,19 +45,19 @@ export class LoginComponent implements OnInit,AfterViewInit
     });
 
     try {
-      this.service.isAuthenticated().subscribe(
-        {
-          next: (res) => {
-            this.store.dispatch(loginSuccess({ user: res.user }));
-            this.tokenStorageService.saveToken(res.token);
-            this.tokenStorageService.saveUser(res);
-            this.router.navigateByUrl('app').then();
-          },
-          error: (error) => {
-            // console.log(error);
-          }
-        }
-      );
+      // this.service.isAuthenticated().subscribe(
+      //   {
+      //     next: (res) => {
+      //       this.store.dispatch(loginSuccess({ user: res.user }));
+      //       this.tokenStorageService.saveToken(res.token);
+      //       this.tokenStorageService.saveUser(res);
+      //       this.router.navigateByUrl('app').then();
+      //     },
+      //     error: (error) => {
+      //       // console.log(error);
+      //     }
+      //   }
+      // );
 
     }catch (error) {
       console.error(error);
@@ -80,12 +81,20 @@ export class LoginComponent implements OnInit,AfterViewInit
     }
 
     this.isDisabled = true;
+
+    const employeeId = this.loginForm.value.employeeId;
+    const password = this.loginForm.value.password;
+    this.store.dispatch(AuthActions.login({employeeId, password}));
+    console.log('login', employeeId, password);
+    this.isDisabled = false;
+   /*
     this.service.login(this.loginForm.value.employeeId, this.loginForm.value.password)
       .subscribe({
         next: (res:LogInResponse) => {
+          console.log(res);
           this.store.dispatch(loginSuccess({ user: res.user }));
           this.tokenStorageService.saveToken(res.token);
-          this.tokenStorageService.saveUser(res);
+          // this.tokenStorageService.saveUser(res);
           // this.currentUserSubject.next(res);
           Swal.fire(
             {
@@ -116,7 +125,7 @@ export class LoginComponent implements OnInit,AfterViewInit
           this.isDisabled = false;
         }
       });
-
+*/
     // display form values on success
   }
 

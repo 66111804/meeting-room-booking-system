@@ -141,7 +141,7 @@ export class BookingRoomComponent implements OnInit
       .subscribe({
       next: (response) => {
         this.meetingRooms = response;
-        this.cdr.detectChanges();
+        // this.cdr.detectChanges();
       },
       error: (error) => {
         console.log(error);

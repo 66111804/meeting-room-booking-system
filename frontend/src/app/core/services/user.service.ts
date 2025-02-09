@@ -5,29 +5,7 @@ import {GlobalComponent} from '../../global-component';
 import {TokenStorageService} from './token-storage.service';
 import {ValidateResponse} from '../../shared/utils/date-utils';
 import {LogInResponse} from './auth.service';
-export interface UserList {
-  users:      User[];
-  total:      number;
-  totalPages: number;
-  current:    number;
-}
-export interface User {
-  id:             number;
-  employeeId:     string;
-  email:          string;
-  name:           string;
-  lastName:       string;
-  password:       string;
-  avatar:         null;
-  dateEmployment: Date;
-  position:       null;
-  department:     null;
-  status:         string;
-  createdAt:      Date;
-  updatedAt:      Date;
-  roles:          any[];
-  permissions:    any[];
-}
+import {IUserResponse, UserList} from '../../store/Authentication/auth.models';
 
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
@@ -82,7 +60,7 @@ export class UserProfileService {
      * @param id
      */
     getUserById(id: number) {
-      return this.http.get<User>(`${GlobalComponent.API_URL}/admin/users/${id}`);
+      return this.http.get<IUserResponse>(`${GlobalComponent.API_URL}/admin/user/${id}`);
     }
 
     /**

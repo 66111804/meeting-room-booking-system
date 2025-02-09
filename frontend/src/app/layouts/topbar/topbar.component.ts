@@ -76,7 +76,13 @@ export class TopbarComponent implements OnInit  {
               public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
               private router: Router, private TokenStorageService: TokenStorageService) {
     this.userInfo = this.TokenStorageService.getUser();
-    this.imageSrc = this.userInfo.user.avatar ? `${GlobalComponent.SERVE_URL}/files/uploads/${this.userInfo.user.avatar}` : 'assets/images/users/avatar-1.jpg';
+    try {
+      this.imageSrc = this.userInfo.user.avatar ? `${GlobalComponent.SERVE_URL}/files/uploads/${this.userInfo.user.avatar}` : 'assets/images/users/avatar-1.jpg';
+    }catch (e) {
+      console.log(e)
+      this.imageSrc = 'assets/images/users/avatar-1.jpg';
+    }
+
   }
 
   ngOnInit() {
