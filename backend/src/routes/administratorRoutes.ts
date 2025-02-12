@@ -1,11 +1,11 @@
 import { Router } from "express";
 import {
-    assignRoleUser,
+    assignRoleUser, assignRoleUserAll,
     createUser,
     deleteUser,
     employeeIdValidation,
     getUser,
-    getUsers, revokeRoleUser,
+    getUsers, revokeRoleUser, revokeRoleUserAll,
     updateUser
 } from "../controllers/administrator/userController";
 import {
@@ -141,4 +141,6 @@ router.get('/permissions', getAllPermissions);
 // ----------- Role and User ------------
 router.post('/role-assign-user', assignRoleUser);
 router.post('/role-revoke-user', revokeRoleUser);
+router.post('/role-assign-user-all', assignRoleUserAll);
+router.post('/role-revoke-user-all', revokeRoleUserAll);
 export default router;

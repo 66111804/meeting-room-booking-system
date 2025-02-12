@@ -72,7 +72,6 @@ export const getUsersService = async (req: any, res: any) => {
 
 export const getUserService = async (req: any, res: any) => {
   const { id } = req.params;
-  console.log(id);
   const user = await prisma.user.findUnique({
     where: {
       id: parseInt(id),
@@ -188,4 +187,69 @@ export const revokeRoleUserService = async (req: any, res: any) => {
   });
 
   return res.status(200).json({ message: "Role revoked from user" });
+};
+
+export const roleAssignUserAllService = async (req: any, res: any) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: "User id is required" });
+  }
+
+  const userExist = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!userExist) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const roles = await prisma.role.findMany();
+
+  for (const role of roles) {
+    // check if role is already assigned to user
+    const roleUserExist = await prisma.userRole.findFirst({
+      where: {
+        roleId: role.id,
+        userId: userId,
+      },
+    });
+
+    if (!roleUserExist) {
+      await prisma.userRole.create({
+        data: {
+          roleId: role.id,
+          userId: userId,
+        },
+      });
+    }
+  }
+
+  return res.status(200).json({ message: "All roles assigned to user" });
+};
+
+export const revokeRoleUserAllService = async (req: any, res: any) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: "User id is required" });
+  }
+
+  const userExist = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!userExist) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  await prisma.userRole.deleteMany({
+    where: {
+      userId: userId,
+    },
+  });
+
+  return res.status(200).json({ message: "All roles revoked from user" });
 };

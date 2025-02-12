@@ -51,8 +51,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-    // console.log('Headers:', req.headers);
-    // console.log('Content-Type:', req.headers['content-type']);
     next();
 });
 
@@ -61,7 +59,7 @@ app.get("/", (req:Request, res:Response) => {
 });
 
 app.get("/api", (req, res) => {
-    res.json({ status: "server is running" });
+    res.json({ status: "server is running..."});
 });
 
 // ----------------- Routes -----------------

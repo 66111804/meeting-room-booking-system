@@ -10,7 +10,7 @@
         <div class="row g-3 justify-content-between d-flex">
           <div class="col-md-4">
             <div class="search-box">
-              <input type="text" name="searchTerm" class="form-control" placeholder="Search for role">
+              <input type="text" name="searchTerm" class="form-control" placeholder="Search for role" [(ngModel)]="searchTerm" (change)="searchInput()">
               <i class="ri-search-line search-icon"></i>
             </div>
           </div>
@@ -36,11 +36,11 @@
           <div class="col-md-auto ms-auto">
             <div class="">
               <!-- เลือกทั้งหมด -->
-              <button class="btn btn-info add-btn ms-2" >
+              <button class="btn btn-info add-btn ms-2" (click)="assignRoleToUserAll()">
                 <i class="ri-add-line me-2"></i> เลือกทั้งหมด
               </button>
               <!-- ยกเลิกทั้งหมด -->
-              <button class="btn btn-warning add-btn ms-2" >
+              <button class="btn btn-warning add-btn ms-2" (click)="revokeRoleFromUserAll()">
                 <i class="ri-close-line me-2"></i>
                 ยกเลิกทั้งหมด
               </button>
@@ -65,10 +65,19 @@
                     <td class="text-center">{{ $index + 1 }}</td>
                     <td>{{ role.name }}</td>
                     <td class="text-center">
-                      <!-- Assign role to user -->
-                      <button class="btn btn-info btn-sm" (click)="assignRoleToUser(role)">
-                        <i class="ri-add-line me-2"></i> กำหนดบทบาท
-                      </button>
+
+
+                      @if(isUserHasRole(role)){
+                        <!-- Remove role from user -->
+                        <button class="btn btn-danger btn-sm" (click)="revokeRoleFromUser(role)">
+                          <i class="ri-close-line me-2"></i> ลบบทบาท
+                        </button>
+                      } @else {
+                        <!-- Assign role to user -->
+                        <button class="btn btn-info btn-sm" (click)="assignRoleToUser(role)">
+                          <i class="ri-add-line me-2"></i> กำหนดบทบาท
+                        </button>
+                      }
                     </td>
                     } @empty {
                   <tr>

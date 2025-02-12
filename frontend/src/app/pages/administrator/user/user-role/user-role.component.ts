@@ -11,13 +11,15 @@ import {DatePipe} from '@angular/common';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 import {User} from '../../../../store/Authentication/auth.models';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-user-role',
   standalone: true,
   imports: [
     BreadcrumbsComponent,
-    NgbPagination
+    NgbPagination,
+    FormsModule
   ],
   templateUrl: './user-role.component.html',
   styleUrl: './user-role.component.scss'
@@ -57,7 +59,6 @@ export class UserRoleComponent implements OnInit
   }
 
   ngOnInit() {
-
     this.fetchUser();
     this.fetchRoles();
   }
@@ -66,10 +67,10 @@ export class UserRoleComponent implements OnInit
     this.userProfileService.getUserById(this.userRoleSelected.id).subscribe(
       {
         next: (response) => {
-          console.log(response);
+          this.userRoleSelected.roles = response.user.roles;
         },
         error: (error) => {
-          console.log(error);
+          console.error(error);
         }
       });
   }
@@ -79,7 +80,6 @@ export class UserRoleComponent implements OnInit
       {
         next: (response) => {
           this.rolesResponse = response;
-          console.log(this.rolesResponse);
         },
         error: (error) => {
           console.error(error);
@@ -94,7 +94,22 @@ export class UserRoleComponent implements OnInit
   assignRoleToUser(role: IRole) {
     this.rolePermissionService.assignRoleToUser(role.id, this.userRoleSelected.id).subscribe({
       next: (response) => {
-        this.toastr.success('Role assigned to user successfully');
+        this.toastr.success('บทบาทถูกกำหนดให้ผู้ใช้เรียบร้อยแล้ว');
+        // Refresh the user
+        this.fetchUser();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  assignRoleToUserAll(){
+    this.rolePermissionService.assignRoleToUserAll(this.userRoleSelected.id).subscribe({
+      next: (response) => {
+        this.toastr.success('บทบาทถูกกำหนดให้ผู้ใช้เรียบร้อยแล้ว');
+        // Refresh the user
+        this.fetchUser();
       },
       error: (error) => {
         console.error(error);
@@ -103,12 +118,41 @@ export class UserRoleComponent implements OnInit
   }
 
   revokeRoleFromUser(role: IRole) {
+    this.rolePermissionService.revokeRoleFromUser(role.id, this.userRoleSelected.id).subscribe({
+      next: (response) => {
+        this.toastr.success('เพิกถอนบทบาทจากผู้ใช้เรียบร้อยแล้ว');
+
+        // Refresh the user
+        this.fetchUser();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  revokeRoleFromUserAll(){
+    this.rolePermissionService.revokeRoleFromUserAll(this.userRoleSelected.id).subscribe({
+      next: (response) => {
+        this.toastr.success('เพิกถอนบทบาทจากผู้ใช้เรียบร้อยแล้ว');
+        // Refresh the user
+        this.fetchUser();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   searchInput() {
     this.searchSubject.next(this.roleName);
   }
 
-  isUserHasRole(role: IRole) {}
+  isUserHasRole(role: IRole) {
+    if(this.userRoleSelected.roles){
+      return this.userRoleSelected.roles.some((userRole) => userRole.roleId === role.id);
+    }
+    return false;
+  }
 
 }

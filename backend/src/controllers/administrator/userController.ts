@@ -4,8 +4,8 @@ import * as bcrypt from "bcrypt";
 import { uploadDir } from "../../shared/uploadFile";
 import {
   getUserService,
-  getUsersService,
-  revokeRoleUserService,
+  getUsersService, revokeRoleUserAllService,
+  revokeRoleUserService, roleAssignUserAllService,
   roleAssignUserService
 } from "../../service/administrator/userService";
 
@@ -234,3 +234,20 @@ const validateData = (data: any) => {
   if(!department) return "Department is required";
   return null;
 }
+
+
+export const assignRoleUserAll = async (req: any, res: any) => {
+  try {
+    return await roleAssignUserAllService(req, res);
+  }catch (e:any) {
+    return res.status(500).json({ message: e.message });
+  }
+};
+
+export const revokeRoleUserAll = async (req: any, res: any) => {
+  try {
+    return await revokeRoleUserAllService(req, res);
+  }catch (e:any) {
+    return res.status(500).json({ message: e.message });
+  }
+};
