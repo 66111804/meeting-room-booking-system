@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import {Component, Input, OnInit} from '@angular/core';
 import {FeatherModule} from 'angular-feather';
 import {CommonModule, NgClass} from '@angular/common';

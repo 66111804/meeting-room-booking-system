@@ -13,6 +13,7 @@ import {findActiveMenuItem, isRouteMatching} from '../../shared/utils/sidebar';
 import {AuthenticationService} from '../../core/services/auth.service';
 import {TokenStorageService} from '../../core/services/token-storage.service';
 import {HasRole} from '../../store/Authentication/auth.models';
+import {isRoleMatched} from '../../shared/utils/role-permisssion';
 
 @Component({
   selector: 'app-sidebar',
@@ -63,7 +64,7 @@ export class SidebarComponent implements OnInit, AfterViewInit
 
     for(let i = 0; i < this.menuItems.length; i++) {
 
-      if(this.menuItems[i].link === '/admin' && !this.isRoleMatched('admin'))
+      if(this.menuItems[i].link === '/admin' && !isRoleMatched(['admin']))
       {
         // Remove the menu item from the list
         this.menuItems.splice(i, 1);
@@ -90,10 +91,7 @@ export class SidebarComponent implements OnInit, AfterViewInit
     });
   }
 
-  isRoleMatched(role: string): boolean {
-    console.log({role_match: role, isMatched: this.roles.some((r) => r.name === role)});
-    return this.roles.some((r) => r.name === role);
-  }
+
   /***
    * Activate droup down set
    */

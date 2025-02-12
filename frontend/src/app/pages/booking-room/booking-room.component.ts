@@ -15,6 +15,7 @@ import {BookingRoomService} from '../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
 import {Router, RouterLink} from '@angular/router';
 import {ITimeSlotResponse, SlotTimeService, TimeSlot} from '../../core/services/slot-time.service';
+import {isPermissionMatched} from '../../shared/utils/role-permisssion';
 
 
 @Component({
@@ -487,4 +488,5 @@ export class BookingRoomComponent implements OnInit
   /**
    * ---------------
    */
+  protected readonly isPermissionMatched = isPermissionMatched;
 }

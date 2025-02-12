@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { permissionAssignService } from "../rolePermissionService";
 
 const prisma = new PrismaClient();
 

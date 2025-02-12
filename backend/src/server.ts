@@ -3,13 +3,13 @@ import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import routes from "express-list-endpoints";
 import { createServer } from "http";
-import auth from "./routes/authRoutes";
+import authRoutes from "./routes/authRoutes";
 import { PrismaClient } from "@prisma/client";
-import administrator from "./routes/administratorRoutes";
+import administratorRoutes from "./routes/administratorRoutes";
 import { authMiddleware } from "./middlewares/auth";
 import fs from "fs";
 import { upload, uploadDir } from "./shared/uploadFile";
-import bookingRoom from "./routes/bookingRoomRoutes";
+import bookingRoomRoutes from "./routes/bookingRoomRoutes";
 import slotTimeRoutes from './routes/slotTimeRoutes';
 
 
@@ -19,6 +19,7 @@ import * as slots from "./controllers/slotTimeController";
 import userRouter from "./routes/userRouter";
 import { generateDefaultSlotsSafe } from "./controllers/slotTimeController";
 import { generateDefaultPermissionsService } from "./service/rolePermissionService";
+import dashboardRoutes from "./routes/dashboardRoutes";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -63,12 +64,12 @@ app.get("/api", (req, res) => {
 });
 
 // ----------------- Routes -----------------
-app.use('/api/auth',auth);
+app.use('/api/auth',authRoutes);
 app.use('/api/user-profile',authMiddleware , userRouter);
-app.use('/api/admin',authMiddleware,administrator);
-app.use('/api/booking-room',authMiddleware,bookingRoom);
+app.use('/api/admin',authMiddleware,administratorRoutes);
+app.use('/api/booking-room',authMiddleware,bookingRoomRoutes);
 app.use('/api/slot-time', slotTimeRoutes);
-
+app.use('/api/dashboard',dashboardRoutes);
 // ----------------- Auto call routes -----------------
 const headers = {
     "Content-Type": "application/json"

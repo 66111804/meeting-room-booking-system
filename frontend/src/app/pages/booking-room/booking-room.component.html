@@ -84,10 +84,12 @@
             </button>
           }
           <!-- เลือกหลายห้อง -->
+          @if(isPermissionMatched(['bookingMultipleRoom create'])){
           <div class="form-check form-switch form-check-inline">
             <input class="form-check-input" type="checkbox" id="selectMultipleRoom" (change)="onSelectMultipleRoomChange($event)">
             <label class="form-check label" for="selectMultipleRoom">เลือกหลายห้อง</label>
           </div>
+          }
       </div>
     </div>
   </div>
