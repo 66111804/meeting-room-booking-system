@@ -74,9 +74,9 @@ export class LayoutsComponent implements OnInit
     this.service.isAuthenticated().subscribe(
       {
         next: (res) => {
-          this.store.dispatch(loginSuccess({ user: res.user }));
+          this.store.dispatch(loginSuccess({ user: res }));
           this.tokenStorageService.saveToken(res.token);
-          this.tokenStorageService.saveUser(res);
+          // this.tokenStorageService.saveUser(res);
         },
         error: (error) => {
           // console.log(error);

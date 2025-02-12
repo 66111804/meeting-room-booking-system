@@ -1,14 +1,3 @@
-// export class User {
-//   id?: number;
-//   // username?: string;
-//   employeeId?: string;
-//   password?: string;
-//   name?: string;
-//   lastName?: string;
-//   token?: string;
-//   email?: string;
-// }
-
 export interface UserList {
   users:      User[];
   total:      number;
@@ -17,6 +6,7 @@ export interface UserList {
 }
 export interface IUserResponse {
   user: User
+  message: string
 }
 
 export interface User {
@@ -32,9 +22,9 @@ export interface User {
   status: string
   createdAt: string
   updatedAt: string
-  roles?: Role[]
-  permissions?: string[]
-  hasRole?: HasRole[]
+  roles: Role[]
+  permissions: string[]
+  hasRole: HasRole[]
 }
 export interface UserInformation {
   id: number

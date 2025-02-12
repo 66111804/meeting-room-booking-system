@@ -1,3 +1,4 @@
+// authentication.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import { User } from './auth.models';
 import * as AuthActions from './authentication.actions';
@@ -19,7 +20,11 @@ export const authenticationReducer = createReducer(
 
     on(AuthActions.login, (state) => ({ ...state, error: null })),
     on(AuthActions.loginSuccess, (state, { user }) => ({ ...state, isLoggedIn: true, user, error: null, })),
-    on(AuthActions.loginFailure, (state, { error }) => ({ ...state, error })),
+    // on(AuthActions.loginFailure, (state, { error }) => ({ ...state, error })),
+    on(AuthActions.loginFailure, (state, { error }) => {
+      console.log("Login Error:", error);
+      return { ...state, error };
+    }),
     on(AuthActions.logout, (state) => ({ ...state, user: null })),
 
 );

@@ -3,7 +3,7 @@ import {GlobalComponent} from '../../global-component';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, catchError, map, Observable, of, throwError} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {loginFailure, loginSuccess, logout} from '../../store/Authentication/authentication.actions';
+import {logout} from '../../store/Authentication/authentication.actions';
 import {getFirebaseBackend} from '../../authUtils';
 import {Router} from '@angular/router';
 import {TokenStorageService} from './token-storage.service';
@@ -96,6 +96,14 @@ export class AuthenticationService {
      */
     getUser() {
       return this.tokenStorageService.getUser();
+    }
+
+    getRole() {
+      return this.tokenStorageService.getRole();
+    }
+
+    getPermissions() {
+      return this.tokenStorageService.getPermissions();
     }
 }
 

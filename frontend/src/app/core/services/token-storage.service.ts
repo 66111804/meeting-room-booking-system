@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {LogInResponse} from './auth.service';
+import {HasRole} from '../../store/Authentication/auth.models';
 
 const TOKEN_KEY = "auth-token";
 const USER_KEY = "currentUser";
@@ -25,6 +26,7 @@ export class TokenStorageService {
   }
 
   public saveUser(user: any): void {
+    console.log({saveUser:true,user});
     window.sessionStorage.removeItem(USER_KEY);
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
@@ -44,5 +46,21 @@ export class TokenStorageService {
   public updateUser(user: LogInResponse): void {
     window.sessionStorage.removeItem(USER_KEY);
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+  }
+
+  public getRole():HasRole[] {
+   const user = window.sessionStorage.getItem(USER_KEY);
+    if(user){
+      return JSON.parse(user).user.hasRole;
+    }
+    return [];
+  }
+
+  public getPermissions() {
+    const user = window.sessionStorage.getItem(USER_KEY);
+    if(user){
+      return JSON.parse(user).user.permissions;
+    }
+    return [];
   }
 }

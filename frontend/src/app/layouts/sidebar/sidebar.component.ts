@@ -11,6 +11,8 @@ import {NgbCollapse, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SimplebarAngularModule} from 'simplebar-angular';
 import {findActiveMenuItem, isRouteMatching} from '../../shared/utils/sidebar';
 import {AuthenticationService} from '../../core/services/auth.service';
+import {TokenStorageService} from '../../core/services/token-storage.service';
+import {HasRole} from '../../store/Authentication/auth.models';
 
 @Component({
   selector: 'app-sidebar',
@@ -36,16 +38,49 @@ export class SidebarComponent implements OnInit, AfterViewInit
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
+  userPermission: any = [];
+  roles: HasRole[] = [];
+
   constructor(private router: Router,
               public translate: TranslateService,
               private modalService: NgbModal,
-              private authService: AuthenticationService) {
+              private authService: AuthenticationService,
+              private tokenStorageService: TokenStorageService) {
     translate.setDefaultLang('en');
+
+    const permission = this.tokenStorageService.getPermissions();
+    console.log({permission});
+
+    this.roles = this.tokenStorageService.getRole();
   }
 
   ngOnInit(): void {
     // Menu Items
     this.menuItems = MENU;
+    // Permission
+    // console.log(this.menuItems);
+    console.log(this.roles);
+
+    for(let i = 0; i < this.menuItems.length; i++) {
+
+      if(this.menuItems[i].link === '/admin' && !this.isRoleMatched('admin'))
+      {
+        // Remove the menu item from the list
+        this.menuItems.splice(i, 1);
+        console.log('Not matched');
+      }
+      if(this.menuItems[i].subItems){
+        const subItems = this.menuItems[i].subItems;
+       if(subItems){
+         for(let j = 0; j < subItems.length; j++){
+           console.log(subItems[j].link);
+         }
+       }
+      }
+    }
+
+
+    // router event
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {
@@ -55,6 +90,10 @@ export class SidebarComponent implements OnInit, AfterViewInit
     });
   }
 
+  isRoleMatched(role: string): boolean {
+    console.log({role_match: role, isMatched: this.roles.some((r) => r.name === role)});
+    return this.roles.some((r) => r.name === role);
+  }
   /***
    * Activate droup down set
    */

@@ -1,6 +1,5 @@
+// Authentication.actions.ts
 import { createAction, props } from '@ngrx/store';
-import { User } from './auth.models';
-
 
 // login action
 export const login = createAction('[Authentication] Login', props<{ employeeId: string, password: string }>());

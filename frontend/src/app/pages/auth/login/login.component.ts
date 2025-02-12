@@ -85,7 +85,6 @@ export class LoginComponent implements OnInit,AfterViewInit
     const employeeId = this.loginForm.value.employeeId;
     const password = this.loginForm.value.password;
     this.store.dispatch(AuthActions.login({employeeId, password}));
-    console.log('login', employeeId, password);
     this.isDisabled = false;
    /*
     this.service.login(this.loginForm.value.employeeId, this.loginForm.value.password)

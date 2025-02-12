@@ -1,11 +1,11 @@
-import {Injectable, Inject, inject} from '@angular/core';
+// Authentication.effects.ts
+import {Injectable, inject} from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map, switchMap, catchError, exhaustMap, tap } from 'rxjs/operators';
-import { from, of } from 'rxjs';
+import { map, catchError, exhaustMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { AuthenticationService } from '../../core/services/auth.service';
-import { login, loginSuccess, loginFailure, logout, logoutSuccess} from './authentication.actions';
+import { logout, logoutSuccess} from './authentication.actions';
 import { Router } from '@angular/router';
-import {environment} from '../../../environments/environment';
 import * as AuthActions from './authentication.actions';
 import Swal from 'sweetalert2';
 import {TokenStorageService} from '../../core/services/token-storage.service';
@@ -13,47 +13,7 @@ import {TokenStorageService} from '../../core/services/token-storage.service';
 @Injectable()
 export class AuthenticationEffects {
 
-  // Register$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(Register),
-  //     exhaustMap(({ email, first_name, password }) =>
-  //       this.AuthenticationService.register(email, first_name, password).pipe(
-  //         map((user) => {
-  //           this.router.navigate(['/auth/login']);
-  //           return loginSuccess({ user });
-  //         }),
-  //         catchError((error) => of(loginFailure({ error })))
-  //       )
-  //     )
-  //   )
-  // );
   private actions$ = inject(Actions);
-
- //  login$ = createEffect(() =>{
- // return  this.actions$.pipe(
- //    ofType(login),
- //    exhaustMap(({ employeeId, password }) => {
- //      if (environment.defaultauth === "fakebackend") {
- //        return this.AuthenticationService.login(employeeId, password).pipe(
- //          map((user) => {
- //            console.log("success login", user);
- //            if (user.message === 'success') {
- //              sessionStorage.setItem('toast', 'true');
- //              sessionStorage.setItem('currentUser', JSON.stringify(user.user));
- //              sessionStorage.setItem('token', user.token);
- //              this.router.navigate(['/app']);
- //            }
- //            return loginSuccess(user);
- //          }),
- //          catchError((error) => of(loginFailure({ error })), // Closing parenthesis added here
- //        ));
- //      } else if (environment.defaultauth === "firebase") {
- //        return of(); // Return an observable, even if it's empty
- //      } else {
- //        return of(); // Return an observable, even if it's empty
- //      }
- //    })
- //  )});
 
   login$ = createEffect(() =>{
     return  this.actions$.pipe(
@@ -67,7 +27,6 @@ export class AuthenticationEffects {
               sessionStorage.setItem('token', user.token ?? '');
               this.tokenStorageService.saveToken(user.token);
               this.tokenStorageService.saveUser(user);
-              // this.router.navigate(['/app']);
               Swal.fire(
                 {
                   icon: 'success',
@@ -80,10 +39,32 @@ export class AuthenticationEffects {
                 .then(() => {
                   this.router.navigateByUrl('/app').then();
                 });
+              return AuthActions.loginSuccess({user});
+            }else{
+              Swal.fire(
+                {
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'เข้าสู่ระบบไม่สำเร็จ!',
+                  timer: 1500,
+                  showConfirmButton: true
+                }
+              ).then();
+              return AuthActions.loginFailure({ error: user.message });
             }
-            return AuthActions.loginSuccess({user});
           }),
-          catchError((error) => of(AuthActions.loginFailure({ error })))
+          catchError((error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: 'เกิดข้อผิดพลาด! ไม่สามารถเข้าสู่ระบบได้',
+              timer: 1500,
+              showConfirmButton: true
+            });
+            
+            return of(AuthActions.loginFailure({ error: error.message || 'Unknown error' }));
+          })
+
         )
       )
     )
@@ -100,8 +81,6 @@ export class AuthenticationEffects {
   );
 
   constructor(
-    // @Inject(Actions) private actions$: Actions,
-
     private authenticationService: AuthenticationService,
     private tokenStorageService:TokenStorageService,
     private router: Router) { }

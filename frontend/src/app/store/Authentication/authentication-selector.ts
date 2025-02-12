@@ -1,3 +1,4 @@
+// authentication-selector.ts
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { AuthenticationState } from './authentication.reducer';
 
