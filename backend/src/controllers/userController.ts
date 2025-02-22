@@ -21,7 +21,7 @@ export const updateUserProfile = async (req: any, res: any) =>
 
 
     let { name, lastName } = req.body;
-    console.log({body:req.body});
+    // console.log({body:req.body});
     if (!name) return res.status(400).json({ message: "Name is required" });
     if (!lastName) return res.status(400).json({ message: "Last name is required" });
 
