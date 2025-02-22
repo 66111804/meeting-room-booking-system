@@ -1,10 +1,10 @@
 
 
 import {
-    generateDefaultPermissionsService, permissionAssignService,
+    permissionAssignService,
     permissionList, revokePermissionService,
-    roleCreate,
-    roleList,
+    roleCreateService, roleDeleteService,
+    roleList, roleUpdateService,
     validateRoleNameService
 } from "../../service/rolePermissionService";
 
@@ -23,13 +23,32 @@ export const getAllRoles = async (req: any, res: any) => {
 // ----------- CREATE ROLE -----------
 export const createRole = async (req: any, res: any) => {
     try {
-        const role = await roleCreate(req, res);
+        const role = await roleCreateService(req, res);
         res.json({ message: "success", data: role });
     }catch (error:any) {
         res.status(400).json({message: error.message});
     }
 };
 
+// ----------- UPDATE ROLE -----------
+export const updateRole = async (req: any, res: any) => {
+    try {
+        const role = await roleUpdateService(req, res);
+        res.json({ message: "success", data: role });
+    }catch (error:any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// ----------- DELETE ROLE -----------
+export const deleteRole = async (req: any, res: any) => {
+    try {
+        const role = await roleDeleteService(req, res);
+        res.json({ message: "success", data: role });
+    }catch (error:any) {
+        res.status(500).json({ message: error.message });
+    }
+};
 export const validateRoleName = async (req: any, res: any) => {
     try {
         const roleExist = await validateRoleNameService(req, res);

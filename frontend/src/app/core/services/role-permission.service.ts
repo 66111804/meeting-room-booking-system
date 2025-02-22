@@ -49,6 +49,14 @@ export class RolePermissionService {
     return this.http.post(GlobalComponent.API_URL + '/admin/role-create', {name});
   }
 
+  updateRole(roleId: number, name: string) {
+    return this.http.post(GlobalComponent.API_URL + '/admin/role-update/' + roleId, {name});
+  }
+
+  deleteRole(roleId: number) {
+    return this.http.delete(GlobalComponent.API_URL + '/admin/role-delete/' + roleId);
+  }
+
   assignPermission(roleId: number, permissionId: number) {
     return this.http.post(GlobalComponent.API_URL + '/admin/role-assign-permission', {roleId, permissionId});
   }

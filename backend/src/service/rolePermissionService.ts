@@ -49,7 +49,7 @@ export const roleList = async (req: any, res: any) => {
   }
 };
 
-export const roleCreate = async (req: any, res: any) => {
+export const roleCreateService = async (req: any, res: any) => {
     const { name } = req.body;
 
     if(!name) {
@@ -71,6 +71,92 @@ export const roleCreate = async (req: any, res: any) => {
        name,
      },
    });
+};
+
+export const roleUpdateService = async (req: any, res: any) => {
+  const { name } = req.body;
+  const { id } = req.params;
+  if (!id) {
+    throw new Error("Role ID is required");
+  }
+  if (!name) {
+    throw new Error("Role name is required");
+  }
+
+  const roleExist = await prisma.role.findFirst({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!roleExist) {
+    throw new Error("Role not found");
+  }
+
+  const roleExistNameWithId = await prisma.role.findFirst({
+    where: {
+      name,
+      NOT: {
+        id: parseInt(id),
+      },
+    },
+  });
+  if(roleExistNameWithId){
+    throw new Error("Role name already exists");
+  }
+  return prisma.role.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      name,
+    },
+  });
+
+};
+
+export const roleDeleteService = async (req: any, res: any) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new Error("Role ID is required");
+  }
+
+  const roleExist = await prisma.role.findFirst({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!roleExist) {
+    throw new Error("Role not found");
+  }
+
+  // check relation with user and permission
+  const userRoleExist = await prisma.userRole.findFirst({
+    where: {
+      roleId: parseInt(id),
+    },
+  });
+
+  if (userRoleExist) {
+    throw new Error("Role has assigned to user");
+  }
+
+  const rolePermissionExist = await prisma.rolePermission.findFirst({
+    where: {
+      roleId: parseInt(id),
+    },
+  });
+
+  if (rolePermissionExist) {
+    throw new Error("Role has assigned to permission");
+  }
+
+  return prisma.role.delete({
+    where: {
+      id: parseInt(id),
+    },
+  });
 };
 
 export const validateRoleNameService = async (req: any, res: any): Promise<boolean> => {

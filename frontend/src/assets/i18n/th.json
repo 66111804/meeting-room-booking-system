@@ -131,5 +131,6 @@
   "CANCEL-BOOKING": "ยกเลิกการจอง",
   "Yes, Cancel It!": "ใช่ ยกเลิก",
   "SELECT-POSITION": "เลือกตำแหน่ง",
-  "SELECT-DEPARTMENT": "เลือกแผนก"
+  "SELECT-DEPARTMENT": "เลือกแผนก",
+  "Are you sure you want to delete this role ?": "คุณแน่ใจหรือไม่ที่จะลบบทบาทนี้?"
 }

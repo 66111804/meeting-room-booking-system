@@ -26,10 +26,10 @@ import {
 } from "../controllers/administrator/meetingRoomController";
 import { upload } from "../shared/uploadFile";
 import {
-    createRole,
+    createRole, deleteRole,
     getAllPermissions,
     getAllRoles,
-    permissionAssign, revokePermission
+    permissionAssign, revokePermission, updateRole
 } from "../controllers/administrator/rolePermissionController";
 
 const router = Router();
@@ -131,6 +131,8 @@ router.get('/feature/:id/validate', async (req, res) => {
 // ----------- Role and Permission ------------
 router.get('/roles', getAllRoles);
 router.post('/role-create', createRole);
+router.post('/role-update/:id', updateRole);
+router.delete('/role-delete/:id', deleteRole);
 router.post('/role-assign-permission',permissionAssign);
 router.post('/role-revoke-permission',revokePermission);
 

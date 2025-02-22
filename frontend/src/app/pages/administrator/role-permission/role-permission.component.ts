@@ -24,7 +24,8 @@ import {PermissionComponent} from './permission/permission.component';
     FormsModule,
     DatePipe,
     NgbPagination,
-    PermissionComponent
+    PermissionComponent,
+    TranslatePipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './role-permission.component.html',
@@ -41,7 +42,7 @@ export class RolePermissionComponent  implements OnInit, AfterViewInit
   roleName: string = '';
   rolesResponse: IRolesAdnPermissionResponse = {message: '', data: {roles: [],permissions:[], total: 0, totalPages: 0, currentPage: 0, limit: 0}};
 
-  roleSelected?: IRole | null;
+  roleSelected!: IRole | null;
 
   // noinspection JSUnusedLocalSymbols
   constructor(
@@ -87,6 +88,7 @@ export class RolePermissionComponent  implements OnInit, AfterViewInit
 
   openModal(content: any) {
     this.roleName = '';
+    this.selectedRole = null;
     this.modalService.open(content, { centered: true });
   }
 
@@ -95,18 +97,34 @@ export class RolePermissionComponent  implements OnInit, AfterViewInit
       this.toastr.error('Role name is required');
       return;
     }
-    this.rolePermissionService.createRole(this.roleName).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.modalService.dismissAll();
-        this.fetchRoles();
-        this.toastr.success('Role created successfully');
-      },
-      error: (error) => {
-        console.error(error.error.message);
-        this.toastr.error(error.error.message);
-      }
-    });
+
+    if(this.selectedRole){
+      this.rolePermissionService.updateRole(this.selectedRole.id, this.roleName).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.modalService.dismissAll();
+          this.fetchRoles();
+          this.toastr.success('Role updated successfully');
+        },
+        error: (error) => {
+          console.error(error.error.message);
+          this.toastr.error(error.error.message);
+        }
+      });
+    }else {
+      this.rolePermissionService.createRole(this.roleName).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.modalService.dismissAll();
+          this.fetchRoles();
+          this.toastr.success('Role created successfully');
+        },
+        error: (error) => {
+          console.error(error.error.message);
+          this.toastr.error(error.error.message);
+        }
+      });
+    }
 
   }
 
@@ -128,5 +146,34 @@ export class RolePermissionComponent  implements OnInit, AfterViewInit
   roleChange(role: IRole) {
     this.roleSelected = role;
     // this.fetchRoles();
+  }
+
+  selectedRole: IRole | null = null;
+  seleteRole(model:any, role:IRole) {
+    this.roleName = role.name;
+    this.selectedRole = role;
+    this.modalService.open(model, { centered: true });
+  }
+  confirnDeleteRole(content: any, role: IRole) {
+    this.selectedRole = role;
+    this.modalService.open(content, { centered: true });
+  }
+  deleteRole(){
+    if(!this.selectedRole){
+      return;
+    }
+    this.rolePermissionService.deleteRole(this.selectedRole.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.modalService.dismissAll();
+        this.fetchRoles();
+        this.toastr.success('Role deleted successfully');
+      },
+      error: (error) => {
+        console.error(error.error.message);
+        this.toastr.error(error.error.message);
+      }
+    });
+
   }
 }
