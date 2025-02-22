@@ -60,7 +60,7 @@ export class SidebarComponent implements OnInit, AfterViewInit
     this.menuItems = MENU;
     // Permission
     // console.log(this.menuItems);
-    console.log(this.roles);
+    // console.log(this.roles);
 
     for(let i = 0; i < this.menuItems.length; i++) {
 
@@ -68,13 +68,13 @@ export class SidebarComponent implements OnInit, AfterViewInit
       {
         // Remove the menu item from the list
         this.menuItems.splice(i, 1);
-        console.log('Not matched');
+        // console.log('Not matched');
       }
       if(this.menuItems[i].subItems){
         const subItems = this.menuItems[i].subItems;
        if(subItems){
          for(let j = 0; j < subItems.length; j++){
-           console.log(subItems[j].link);
+           // console.log(subItems[j].link);
          }
        }
       }

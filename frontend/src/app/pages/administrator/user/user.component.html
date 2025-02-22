@@ -270,13 +270,33 @@
         <div class="col-md-6">
           <div class="mb-3">
             <label for="position" class="form-label">{{ "POSITION" | translate }}</label>
+            <!--
             <input type="text" class="form-control" id="position" formControlName="position" placeholder="Position" [ngClass]="{'is-invalid': submitted && form['position'].errors}">
+            -->
+
+            <select class="form-select mb-3" id="position" aria-label="Position" formControlName="position" [ngClass]="{'is-invalid': submitted && form['position'].errors}">
+              <option value="" disabled selected>{{ "SELECT-POSITION" | translate }}</option>
+              @for(position of positions; track $index)
+              {
+                <option value="{{ position }}" >{{ position }}</option>
+              }
+            </select>
+
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
             <label for="department" class="form-label">{{ "DEPARTMENT" | translate }}</label>
+            <!--
             <input type="text" class="form-control" id="department" formControlName="department" placeholder="Department" [ngClass]="{'is-invalid': submitted && form['department'].errors}">
+            -->
+            <select class="form-select mb-3" id="department" aria-label="Department" formControlName="department" [ngClass]="{'is-invalid': submitted && form['department'].errors}">
+              <option value="" disabled selected>{{ "SELECT-DEPARTMENT" | translate }}</option>
+              @for(department of departments; track $index)
+              {
+                <option value="{{ department }}">{{ department }}</option>
+              }
+            </select>
           </div>
         </div>
         <div class="col-lg-12">

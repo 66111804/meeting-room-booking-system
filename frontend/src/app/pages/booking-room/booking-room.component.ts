@@ -121,7 +121,7 @@ export class BookingRoomComponent implements OnInit
     const slotTimeTemp = this.slotTimeService.getSlotTimeTemp();
 
     this.timeStartSlotSelected = slotTimeTemp ? slotTimeTemp.startTime : '08:00';
-    this.timeEndSlotSelected = slotTimeTemp ? slotTimeTemp.endTime : '08:30';
+    this.timeEndSlotSelected = slotTimeTemp ? slotTimeTemp.endTime : '18:00';
 
     this.timeStartSlotSelectList = this.timeSlots.slice(0, 1);
     this.timeEndSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);

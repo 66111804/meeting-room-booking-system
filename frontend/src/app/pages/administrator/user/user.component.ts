@@ -14,6 +14,7 @@ import {ToastrService} from 'ngx-toastr';
 import {AuthenticationService} from '../../../core/services/auth.service';
 import {UserRoleComponent} from './user-role/user-role.component';
 import {User, UserList} from '../../../store/Authentication/auth.models';
+import {NgOptionComponent} from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-user',
@@ -28,7 +29,8 @@ import {User, UserList} from '../../../store/Authentication/auth.models';
     NgClass,
     MatRadioButton,
     MatRadioGroup,
-    UserRoleComponent
+    UserRoleComponent,
+    NgOptionComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './user.component.html',
@@ -59,7 +61,29 @@ export class UserComponent implements OnInit {
   employeeSubject: Subject<string> = new Subject<string>();
 
   userRoleSelected!: User | null;
+  positions =[
+    'ผู้จัดการฝ่ายขาย',
+    'ผู้จัดการฝ่ายจัดซื้อ',
+    'ผู้จัดการฝ่ายบุคคล',
+    'พนักงานทั่วไป',
+    'เลขา',
+    'แอดมิน',
+    'ผู้ช่วย',
+    'ผู้จัดการฝ่ายควบคุมการผลิต'
+  ]
 
+  departments =[
+    'Engineer',
+    "HR",
+    "QA",
+    "QC",
+    "Sales",
+    "Store",
+    "Production",
+    "Purchasing",
+    "Accounting",
+    "IT"
+  ]
   constructor(private userProfileService: UserProfileService,
               private modalService: NgbModal,
               private formBuilder: UntypedFormBuilder,
@@ -123,7 +147,10 @@ export class UserComponent implements OnInit {
 
   updateUser(content: any) {
     this.imageSrc = 'assets/images/users/user-dummy-img.jpg';
-    this.userForm.reset();
+    this.userForm.reset({
+      position: '',
+      department: '',
+    });
     this.submitted = false;
     this.empHasValid = false;
     this.userProfileService.imageFile = null; // reset image file
@@ -145,6 +172,15 @@ export class UserComponent implements OnInit {
     }
     if(this.userEdit !== null){
       // Update user
+      if(this.userForm.value.password === ''){
+        delete this.userForm.value.password;
+      }else {
+          if (this.userForm.value.password !== this.userForm.value.confirmPassword) {
+            this.userForm.get('confirmPassword')?.setErrors({notMatch: true});
+            this.toastr.error('รหัสผ่านไม่ตรงกัน');
+            return;
+        }
+      }
       this.userProfileService.updateUser(this.userForm.value, this.userEdit.id).subscribe({
         next: (res) => {
           modal.close('Close click');

@@ -134,8 +134,8 @@ export const updateUser = async (req: any, res: any) => {
     }
     const file = req.file;
     const avatar = file ? file.filename : user.avatar;
-    const hash = password ? await bcrypt.hash(password, 12) : user.password;
-    status = status || user.status;
+    const hash = password === "null" ? user.password : await bcrypt.hash(password, 12);
+
     const updatedUser = await prisma.user.update({
       where: {
         id: parseInt(id),

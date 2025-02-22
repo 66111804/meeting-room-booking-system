@@ -58,9 +58,7 @@ router.post('/user-create', upload.single('avatar') , async (req, res) => {
 });
 
 // ----------- Update User ------------
-router.put('/user/:id/update', upload.single('avatar'), async (req, res) => {
-    await updateUser(req, res);
-});
+router.put('/user/:id/update', upload.single('avatar'), updateUser);
 
 // ----------- Delete User ------------
 router.delete('/user/:id/delete', async (req, res) => {

@@ -51,7 +51,7 @@ app.use('/files/uploads',express.static(uploadDir));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: any, res: Response, next: NextFunction) => {
     next();
 });
 

@@ -129,5 +129,7 @@
   "NO-RECORD-FOUND": "ไม่พบข้อมูล",
   "Are you sure you want to cancel this booking?" : "คุณแน่ใจหรือไม่ที่จะยกเลิกการจองนี้?",
   "CANCEL-BOOKING": "ยกเลิกการจอง",
-  "Yes, Cancel It!": "ใช่ ยกเลิก"
+  "Yes, Cancel It!": "ใช่ ยกเลิก",
+  "SELECT-POSITION": "เลือกตำแหน่ง",
+  "SELECT-DEPARTMENT": "เลือกแผนก"
 }
