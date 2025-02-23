@@ -173,10 +173,12 @@ export class BookingRoomComponent implements OnInit
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
-    this.timeStartSlotSelectList = this.timeSlots.slice(
-      0,
-      this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
-    ); // Update start time options
+    this.timeStartSlotSelectList = this.timeSlots;
+
+    // this.timeStartSlotSelectList = this.timeSlots.slice(
+    //   0,
+    //   this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
+    // ); // Update start time options
 
     // validate time slot
     this.calculateTotalHours(); // Recalculate hours
