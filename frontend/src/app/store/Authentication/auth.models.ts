@@ -25,6 +25,7 @@ export interface User {
   roles: Role[]
   permissions: string[]
   hasRole: HasRole[]
+  token?: string
 }
 export interface UserInformation {
   id: number

@@ -37,7 +37,8 @@ export class AuthenticationEffects {
                 }
               )
                 .then(() => {
-                  this.router.navigateByUrl('/app').then();
+                  // this.router.navigateByUrl('/app').then();
+                  window.location.href = '/app';
                 });
               return AuthActions.loginSuccess({user});
             }else{
@@ -61,7 +62,7 @@ export class AuthenticationEffects {
               timer: 1500,
               showConfirmButton: true
             });
-            
+
             return of(AuthActions.loginFailure({ error: error.message || 'Unknown error' }));
           })
 

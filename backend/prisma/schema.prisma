@@ -13,33 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id        Int      @id @default(autoincrement())
-  employeeId String     @unique
-  email     String?   @unique
-  name      String?
-  lastName  String?
-  password  String?
-  avatar    String?
+  id             Int       @id @default(autoincrement())
+  employeeId     String    @unique
+  email          String?   @unique
+  name           String?
+  lastName       String?
+  password       String?
+  avatar         String?
   dateEmployment DateTime?
-  position  String?
-  department String?
-  status    String?  @default("active") // active, inactive, deleted
+  position       String?
+  department     String?
+  status         String?   @default("active") // active, inactive, deleted
 
   MeetingRoomBooking MeetingRoomBooking[] // relation to booking
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   roles     UserRole[] // relation to roles table
+  Post      Post[]
 }
 
 model Role {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users     UserRole[]
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  users       UserRole[]
   permissions RolePermission[]
 }
 
@@ -57,104 +57,118 @@ model UserRole {
 }
 
 model Permission {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
   roles     RolePermission[]
 }
 
 model RolePermission {
-  id            Int      @id @default(autoincrement())
-  roleId        Int
-  permissionId  Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   Role       Role       @relation(fields: [roleId], references: [id])
   Permission Permission @relation(fields: [permissionId], references: [id])
-
 
   @@index([roleId, permissionId]) // add index for roleId and permissionId to make it unique
 }
 
 // Meeting room model
 model MeetingRoom {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique // name of the meeting room
-  description String? @db.Text  // description of the meeting room
-  capacity    Int? // number of people
-  imageUrl    String? // image url of the meeting room
+  id                 Int                   @id @default(autoincrement())
+  name               String                @unique // name of the meeting room
+  description        String?               @db.Text // description of the meeting room
+  capacity           Int? // number of people
+  imageUrl           String? // image url of the meeting room
   // Image obj list for multiple images
-  images      ImageRoom[]
-  status      String?  @default("active") // active, inactive, deleted
+  images             ImageRoom[]
+  status             String?               @default("active") // active, inactive, deleted
   roomHasFeatures    MeetingRoomFeatures[] // relation to features
   meetingRoomBooking MeetingRoomBooking[] // relation to booking
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ImageRoom {
-  id          Int      @id @default(autoincrement())
-  imageUrl     String
-  meetingRoom MeetingRoom @relation(fields: [meetingRoomId], references: [id], onDelete: Cascade)
+  id            Int         @id @default(autoincrement())
+  imageUrl      String
+  meetingRoom   MeetingRoom @relation(fields: [meetingRoomId], references: [id], onDelete: Cascade)
   meetingRoomId Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Features {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique // name of the feature
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           Int                   @id @default(autoincrement())
+  name         String                @unique // name of the feature
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
   meetingRooms MeetingRoomFeatures[] // relation to meeting rooms
 }
 
 model MeetingRoomFeatures {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   meetingRoom   MeetingRoom @relation(fields: [meetingRoomId], references: [id], onDelete: Cascade)
   meetingRoomId Int
-  feature       Features @relation(fields: [featureId], references: [id])
+  feature       Features    @relation(fields: [featureId], references: [id])
   featureId     Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
   @@index([meetingRoomId, featureId]) // add index for meetingRoomId and featureId to make it unique
 }
 
 // Meeting Room Booking model
 
 model MeetingRoomBooking {
-  id          Int      @id @default(autoincrement())
-  userId      Int // user who booked the meeting room
+  id            Int      @id @default(autoincrement())
+  userId        Int // user who booked the meeting room
   meetingRoomId Int
-  slotTimeId  Int?
-  title       String
+  slotTimeId    Int?
+  title         String
   // long description
-  description String? // description of the meeting
-  startTime   DateTime
-  endTime     DateTime
-  status      String?  @default("confirmed") // confirmed, pending, cancelled
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description   String? // description of the meeting
+  startTime     DateTime
+  endTime       DateTime
+  status        String?  @default("confirmed") // confirmed, pending, cancelled
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  User        User         @relation(fields: [userId], references: [id])
-  MeetingRoom MeetingRoom  @relation(fields: [meetingRoomId], references: [id])
-  SlotTime    SlotTime?     @relation(fields: [slotTimeId], references: [id])
+  User        User        @relation(fields: [userId], references: [id])
+  MeetingRoom MeetingRoom @relation(fields: [meetingRoomId], references: [id])
+  SlotTime    SlotTime?   @relation(fields: [slotTimeId], references: [id])
 
   @@index([userId, meetingRoomId]) // add index for userId and meetingRoomId to make it unique
   @@index([slotTimeId]) // add index for slotTimeId
 }
 
 model SlotTime {
-  id          Int      @id @default(autoincrement())
-  startTime   DateTime @db.Time(0)
-  endTime     DateTime @db.Time(0)
-  isActive    Boolean  @default(true)
+  id          Int                  @id @default(autoincrement())
+  startTime   DateTime             @db.Time(0)
+  endTime     DateTime             @db.Time(0)
+  isActive    Boolean              @default(true)
   bookingSlot MeetingRoomBooking[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 
   @@index([startTime, endTime]) // add index for startTime and endTime to make it unique
+}
+
+// post model for blog
+model Post {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  contentHtml String   @db.LongText
+  published   Boolean  @default(false)
+  tags        String   @default("") // comma separated tags
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

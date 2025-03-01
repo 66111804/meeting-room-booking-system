@@ -51,6 +51,12 @@ export const MENU: MenuItem[] = [
         label: 'MENUITEMS.ADMIN.LIST.ROLE-PERMISSION',
         link: '/admin/role-permission',
         parentId: 6
+      },
+      {
+        id: 10,
+        label: 'MENUITEMS.ADMIN.LIST.NEW',
+        link: '/admin/new',
+        parentId: 6
       }
     ]
   },

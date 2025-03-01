@@ -42,7 +42,8 @@
         "PERMISSION": "สิทธิ์การใช้งาน",
         "SETTING": "ตั้งค่า",
         "ROLE": "บทบาท",
-        "ROLE-PERMISSION": "สิทธิ์การใช้งานและบทบาท"
+        "ROLE-PERMISSION": "สิทธิ์การใช้งานและบทบาท",
+        "NEW": "ข้อมูลห้องประชุม และข่าวสาร"
       }
     },
     "CONTACT-US": {
@@ -132,5 +133,9 @@
   "Yes, Cancel It!": "ใช่ ยกเลิก",
   "SELECT-POSITION": "เลือกตำแหน่ง",
   "SELECT-DEPARTMENT": "เลือกแผนก",
-  "Are you sure you want to delete this role ?": "คุณแน่ใจหรือไม่ที่จะลบบทบาทนี้?"
+  "Are you sure you want to delete this role ?": "คุณแน่ใจหรือไม่ที่จะลบบทบาทนี้?",
+  "NEW-INFORMATION": "ข้อมูลข่าวสารใหม่",
+  "INFORMATION": "ข่าวสาร",
+  "CREATE_NEW": "สร้างข้อมูลใหม่",
+  "BACK": "กลับ"
 }

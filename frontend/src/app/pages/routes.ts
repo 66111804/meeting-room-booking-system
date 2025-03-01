@@ -7,10 +7,12 @@ import {UserComponent} from './administrator/user/user.component';
 import {MeetingRoomComponent} from './administrator/meeting-room/meeting-room.component';
 import {RolePermissionComponent} from './administrator/role-permission/role-permission.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
-import {LogoutComponent} from './auth/logout/logout.component';
 import {RoomComponent} from './booking-room/room/room.component';
 import {EditBookingComponent} from './my-booking/edit-booking/edit-booking.component';
 import {ContactUsComponent} from './contact-us/contact-us.component';
+import {NewComponent} from './administrator/new/new.component';
+import {NewCreateComponent} from './administrator/new/new-create/new-create.component';
+import {NewEditComponent} from './administrator/new/new-edit/new-edit.component';
 
 const Routing: Routes = [
   {
@@ -52,6 +54,18 @@ const Routing: Routes = [
       {
         path: 'role-permission',
         component: RolePermissionComponent
+      },
+      {
+        path: 'new',
+        component: NewComponent
+      },
+      {
+        path: 'new/create',
+        component: NewCreateComponent
+      },
+      {
+        path: 'new/:id/edit',
+        component: NewEditComponent
       }
     ]
   },

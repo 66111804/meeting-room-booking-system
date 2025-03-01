@@ -31,6 +31,7 @@ import {
     getAllRoles,
     permissionAssign, revokePermission, updateRole
 } from "../controllers/administrator/rolePermissionController";
+import {getBlog} from "../controllers/administrator/blogController";
 
 const router = Router();
 
@@ -143,4 +144,7 @@ router.post('/role-assign-user', assignRoleUser);
 router.post('/role-revoke-user', revokeRoleUser);
 router.post('/role-assign-user-all', assignRoleUserAll);
 router.post('/role-revoke-user-all', revokeRoleUserAll);
+
+// ----------- Blog ------------
+router.get('/blogs', getBlog);
 export default router;
