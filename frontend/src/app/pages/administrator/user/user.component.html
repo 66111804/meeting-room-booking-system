@@ -245,31 +245,31 @@
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="name" class="form-label">{{ "FIRST-NAME" | translate }}</label>
+            <label for="name" class="form-label">{{ "FIRST-NAME" | translate }} <code>*</code></label>
             <input type="text" class="form-control" id="name" formControlName="name" placeholder="First Name" [ngClass]="{'is-invalid': submitted && form['name'].errors}">
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="lastName" class="form-label">{{ "LAST-NAME" | translate }}</label>
+            <label for="lastName" class="form-label">{{ "LAST-NAME" | translate }} <code>*</code></label>
             <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Last Name" [ngClass]="{'is-invalid': submitted && form['lastName'].errors}">
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="email" class="form-label">{{ "EMAIL" | translate }}</label>
+            <label for="email" class="form-label">{{ "EMAIL" | translate }} <code>*</code></label>
             <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email" [ngClass]="{'is-invalid': submitted  && form['email'].errors}">
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="employeeId" class="form-label">{{ "EMPLOYEE-ID" | translate }}</label>
+            <label for="employeeId" class="form-label">{{ "EMPLOYEE-ID" | translate }} <code>*</code></label>
             <input type="text" class="form-control" id="employeeId" formControlName="employeeId" placeholder="Employee ID" (input)="employeeIdChange($event)" [ngClass]="{'is-invalid': (submitted || empHasValid) && form['employeeId'].errors}">
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="position" class="form-label">{{ "POSITION" | translate }}</label>
+            <label for="position" class="form-label">{{ "POSITION" | translate }} <code>*</code></label>
             <!--
             <input type="text" class="form-control" id="position" formControlName="position" placeholder="Position" [ngClass]="{'is-invalid': submitted && form['position'].errors}">
             -->
@@ -286,7 +286,7 @@
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="department" class="form-label">{{ "DEPARTMENT" | translate }}</label>
+            <label for="department" class="form-label">{{ "DEPARTMENT" | translate }} <code>*</code></label>
             <!--
             <input type="text" class="form-control" id="department" formControlName="department" placeholder="Department" [ngClass]="{'is-invalid': submitted && form['department'].errors}">
             -->
@@ -301,7 +301,7 @@
         </div>
         <div class="col-lg-12">
           <div class="mb-3">
-            <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }}</label>
+            <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }} <code>*</code></label>
             <mat-radio-group id="statusInfo" class="justify-content-start d-flex align-items-center" aria-label="Select Status" name="status" >
               <mat-radio-button value="active" class="mt-1" (change)="statusChange($event)"  [checked]="form['status'].value == 'active'">
                 {{ "ACTIVE" | translate }}
@@ -314,13 +314,13 @@
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="password" class="form-label">{{ "PASSWORD" | translate }}</label>
+            <label for="password" class="form-label">{{ "PASSWORD" | translate }} <code>*</code></label>
             <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password" [ngClass]="{'is-invalid': submitted && form['password'].errors}">
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="confirmPassword" class="form-label">{{ "CONFIRM-PASSWORD" | translate }}</label>
+            <label for="confirmPassword" class="form-label">{{ "CONFIRM-PASSWORD" | translate }} <code>*</code></label>
             <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm Password" [ngClass]="{'is-invalid': submitted && form['confirmPassword'].errors}">
           </div>
         </div>

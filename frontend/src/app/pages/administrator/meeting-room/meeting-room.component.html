@@ -236,20 +236,20 @@
           </div>
           <div class="col-lg-6">
             <div class="mb-3">
-              <label for="room" class="form-label fw-medium">{{ "ROOM" | translate }}</label>
+              <label for="room" class="form-label fw-medium">{{ "ROOM" | translate }} <code>*</code></label>
               <input type="text" class="form-control"  id="room"  name="name" [ngClass]="{'is-invalid' : roomFormControls.name.valid }" placeholder="{{ 'ROOM' | translate }}" [(ngModel)]="roomFormControls.name.data" (input)="roomFormChange()">
             </div>
           </div>
           <div class="col-lg-6">
             <div class="mb-3">
-              <label for="capacity" class="form-label fw-medium">{{ "CAPACITY" | translate }} - {{ 'CAPACITY-UNIT' | translate }}*</label>
+              <label for="capacity" class="form-label fw-medium">{{ "CAPACITY" | translate }} - {{ 'CAPACITY-UNIT' | translate }} <code>*</code></label>
               <input type="number" class="form-control" id="capacity" max="100" name="capacity" [ngClass]="{'is-invalid' : roomFormControls.capacity.valid }" placeholder="{{ 'CAPACITY' | translate }} - {{ 'CAPACITY-UNIT' | translate }}" [(ngModel)]="roomFormControls.capacity.data" >
             </div>
           </div>
           <!-- status -->
           <div class="col-lg-12">
             <div class="mb-3">
-              <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }}</label>
+              <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }} <code>*</code></label>
               <mat-radio-group id="statusInfo" class="justify-content-start d-flex align-items-center" aria-label="Select Status" name="status" >
                 <mat-radio-button value="active" class="mt-1" (change)="statusChange($event)"  [checked]="roomFormControls.status.data == 'active'">
                   {{ "ACTIVE" | translate }}
@@ -262,7 +262,7 @@
           </div>
           <div class="col-lg-12">
             <div class="mb-3">
-              <label for="description" class="form-label fw-medium">{{ "DESCRIPTION" | translate }}</label>
+              <label for="description" class="form-label fw-medium">{{ "DESCRIPTION" | translate }} <code>*</code></label>
               <textarea class="form-control"  id="description" rows="3"  name="description" [ngClass]="{'is-invalid' : roomFormControls.description.valid }"  [(ngModel)]="roomFormControls.description.data"  placeholder="{{ 'DESCRIPTION' | translate }}"></textarea>
 <!--              <ckeditor-->
 <!--                id="description"-->

@@ -62,7 +62,7 @@
               <!-- Time start -->
               <div class="col-xl-3">
                 <div class="mb-3">
-                  <label for="timeStart" class="form-label">เวลาเริ่ม</label>
+                  <label for="timeStart" class="form-label">เวลาเริ่ม <code>*</code></label>
 <!--                  <input type="text" class="form-control" id="timeStart" name="timeStart" disabled [value]="timeStartSlotSelected">-->
 
                   <!-- Option -->
@@ -79,7 +79,7 @@
               <!-- Time end -->
               <div class="col-xl-3">
                 <div class="mb-3">
-                  <label for="timeEnd" class="form-label">เวลาสิ้นสุด</label>
+                  <label for="timeEnd" class="form-label">เวลาสิ้นสุด <code>*</code></label>
 <!--                  <input type="text" class="form-control" id="timeEnd" name="timeEnd" disabled [value]="timeEndSlotSelected">-->
                   <!-- Option -->
                   <select class="form-select" id="timeEnd" for="timeEnd" (change)="onSelectTimeEndChange($event)">
@@ -127,7 +127,8 @@
               <!-- Title -->
               <div class="col-xl-12">
                 <div class="mb-3">
-                  <label for="title" class="form-label">หัวข้อการประชุม</label>
+                  <label for="title" class="form-label">หัวข้อการประชุม <code>*</code>
+                  </label>
                   <input type="text" class="form-control" id="title" name="title" placeholder="หัวข้อการประชุม" required [(ngModel)]="formBookingData.title">
                 </div>
               </div>
@@ -135,7 +136,7 @@
               <!-- Description -->
               <div class="col-xl-12">
                 <div class="mb-3">
-                  <label for="description" class="form-label">รายละเอียดการประชุม</label>
+                  <label for="description" class="form-label">รายละเอียดการประชุม <code>*</code></label>
                   <textarea class="form-control" id="description" rows="3" name="description" placeholder="รายละเอียดการประชุม" required
                   [(ngModel)]="formBookingData.description"
                   ></textarea>
