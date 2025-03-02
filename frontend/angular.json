@@ -42,7 +42,7 @@
               "src/assets/scss/icons.scss"
             ],
             "scripts": [
-              "node_modules/@lordicon/element/release/lordicon.js"
+              "node_modules/@lordicon/element/release/lordicon.js",
             ],
             "allowedCommonJsDependencies": [
               "ev-emitter/ev-emitter",

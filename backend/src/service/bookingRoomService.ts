@@ -49,7 +49,6 @@ export const createOrUpdateBookingRoom = async (data: IBookingRoom , bookingId:n
     throw new Error('Cannot book in the past');
   }
 
-  console.table({startTime, endTime});
   const startDateTime = new Date();
   startDateTime.setHours(startTime.hour(), startTime.minute(), 0, 0);
 

@@ -16,13 +16,13 @@ import {allIcons} from 'angular-feather/icons';
 import {provideFlatpickrDefaults} from 'angularx-flatpickr';
 import {authInterceptorProviders} from './core/helpers/auth.interceptor';
 import {provideToastr} from 'ngx-toastr';
-import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 import {authenticationReducer} from './store/Authentication/authentication.reducer';
 import {provideClientHydration} from '@angular/platform-browser';
 import {provideEffects} from '@ngrx/effects';
 import {AuthenticationEffects} from './store/Authentication/authentication.effects';
+import {CKEditorModule} from 'ckeditor4-angular';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -42,6 +42,7 @@ export const appConfig: ApplicationConfig = {
       }),
       FeatherModule.pick(allIcons),
       CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+      CKEditorModule
     ]),
 
     provideMockStore(),

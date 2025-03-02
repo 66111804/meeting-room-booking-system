@@ -50,7 +50,7 @@ export class SidebarComponent implements OnInit, AfterViewInit
     translate.setDefaultLang('en');
 
     const permission = this.tokenStorageService.getPermissions();
-    console.log({permission});
+    // console.log({permission});
 
     this.roles = this.tokenStorageService.getRole();
   }

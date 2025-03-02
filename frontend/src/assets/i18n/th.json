@@ -137,5 +137,14 @@
   "NEW-INFORMATION": "ข้อมูลข่าวสารใหม่",
   "INFORMATION": "ข่าวสาร",
   "CREATE_NEW": "สร้างข้อมูลใหม่",
-  "BACK": "กลับ"
+  "BACK": "กลับ",
+  "SAVE-AND-CONTINUE": "บันทึกและดำเนินการต่อ",
+  "SAVE-AND-EXIT": "บันทึกและออก",
+  "INFORMATION-NAME": "ชื่อข่าวสาร",
+  "INFORMATION-DESCRIPTION": "รายละเอียดข่าวสาร",
+  "INFORMATION-IMAGE": "รูปภาพข่าวสาร",
+  "INFORMATION-NAME-REQUIRED": "กรุณากรอกชื่อข่าวสาร",
+  "INFORMATION-DESCRIPTION-REQUIRED": "กรุณากรอกรายละเอียดข่าวสาร",
+  "INFORMATION-IMAGE-REQUIRED": "กรุณาเลือกรูปภาพข่าวสาร",
+  "INFORMATION-NEW": "ข้อมูลข่าวสารใหม่"
 }

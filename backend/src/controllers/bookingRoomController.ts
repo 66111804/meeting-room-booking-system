@@ -114,9 +114,6 @@ export const meetingRoomList = async (req: any, res: any) => {
         updatedAt: 'desc'
       }
     });
-
-    // console.log('Raw query result:', JSON.stringify(meetingRoomsList, null, 2));
-
     const formattedRooms = meetingRoomsList.map(room => {
       const hasOverlap = room.meetingRoomBooking.some(booking =>
         isTimeOverlap(booking, timeStart, timeEnd)

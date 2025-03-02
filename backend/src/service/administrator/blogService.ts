@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 
 export const getBlogsService = async (req: any, res: any) => {
   let { page, limit, search } = req.query;
-  console.log(req.query);
-  console.log({page, limit, search});
+  // console.log(req.query);
+  // console.log({page, limit, search});
 
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
