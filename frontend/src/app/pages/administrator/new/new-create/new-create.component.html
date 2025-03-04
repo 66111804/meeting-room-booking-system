@@ -16,32 +16,58 @@
         <!-- Form New Information -->
         <form (ngSubmit)="onSubmit()">
           <div class="row">
-            <div class="col-lg-6">
+            <div class="col-ng-12">
+              <!-- Image review -->
+              <div class="mb-3 d-flex justify-content-center align-items-center overflow-hidden d-none image-review-container" id="image-review-container">
+                <img src="https://images.unsplash.com/photo-1740738174801-12a109f9acd3?q=80&w=1314&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="img-fluid rounded w-100 hovering-zoom" alt="image" id="image-review" style="max-width: 200px;">
+              </div>
+              <!-- Image -->
               <div class="mb-3">
-                <label for="title" class="form-label">{{ "TITLE" | translate }}</label>
-                <input type="text" class="form-control" id="title" placeholder="Title">
+                <label for="image" class="form-label">{{ "IMAGE" | translate }}</label>
+                <input type="file" class="form-control" id="image" accept="image/*" (change)="onFileChange($event)">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="mb-3">
-                <label for="status" class="form-label">{{ "STATUS" | translate }}</label>
-                <select class="form-select" id="status" >
-                  <option value="1">{{ "ACTIVE" | translate }}</option>
-                  <option value="0">{{ "INACTIVE" | translate }}</option>
+                <label for="title" class="form-label">{{ "TITLE" | translate }} <code>*</code></label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Title" [ngClass]="{'is-invalid': submitted && !form.title.valid}" required [(ngModel)]="form.title.data">
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <!-- Tag -->
+              <div class="mb-3">
+                <label for="tag" class="form-label">{{ "TAG" | translate }} <code>*</code></label>
+                <input type="text" class="form-control" id="tag" name="tag" placeholder="Tag" [ngClass]="{'is-invalid': submitted && !form.tag.valid}" required [(ngModel)]="form.tag.data">
+                <div class="form-text">{{ "TAG-HELP" | translate }}</div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="mb-3">
+                <label for="publish" class="form-label">{{ "PUBLISH" | translate }} <code>*</code></label>
+                <select class="form-select" id="publish" name="publish" required (change)="onPublishChange($event)">
+                    <option value="1" selected>{{ "YES" | translate }}</option>
+                    <option value="0">{{ "NO" | translate }}</option>
                 </select>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <!-- Short Description -->
+              <div class="mb-3">
+                <label for="short-description" class="form-label">{{ "SHORT-DESCRIPTION" | translate }} <code>*</code></label>
+                <textarea class="form-control" id="short-description" name="content" rows="3" placeholder="Short Description" style="resize: none;"  [ngClass]="{'is-invalid': submitted && !form.content.valid}" required [(ngModel)]="form.content.data"></textarea>
+                <div class="form-text">{{ "SHORT-DESCRIPTION-HELP" | translate }}</div>
               </div>
             </div>
             <div class="col-lg-12">
               <div class="mb-3">
                 <label for="editor-description" class="form-label fw-medium">{{ "DESCRIPTION" | translate }} <code>*</code></label>
                 <div id="editor-description" class="editor">
-
+                  <!-- Editor Description -->
                 </div>
-
               </div>
             <div class="col-lg-12">
               <div class="mb-3">
-                <button type="submit" class="btn btn-primary">{{ "SAVE" | translate }}</button>
+                <button type="submit" class="btn btn-primary" >{{ "SAVE" | translate }}</button>
               </div>
             </div>
             </div>

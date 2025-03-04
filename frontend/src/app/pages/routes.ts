@@ -65,7 +65,7 @@ const Routing: Routes = [
       },
       {
         path: 'new/:id/edit',
-        component: NewEditComponent
+        component: NewCreateComponent
       }
     ]
   },

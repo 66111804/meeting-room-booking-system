@@ -18,14 +18,6 @@ import {
 import {GlobalComponent} from '../../../global-component';
 import Swal from 'sweetalert2';
 import {MatRadioModule} from '@angular/material/radio';
-
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
-
-// import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
-import {Code} from 'angular-feather/icons';
-// import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
-
 @Component({
   selector: 'app-meeting-room',
   standalone: true,

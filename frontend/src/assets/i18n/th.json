@@ -146,5 +146,12 @@
   "INFORMATION-NAME-REQUIRED": "กรุณากรอกชื่อข่าวสาร",
   "INFORMATION-DESCRIPTION-REQUIRED": "กรุณากรอกรายละเอียดข่าวสาร",
   "INFORMATION-IMAGE-REQUIRED": "กรุณาเลือกรูปภาพข่าวสาร",
-  "INFORMATION-NEW": "ข้อมูลข่าวสารใหม่"
+  "INFORMATION-NEW": "ข้อมูลข่าวสารใหม่",
+  "SHORT-DESCRIPTION": "รายละเอียดสั้น",
+  "IMAGE": "รูปภาพ",
+  "TAG": "แท็ก",
+  "TAG-NAME": "ชื่อแท็ก",
+  "TAG-DESCRIPTION": "รายละเอียดแท็ก",
+  "PUBLIC": "สาธารณะ",
+  "PUBLISH": "เผยแพร่"
 }

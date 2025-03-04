@@ -1,0 +1,9 @@
+
+.hovering-zoom{
+  transition: transform .2s;
+  cursor: pointer;
+}
+
+.hovering-zoom:hover{
+    transform: scale(1.1);
+}

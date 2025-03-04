@@ -163,6 +163,7 @@ model SlotTime {
 model Post {
   id          Int      @id @default(autoincrement())
   title       String
+  image       String?
   content     String
   contentHtml String   @db.LongText
   published   Boolean  @default(false)
