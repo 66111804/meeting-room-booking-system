@@ -15,6 +15,25 @@ export interface IFormBlog {
   tag: FormField<string>;
 }
 
+export interface IBlog {
+  id: number;
+  title: string;
+  image: string;
+  content: string;
+  contentHtml: string;
+  published: boolean;
+  tags: string;
+  authorId: number;
+  createdAt: string; // สามารถใช้ Date แทน string ถ้าจะแปลงเป็น Date object
+  updatedAt: string;
+}
+
+export interface IBlogResponse {
+  blogs: IBlog[];
+  total: number;
+  totalPages: number;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -25,11 +44,11 @@ export class BlogService {
   imageFile: File | null = null;
 
   getBlogs(searchTerm: string, page: number, pageSize: number) {
-    return this.http.get(`${GlobalComponent.API_URL}/admin/blogs?page=${page}&limit=${pageSize}&search=${searchTerm}`);
+    return this.http.get<IBlogResponse>(`${GlobalComponent.API_URL}/admin/blogs?page=${page}&limit=${pageSize}&search=${searchTerm}`);
   }
 
   getBlogById(id: number) {
-    return this.http.get(`${GlobalComponent.API_URL}/admin/blogs/${id}`);
+    return this.http.get<IBlog>(`${GlobalComponent.API_URL}/admin/blog/${id}/info`);
   }
 
   createBlogOrUpdate(data: IFormBlog, id: number = 0) {
@@ -37,7 +56,7 @@ export class BlogService {
     formData.append('title', data.title.data);
     formData.append('content', data.content.data);
     formData.append('contentHtml', data.contentHtml.data);
-    formData.append('publish', data.publish.data.toString());
+    formData.append('published', data.publish.data.toString());
     formData.append('tag', data.tag.data);
     if (this.imageFile !== null) {
       formData.append('image', this.imageFile);
@@ -47,5 +66,9 @@ export class BlogService {
       return this.http.post(`${GlobalComponent.API_URL}/admin/blog/${id}/update`, formData);
     }
     return this.http.post(`${GlobalComponent.API_URL}/admin/blog-create`, formData);
+  }
+
+  deleteBlog(id: number) {
+    return this.http.delete(`${GlobalComponent.API_URL}/admin/blog/${id}/delete`);
   }
 }

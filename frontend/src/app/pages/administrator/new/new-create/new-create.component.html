@@ -5,7 +5,14 @@
     <div class="card">
       <div class="card-header">
         <div class="d-flex align-items center">
-          <h5 class="card-title mb-0 flex-grow-1">{{ "INFORMATION-NEW" | translate }}</h5>
+          <h5 class="card-title mb-0 flex-grow-1">
+            @if(id > 0)
+            {
+              {{ "INFORMATION-EDIT" | translate }}
+            } @else {
+              {{ "INFORMATION-NEW" | translate }}
+            }
+          </h5>
           <div class="">
             <a routerLink="/admin/new" class="btn btn-info add-btn ms-2" ><i class="ri-arrow-left-line me-2"></i>
               {{ "BACK" | translate }}</a>
@@ -45,8 +52,15 @@
               <div class="mb-3">
                 <label for="publish" class="form-label">{{ "PUBLISH" | translate }} <code>*</code></label>
                 <select class="form-select" id="publish" name="publish" required (change)="onPublishChange($event)">
-                    <option value="1" selected>{{ "YES" | translate }}</option>
-                    <option value="0">{{ "NO" | translate }}</option>
+                    @if(id>0)
+                    {
+                      <option value="1" [selected]="form.publish.data == 1 ? 'selected' : '' ">{{ "YES" | translate }}</option>
+                      <option value="0" [selected]="form.publish.data == 0 ? 'selected' : '' ">{{ "NO" | translate }}</option>
+                    } @else {
+                      <option value="1" selected>{{ "YES" | translate }}</option>
+                      <option value="0">{{ "NO" | translate }}</option>
+
+                    }
                 </select>
               </div>
             </div>
@@ -67,7 +81,15 @@
               </div>
             <div class="col-lg-12">
               <div class="mb-3">
-                <button type="submit" class="btn btn-primary" >{{ "SAVE" | translate }}</button>
+                <button type="submit" class="btn btn-primary" >
+                  @if(id > 0)
+                  {
+                    {{ "UPDATE" | translate }}
+                  }
+                  @else{
+                    {{ "SAVE" | translate }}
+                  }
+                </button>
               </div>
             </div>
             </div>

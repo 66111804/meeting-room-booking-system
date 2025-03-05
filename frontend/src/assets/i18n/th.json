@@ -153,5 +153,6 @@
   "TAG-NAME": "ชื่อแท็ก",
   "TAG-DESCRIPTION": "รายละเอียดแท็ก",
   "PUBLIC": "สาธารณะ",
-  "PUBLISH": "เผยแพร่"
+  "PUBLISH": "เผยแพร่",
+  "INFORMATION-EDIT": "แก้ไขข้อมูลข่าวสาร"
 }

@@ -6,6 +6,8 @@ import {ActivatedRoute, Route, Router, RouterLink} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {BlogService, IFormBlog} from '../../../../core/services/blog.service';
 import {ToastrService} from 'ngx-toastr';
+import {GlobalComponent} from '../../../../global-component';
+import Swal from 'sweetalert2';
 
 declare var CKEDITOR: any;
 @Component({
@@ -26,7 +28,7 @@ export class NewCreateComponent implements OnInit, AfterViewInit
 {
   breadCrumbItems!: Array<{}>;
 
-  id: number | undefined;
+  id: number = 0;
   constructor(private blogService: BlogService,
               private route: ActivatedRoute,
               private toastr: ToastrService,
@@ -65,7 +67,10 @@ export class NewCreateComponent implements OnInit, AfterViewInit
   ngAfterViewInit(): void {
     setTimeout(() => {
       document.getElementById('elmLoader')?.classList.add('d-none');
-    }, 1000);
+      if(this.id > 0) {
+        this.fetchBlog();
+      }
+    }, 500);
     CKEDITOR.replace('editor-description');
     CKEDITOR.config.versionCheck = false;
     CKEDITOR.instances['editor-description'].on('change', () => {
@@ -73,6 +78,32 @@ export class NewCreateComponent implements OnInit, AfterViewInit
       this.form.contentHtml.data = this.editorData;
     });
 
+
+  }
+
+  fetchBlog(){
+    this.blogService.getBlogById(this.id)
+      .subscribe({
+        next: (data) => {
+          this.form = {
+            title: {data: data.title, valid: true},
+            content: {data: data.content, valid: true},
+            contentHtml: {data: data.contentHtml, valid: true},
+            publish: {data: data.published ? 1 : 0, valid: true},
+            tag: {data: data.tags, valid: true}
+          };
+          console.log(this.form);
+          CKEDITOR.instances['editor-description'].setData(this.form.contentHtml.data);
+
+          if(data.image !== ''){
+            document.getElementById('image-review')?.setAttribute('src', GlobalComponent.SERVE_URL+'/files/uploads/'+data.image);
+            document.getElementById('image-review-container')?.classList.remove('d-none');
+            }
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
   }
 
   onSubmit(){
@@ -115,13 +146,53 @@ export class NewCreateComponent implements OnInit, AfterViewInit
     {
       return;
     }
+
+    // ------------------ Update-------------------
+    if(this.id > 0){
+      console.log(this.form);
+      this.blogService.createBlogOrUpdate(this.form, this.id).subscribe(
+        {
+          next: (data) => {
+            console.log(data);
+            this.toastr.success('Blog updated successfully');
+            // this.router.navigate(['/admin/new']).then();
+            Swal.fire({
+              title: 'สำเร็จ',
+              text: 'อัพเดทบล็อกสำเร็จ',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.router.navigate(['/admin/new']).then();
+              }
+            });
+          },
+          error: (error) => {
+            console.log(error);
+            this.toastr.error('Error updating blog');
+          }
+        }
+      );
+      return;
+    }
+    // ------------------ Create -------------------
     // submit form
     this.blogService.createBlogOrUpdate(this.form)
       .subscribe({
         next: (data) => {
           console.log(data);
           this.toastr.success('Blog created successfully');
-          this.router.navigate(['/admin/new']).then();
+          Swal.fire({
+            title: 'สำเร็จ',
+            text: 'สร้างบล็อกสำเร็จ',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.router.navigate(['/admin/new']).then();
+            }
+          });
+
         },
         error: (error) => {
           console.log(error);

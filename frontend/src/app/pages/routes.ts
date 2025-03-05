@@ -12,7 +12,6 @@ import {EditBookingComponent} from './my-booking/edit-booking/edit-booking.compo
 import {ContactUsComponent} from './contact-us/contact-us.component';
 import {NewComponent} from './administrator/new/new.component';
 import {NewCreateComponent} from './administrator/new/new-create/new-create.component';
-import {NewEditComponent} from './administrator/new/new-edit/new-edit.component';
 
 const Routing: Routes = [
   {

@@ -179,4 +179,4 @@ prisma/.env
 prisma/.env.local
 prisma/migrations/*
 
-uploads/*
+uploads/
