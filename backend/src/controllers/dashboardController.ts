@@ -1,6 +1,6 @@
 // src/controllers/dashboardController.ts
 
-import { getDashboardService } from "../service/dashboardService";
+import {getBlogService, getBlogsService, getDashboardService} from "../service/dashboardService";
 
 export const dashboardController = async (req: any, res: any) => {
   try{
@@ -9,4 +9,20 @@ export const dashboardController = async (req: any, res: any) => {
   }catch (error:any) {
     res.status(500).json({ error: error.message });
   }
+};
+
+export const getBlogsController = async (req: any, res: any) => {
+    try {
+        return await getBlogsService(req, res);
+    } catch (e:any) {
+        return res.status(500).json({ message: e.message });
+    }
+};
+
+export const getBlogController = async (req: any, res: any) => {
+    try {
+        return await getBlogService(req, res);
+    }catch (e:any) {
+        return res.status(500).json({ message: e.message });
+    }
 };

@@ -3,10 +3,12 @@
 import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import {TranslatePipe} from '@ngx-translate/core';
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
-import {NgClass} from '@angular/common';
+import {DatePipe, NgClass, SlicePipe} from '@angular/common';
 import {StatComponent} from '../../widget/stat/stat.component';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {DashboardService} from '../../core/services/dashboard.service';
+import {DashboardService, IBlogResponseDahsboard} from '../../core/services/dashboard.service';
+import {GlobalComponent} from '../../global-component';
+import {Router} from '@angular/router';
 //
 const projectstatData = [{
   title: 'การใช้งานล่าสุด 30 วัน',
@@ -39,9 +41,10 @@ const projectstatData = [{
   imports: [
     TranslatePipe,
     BreadcrumbsComponent,
-    NgClass,
     StatComponent,
     NgbPagination,
+    SlicePipe,
+    DatePipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -57,21 +60,21 @@ export class DashboardComponent implements OnInit {
   order: string = 'asc';
   sort: string = 'id';
   page: number = 1;
-  limit: number = 10;
-  constructor(private dashboardService:DashboardService) {
+  pageSize: number = 10;
+  searchTerm: string = '';
+  blogs: IBlogResponseDahsboard = {
+    blogs: [],
+    total: 0,
+    totalPages: 0,
+    currentPage: 0,
+  };
+  constructor(private dashboardService:DashboardService,
+              private router:Router) {
     this.breadCrumbItems = [
       { label: '', active: true }
     ];
 
-    this.dashboardService.getStats().subscribe({
-      next: (data) => {
-        this.statData = data;
-        console.log(data);
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+
 
   }
 
@@ -108,9 +111,47 @@ export class DashboardComponent implements OnInit {
         profit: 'down',
       }
     ];
+
+    this.fetchStats();
+    this.fetchBlogs();
   }
 
-  changePage(){
+  fetchStats(){
+    this.dashboardService.getStats().subscribe({
+      next: (data) => {
+        this.statData = data;
+        // console.log(data);
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
 
+  fetchBlogs() {
+    this.dashboardService.getBlogs(this.searchTerm, this.page, this.pageSize).subscribe(
+      {
+        next: (data) => {
+          this.blogs = data;
+        },
+        error: (error) => {
+          console.log(error);
+          this.blogs = {
+            blogs: [],
+            total: 0,
+            totalPages: 0,
+            currentPage: 0,
+          }
+        }
+      });
+  }
+  changePage(){
+    this.fetchBlogs();
+  }
+
+  protected readonly GlobalComponent = GlobalComponent;
+
+  gotoBlog(id: number) {
+    this.router.navigate(['/app/'+id+'/blog']).then();
   }
 }

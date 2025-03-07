@@ -92,7 +92,7 @@ export class NewComponent implements OnInit, AfterViewInit
           this.modalService.dismissAll();
         },
         error: (error) => {
-          console.log(error);
+          console.error(error);
         }
       });
     }

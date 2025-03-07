@@ -69,13 +69,25 @@ export const updateBlogService = async (req: any, res: any) => {
     published = typeof published === "string" ? parseInt(published) : published;
     const imageUrl = file ? file.filename : "";
     if(!id) return res.status(400).json({ message: "Blog id is required" });
+
+    const _blog = await prisma.post.findUnique({
+        where: {
+            id: parseInt(id),
+        },
+    });
+
+    if(!_blog) {
+        return res.status(404).json({ message: "Blog not found" });
+    }
+
+
     const blog = await prisma.post.update({
         where: {
             id: parseInt(id),
         },
         data: {
             title,
-            image: imageUrl,
+            image: imageUrl === "" ? _blog.image : imageUrl,
             published: published === 1,
             tags: tag,
             content: content,

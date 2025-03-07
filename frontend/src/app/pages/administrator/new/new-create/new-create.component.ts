@@ -55,7 +55,7 @@ export class NewCreateComponent implements OnInit, AfterViewInit
     title: {data: '', valid: false},
     content: {data: '', valid: false},
     contentHtml: {data: '', valid: false},
-    publish: {data: 0,valid: false},
+    publish: {data: 1,valid: false},
     tag: { data: '', valid: false},
  }
   editorData:string = '';
@@ -92,7 +92,6 @@ export class NewCreateComponent implements OnInit, AfterViewInit
             publish: {data: data.published ? 1 : 0, valid: true},
             tag: {data: data.tags, valid: true}
           };
-          console.log(this.form);
           CKEDITOR.instances['editor-description'].setData(this.form.contentHtml.data);
 
           if(data.image !== ''){
@@ -101,7 +100,7 @@ export class NewCreateComponent implements OnInit, AfterViewInit
             }
         },
         error: (error) => {
-          console.log(error);
+          console.error(error);
         }
       });
   }
@@ -141,7 +140,7 @@ export class NewCreateComponent implements OnInit, AfterViewInit
     }else{
       this.form.content.valid = true;
     }
-    console.log(this.form);
+
     if(!this.form.title.valid || !this.form.contentHtml.valid || !this.form.tag.valid || !this.form.content.valid)
     {
       return;
@@ -149,11 +148,9 @@ export class NewCreateComponent implements OnInit, AfterViewInit
 
     // ------------------ Update-------------------
     if(this.id > 0){
-      console.log(this.form);
       this.blogService.createBlogOrUpdate(this.form, this.id).subscribe(
         {
           next: (data) => {
-            console.log(data);
             this.toastr.success('Blog updated successfully');
             // this.router.navigate(['/admin/new']).then();
             Swal.fire({
@@ -180,7 +177,6 @@ export class NewCreateComponent implements OnInit, AfterViewInit
     this.blogService.createBlogOrUpdate(this.form)
       .subscribe({
         next: (data) => {
-          console.log(data);
           this.toastr.success('Blog created successfully');
           Swal.fire({
             title: 'สำเร็จ',
@@ -195,7 +191,7 @@ export class NewCreateComponent implements OnInit, AfterViewInit
 
         },
         error: (error) => {
-          console.log(error);
+          console.error(error);
           this.toastr.error('Error creating blog');
         }
       });
@@ -208,18 +204,15 @@ export class NewCreateComponent implements OnInit, AfterViewInit
     this.form.publish.data = event.target.value;
   }
   onFileChange(event: any){
-    // console.log(event);
     let files: any = (event.target as HTMLInputElement)
     if (files.files.length > 0) {
       let file: File = files.files[0];
       let reader: FileReader = new FileReader();
       reader.onloadend = (e) => {
           document.getElementById('image-review')?.setAttribute('src', reader.result as string);
-          // console.log(reader.result);
           this.blogService.imageFile = file;
       };
       reader.readAsDataURL(file);
-
       document.getElementById('image-review-container')?.classList.remove('d-none');
     }
   }

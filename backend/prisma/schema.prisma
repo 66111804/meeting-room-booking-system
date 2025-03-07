@@ -164,7 +164,7 @@ model Post {
   id          Int      @id @default(autoincrement())
   title       String
   image       String?
-  content     String
+  content     String   @db.Text
   contentHtml String   @db.LongText
   published   Boolean  @default(false)
   tags        String   @default("") // comma separated tags

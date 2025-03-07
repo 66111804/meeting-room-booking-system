@@ -49,7 +49,11 @@
                 <tr>
                   <td>{{ $index + 1 }}</td>
                   <td>
-                    <img src="{{GlobalComponent.SERVE_URL}}/files/uploads/{{ _new.image }}" class="img-fluid rounded" alt="image" style="max-width: 100px;">
+                    @if(_new.image)
+                    {<img src="{{GlobalComponent.SERVE_URL}}/files/uploads/{{ _new.image }}" alt="" width="115" class="rounded-1 img-hover">
+                    } @else {
+                      <img src="assets/images/dummy-image-square.jpg" alt="" width="115" class="rounded-1 img-hover">
+                    }
                   </td>
                   <td>{{ _new.title }}</td>
                   <td>{{ _new.tags }}</td>

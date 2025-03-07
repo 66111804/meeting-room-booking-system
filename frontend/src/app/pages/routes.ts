@@ -12,11 +12,16 @@ import {EditBookingComponent} from './my-booking/edit-booking/edit-booking.compo
 import {ContactUsComponent} from './contact-us/contact-us.component';
 import {NewComponent} from './administrator/new/new.component';
 import {NewCreateComponent} from './administrator/new/new-create/new-create.component';
+import {BlogComponent} from './dashboard/blog/blog.component';
 
 const Routing: Routes = [
   {
     path: 'app',
     component: DashboardComponent
+  },
+  {
+    path: 'app/:id/blog',
+    component: BlogComponent
   },
   {
     path: 'booking-room/:id/info',

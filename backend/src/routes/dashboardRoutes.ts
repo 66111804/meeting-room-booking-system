@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { dashboardController } from "../controllers/dashboardController";
+import {dashboardController, getBlogsController} from "../controllers/dashboardController";
 
 const router = Router();
 
 router.get('/stats', dashboardController);
 
+router.get('/blogs',getBlogsController);
 
 export default router;
