@@ -219,7 +219,8 @@ export class DashboardComponent implements OnInit {
   getTimes(startTime: string, endTime: string) {
     let start = new Date(startTime);
     let end = new Date(endTime);
-    return start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    // 11:00 AM - 05:00 PM to 11:00 - 17:00
+    return start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) + ' - ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
   }
 
   showBookingMore(){
