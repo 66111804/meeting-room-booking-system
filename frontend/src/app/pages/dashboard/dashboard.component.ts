@@ -18,7 +18,7 @@ const projectstatData = [{
   profit: 'up',
   month: ''
 }, {
-  title: 'ยอดใช้งานแล้ว',
+  title: 'ยอดใช้งาน',
   value: 7522,
   icon: 'award',
   persantage: '3.58',

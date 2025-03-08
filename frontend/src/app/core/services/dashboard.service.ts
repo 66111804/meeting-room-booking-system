@@ -22,11 +22,12 @@ export interface Author {
   name: string;
 }
 
-export interface Blog {
+export interface IBlog {
   id: number;
   title: string;
   image: string;
   content: string;
+  contentHtml: string;
   published: boolean;
   tags: string;
   createdAt: string;
@@ -35,7 +36,7 @@ export interface Blog {
 }
 
 export interface IBlogResponseDahsboard {
-  blogs: Blog[];
+  blogs: IBlog[];
   total: number;
   totalPages: number;
   currentPage: number;
@@ -54,5 +55,9 @@ export class DashboardService {
 
   getBlogs(searchTerm: string, page: number, pageSize: number) {
     return this.http.get<IBlogResponseDahsboard>(`${GlobalComponent.API_URL}/dashboard/blogs?page=${page}&limit=${pageSize}&search=${searchTerm}`);
+  }
+
+  getBlog(id: number) {
+    return this.http.get<IBlog>(`${GlobalComponent.API_URL}/dashboard/blog/${id}/info`);
   }
 }

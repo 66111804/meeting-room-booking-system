@@ -24,7 +24,7 @@ export interface IBlog {
   published: boolean;
   tags: string;
   authorId: number;
-  createdAt: string; // สามารถใช้ Date แทน string ถ้าจะแปลงเป็น Date object
+  createdAt: string;
   updatedAt: string;
 }
 

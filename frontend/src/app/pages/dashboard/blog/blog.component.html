@@ -1,1 +1,41 @@
 <app-breadcrumbs title="ข้อมูลข่าวสาร" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items center">
+          <h5 class="card-title mb-0 flex-grow-1">
+            {{ blog.title }}
+          </h5>
+          <div class="">
+            <a routerLink="/app" class="btn btn-info add-btn ms-2" ><i class="ri-arrow-left-line me-2"></i>
+              {{ "BACK" | translate }}</a>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p4">
+        <!-- Blog Information show -->
+        <div [innerHTML]="safeContentHtml"></div>
+
+        <div class="mt-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <ul class="list-inline mb-0">
+                <li class="list-inline-item"><i class="ri-user-3-fill text-success align-middle me-1"></i> {{ blog.author.name }}</li>
+                <li class="list-inline-item"><i class="ri-calendar-2-fill text-success align-middle me-1"></i> {{ blog.updatedAt | date: 'dd,MMM,yyyy' }}</li>
+              </ul>
+            </div>
+            <div>
+              <ul class="list-inline mb-0">
+                <li class="list-inline-item"><i class="ri-eye-fill text-success align-middle me-1"></i> -- </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

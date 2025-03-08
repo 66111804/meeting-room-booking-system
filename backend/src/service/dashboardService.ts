@@ -142,6 +142,15 @@ export const getBlogService = async (req:any, res:any) => {
         id: parseInt(id),
         },
         select: {
+            id: true,
+            title: true,
+            image: true,
+            content: true,
+            contentHtml: true,
+            published: true,
+            tags: true,
+            createdAt: true,
+            updatedAt: true,
             author:
                 {
                   select: {

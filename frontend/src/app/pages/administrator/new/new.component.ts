@@ -52,8 +52,14 @@ export class NewComponent implements OnInit, AfterViewInit
     }, 500);
   }
 
+  timeOutSearch: any;
   searchInput() {
-
+    if(this.timeOutSearch){
+      clearTimeout(this.timeOutSearch);
+    }
+    this.timeOutSearch = setTimeout(() => {
+      this.fetchBlogs();
+    }, 500);
   }
 
   fetchBlogs() {
