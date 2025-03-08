@@ -1,6 +1,6 @@
 // src/controllers/dashboardController.ts
 
-import {getBlogService, getBlogsService, getDashboardService} from "../service/dashboardService";
+import {getBlogService, getBlogsService, getBookingService, getDashboardService} from "../service/dashboardService";
 
 export const dashboardController = async (req: any, res: any) => {
   try{
@@ -22,6 +22,14 @@ export const getBlogsController = async (req: any, res: any) => {
 export const getBlogController = async (req: any, res: any) => {
     try {
         return await getBlogService(req, res);
+    }catch (e:any) {
+        return res.status(500).json({ message: e.message });
+    }
+};
+
+export const getBookingController = async (req: any, res: any) => {
+    try {
+        return await getBookingService(req, res);
     }catch (e:any) {
         return res.status(500).json({ message: e.message });
     }

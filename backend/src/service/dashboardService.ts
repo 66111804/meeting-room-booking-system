@@ -2,6 +2,7 @@
 
 
 import { PrismaClient } from "@prisma/client";
+import { IMeetingDashboardResponse, IMeetingDashboard } from "../shared/dashboard";
 
 const prisma = new PrismaClient();
 
@@ -162,3 +163,78 @@ export const getBlogService = async (req:any, res:any) => {
       });
     return res.status(200).json(blog);
 }
+
+export const getBookingService = async (req:any, res:any) => {
+    let { date, page = 1, limit = 10 } = req.query; // รองรับ Pagination
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    if (!date) {
+        return res.status(400).json({ message: "Date is required" });
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        const today = new Date();
+        date = today.toISOString().split("T")[0]; // แปลงเป็น YYYY-MM-DD
+    }
+
+    const startDate = new Date(`${date}T00:00:00.000Z`);
+    const endDate = new Date(`${date}T23:59:59.999Z`);
+    const total = await prisma.meetingRoomBooking.count({
+        where: {
+            startTime: {
+                gte: startDate,
+                lt: endDate
+            },
+            status: "confirmed"
+        }
+    });
+    const totalPages = Math.ceil(total / limit);
+    const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+            startTime: {
+                gte: startDate,
+                lt: endDate
+            },
+            status: "confirmed"
+        },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            startTime: true,
+            endTime: true,
+            status: true,
+            MeetingRoom: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            },
+            User: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+            startTime: "asc"
+        }
+    });
+    if(bookings == null){
+        return res.status(404).json({message:"No bookings found"});
+    }
+
+
+    const response = {
+        meetings: bookings,
+        total,
+        totalPages,
+        currentPage: page
+    };
+
+    return res.status(200).json(response);
+};

@@ -42,6 +42,38 @@ export interface IBlogResponseDahsboard {
   currentPage: number;
 }
 
+export interface IMeetingRoomDashboard
+{
+  id: number;
+  name: string;
+}
+
+export interface IUser
+{
+  id: number;
+  name: string;
+}
+
+export interface IMeetingDashboard
+{
+  id: number;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  status: "confirmed" | "pending" | "cancelled" | undefined;
+  MeetingRoom: IMeetingRoomDashboard;
+  User: IUser;
+}
+
+export interface IMeetingDashboardResponse
+{
+  meetings: IMeetingDashboard[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -59,5 +91,9 @@ export class DashboardService {
 
   getBlog(id: number) {
     return this.http.get<IBlog>(`${GlobalComponent.API_URL}/dashboard/blog/${id}/info`);
+  }
+
+  getBookings( page: number, pageSize: number, date: string) {
+    return this.http.get<IMeetingDashboardResponse>(`${GlobalComponent.API_URL}/dashboard/bookings?date=${date}&page=${page}&limit=${pageSize}`);
   }
 }

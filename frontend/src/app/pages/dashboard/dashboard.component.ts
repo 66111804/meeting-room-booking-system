@@ -6,9 +6,15 @@ import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.compone
 import {DatePipe, NgClass, SlicePipe} from '@angular/common';
 import {StatComponent} from '../../widget/stat/stat.component';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {DashboardService, IBlogResponseDahsboard} from '../../core/services/dashboard.service';
+import {
+  DashboardService,
+  IBlogResponseDahsboard,
+  IMeetingDashboardResponse
+} from '../../core/services/dashboard.service';
 import {GlobalComponent} from '../../global-component';
 import {Router} from '@angular/router';
+import {FlatpickrDefaultsInterface, FlatpickrDirective} from 'angularx-flatpickr';
+import {FormsModule} from '@angular/forms';
 //
 const projectstatData = [{
   title: 'การใช้งานล่าสุด 30 วัน',
@@ -45,6 +51,8 @@ const projectstatData = [{
     NgbPagination,
     SlicePipe,
     DatePipe,
+    FlatpickrDirective,
+    FormsModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -68,14 +76,30 @@ export class DashboardComponent implements OnInit {
     totalPages: 0,
     currentPage: 0,
   };
+
+  flatpickrOptions: FlatpickrDefaultsInterface = {
+    // minDate: this.getMinDate(),
+    maxDate: this.getMaxDate(),
+    dateFormat: 'Y-m-d',
+    enableTime: false,
+    altInput: true,
+    convertModelValue: true,
+    monthSelectorType: 'dropdown',
+    mode: 'single',
+  };
+  dateSelected:Date;
+  bookingRoom:IMeetingDashboardResponse ={
+    meetings: [],
+    total: 0,
+    totalPages: 0,
+    currentPage: 0,
+  }
   constructor(private dashboardService:DashboardService,
               private router:Router) {
     this.breadCrumbItems = [
       { label: '', active: true }
     ];
-
-
-
+    this.dateSelected = new Date();
   }
 
   ngOnInit() {
@@ -114,6 +138,7 @@ export class DashboardComponent implements OnInit {
 
     this.fetchStats();
     this.fetchBlogs();
+    this.fetchBooking();
   }
 
   fetchStats(){
@@ -149,9 +174,57 @@ export class DashboardComponent implements OnInit {
     this.fetchBlogs();
   }
 
+  private getMinDate(){
+    let currentDate = new Date();
+    const currentHour = currentDate.getHours();
+    if(currentHour > 17){
+      currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+    }
+    return currentDate;
+  }
+
+  private getMaxDate(): Date {
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() + 3);
+    return currentDate;
+  }
+
   protected readonly GlobalComponent = GlobalComponent;
 
   gotoBlog(id: number) {
     this.router.navigate(['/app/'+id+'/blog']).then();
+  }
+
+  onDateSelectChange(event: any) {
+    this.dateSelected = new Date(event.dateString);
+    console.log(this.dateSelected);
+    this.fetchBooking();
+  }
+
+  bookingPageSize: number = 5;
+  bookingPage: number = 1;
+
+  fetchBooking() {
+    let formattedDate = this.dateSelected.toLocaleDateString('en-CA');
+    this.dashboardService.getBookings(this.bookingPage,this.bookingPageSize,formattedDate).subscribe({
+        next: (data) => {
+          this.bookingRoom = data;
+        },
+        error: (err) => {
+          console.error(err);
+      }
+    });
+  }
+
+  getTimes(startTime: string, endTime: string) {
+    let start = new Date(startTime);
+    let end = new Date(endTime);
+    return start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  }
+
+  showBookingMore(){
+    this.bookingPage = 1;
+    this.bookingPageSize += 10;
+    this.fetchBooking();
   }
 }

@@ -1,6 +1,13 @@
 // noinspection SpellCheckingInspection
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit,} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  OnInit,
+} from '@angular/core';
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {DatePipe, NgForOf, SlicePipe} from '@angular/common';
@@ -34,7 +41,7 @@ import {isPermissionMatched} from '../../shared/utils/role-permisssion';
   styleUrl: './booking-room.component.scss',
   schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })
-export class BookingRoomComponent implements OnInit
+export class BookingRoomComponent implements OnInit, AfterViewInit
 {
   breadCrumbItems!: Array<{}>;
 
@@ -53,7 +60,6 @@ export class BookingRoomComponent implements OnInit
   totalHours = 0;
 
   dateSelected!:Date;
-  validateTimeSlot:boolean = false; // true is invalid, false is valid
 
   page:number = 1;
   limit:number = 12; // col-xxl-3 = 11, col-xl-4 = 9, col-lg-6 = 6
@@ -103,7 +109,7 @@ export class BookingRoomComponent implements OnInit
       this.dateSelected = new Date(now.setDate(now.getDate()));
     }
 
-    this.fetchMeetingRooms();
+
   }
 
   ngOnInit() {
@@ -137,12 +143,20 @@ export class BookingRoomComponent implements OnInit
     this.fetchTimeSlot();
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      document.getElementById('elmLoader')?.classList.add('d-none');
+
+    }, 500);
+    this.fetchMeetingRooms();
+  }
+
   fetchMeetingRooms() {
     this.roomMeetingService.getAllBooking(this.page, this.limit,this.searchTerm, this.dateSelected.toISOString(), this.timeStartSlotSelected, this.timeEndSlotSelected)
       .subscribe({
       next: (response) => {
         this.meetingRooms = response;
-        // this.cdr.detectChanges();
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.log(error);

@@ -254,37 +254,6 @@ export const listBookingRoom = async (meetingRoomId:number,date:string) => {
   return timeSlots;
 };
 
-// export const updateBookingRoom = async (id: number, data: IBookingRoom) => {
-//   const startTime = dayjs(data.startTime).tz("Asia/Bangkok").format();
-//   const endTime = dayjs(data.endTime).tz("Asia/Bangkok").format();
-//   const conflicts = await prisma.meetingRoomBooking.findMany({
-//     where:{
-//       meetingRoomId: data.meetingRoomId,
-//       status: 'confirmed',
-//       OR: [
-//         {
-//           startTime: { gte: startTime }, // greater than or equal
-//           endTime: { lte: endTime }, // less than or equal
-//         },
-//       ],
-//       NOT:{
-//         id
-//       }
-//     }
-//   })
-//
-//   if(conflicts.length > 0){
-//     throw new Error('This room is already booked for this time');
-//   }
-//
-//   return prisma.meetingRoomBooking.update({
-//     where:{
-//       id
-//     },
-//     data
-//   });
-// };
-
 export const validateBookingRoom = async (data: IBookingRoomValidation) => {
 
   const timeStart = dayjs(data.startTime).tz("Asia/Bangkok").format();
