@@ -238,7 +238,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
 
   private getMinDate(): Date {
     const currentDate = new Date();
-    // if time > 15:00, set min date to next day
+    // if time > 17:00, set min date to next day
     if(currentDate.getHours() >= 17){
       currentDate.setDate(currentDate.getDate() + 1);
     }

@@ -12,11 +12,11 @@
   <div class="col-xxl-12">
     <div class="card card-height-100">
       <div class="card-header border-0">
-        <h4 class="card-title mb-0">การจองห้องประชุม</h4>
+        <h4 class="card-title mb-0">ปฏิทินการใช้ห้องประชุม</h4>
       </div><!-- end cardheader -->
       <div class="card-body pt-0">
         <div class="upcoming-scheduled">
-          <input type="text" class="form-control" mwlFlatpickr [altInput]="true" [options]="flatpickrOptions" [convertModelValue]="true" [inline]="true" [(ngModel)]="dateSelected" (flatpickrChange)="onDateSelectChange($event)">
+          <input type="text" class="form-control" mwlFlatpickr [altInput]="true" [options]="flatpickrOptions" [convertModelValue]="true" [inline]="true" [(ngModel)]="dateSelected" (flatpickrChange)="onDateSelectChange($event)" />
         </div>
         <hr>
         <!-- Events -->
@@ -85,7 +85,13 @@
                         </div>
                         <div class="flex-grow-1 ms-sm-4 mt-3 mt-sm-0">
                           <ul class="list-inline mb-2">
-                            <li class="list-inline-item"><span class="badge bg-warning-subtle text-warning fs-11">{{ blog.tags }}</span></li>
+                            <li class="list-inline-item">
+                              @if(IsAfterDay(blog.updatedAt))
+                              {
+                                <span class="badge bg-success-subtle text-success fs-11">{{ "NEW" | translate }}</span>
+<!--                                <span class="badge bg-warning-subtle text-warning fs-11">{{ blog.tags }}</span>-->
+                              }
+                            </li>
                           </ul>
                           <h5><a href="javascript:void(0);" (click)="gotoBlog(blog.id)">
                               {{ blog.title }}

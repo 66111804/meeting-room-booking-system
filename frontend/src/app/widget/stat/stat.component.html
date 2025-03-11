@@ -11,8 +11,11 @@
         <div class="d-flex align-items-center mb-3">
           <h4 class="fs-4 flex-grow-1 mb-0">
             <span [countUp]="value" class="counter-value" [options]="option"></span>
+            <span>
+              ครั้ง
+            </span>
           </h4>
-          <span class="badge fs-12" [ngClass]=" {'bg-success-subtle text-success': profit === 'up', 'bg-danger-subtle text-danger': profit === 'down'}"><i class="fs-13 align-middle me-1" [ngClass]=" {'ri-arrow-up-s-line': profit === 'up', 'ri-arrow-down-s-line': profit === 'down'}"></i>{{persantage}} %</span>
+<!--          <span class="badge fs-12" [ngClass]=" {'bg-success-subtle text-success': profit === 'up', 'bg-danger-subtle text-danger': profit === 'down'}"><i class="fs-13 align-middle me-1" [ngClass]=" {'ri-arrow-up-s-line': profit === 'up', 'ri-arrow-down-s-line': profit === 'down'}"></i>{{persantage}} %</span>-->
         </div>
         <p class="text-muted text-truncate mb-0"></p>
       </div>

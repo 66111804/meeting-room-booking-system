@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
     altInput: true,
     convertModelValue: true,
     monthSelectorType: 'dropdown',
-    mode: 'single',
+    mode: 'single'
   };
   dateSelected:Date;
   bookingRoom:IMeetingDashboardResponse ={
@@ -94,6 +94,7 @@ export class DashboardComponent implements OnInit {
     totalPages: 0,
     currentPage: 0,
   }
+  currentDay: Date = new Date();
   constructor(private dashboardService:DashboardService,
               private router:Router) {
     this.breadCrumbItems = [
@@ -197,8 +198,12 @@ export class DashboardComponent implements OnInit {
 
   onDateSelectChange(event: any) {
     this.dateSelected = new Date(event.dateString);
-    console.log(this.dateSelected);
     this.fetchBooking();
+    const todayElement = document.querySelector(".flatpickr-day.today") as HTMLElement;
+    if (todayElement) {
+      todayElement.style.opacity = this.dateSelected.toDateString() === this.currentDay.toDateString() ? "1" : "0.5";
+    }
+
   }
 
   bookingPageSize: number = 5;
@@ -227,5 +232,15 @@ export class DashboardComponent implements OnInit {
     this.bookingPage = 1;
     this.bookingPageSize += 10;
     this.fetchBooking();
+  }
+
+  IsAfterDay(date: string){
+    // 3 days ago
+    let threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    let dateToCheck = new Date(date);
+    const _date = dateToCheck > threeDaysAgo;
+    console.log(dateToCheck, "is after now", _date);
+    return _date;
   }
 }
