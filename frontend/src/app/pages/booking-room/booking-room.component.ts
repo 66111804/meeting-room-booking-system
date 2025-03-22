@@ -191,6 +191,13 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
         endTime: this.timeEndSlotSelected
       }
     );
+    // noinspection DuplicatedCode
+    let index_start = this.timeSlots.findIndex((slot) => slot.startTime === this.timeStartSlotSelected);
+    let index_end = this.timeSlots.findIndex((slot) => slot.endTime === this.timeEndSlotSelected);
+    if(index_start > 0 && index_end > 0 && index_start >= index_end)
+    {
+      this.timeEndSlotSelected = this.timeEndSlotSelectList[0].endTime;
+    }
 
     this.fetchMeetingRooms();
   }
