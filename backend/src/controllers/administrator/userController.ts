@@ -192,6 +192,17 @@ export const deleteUser = async (req: any, res: any) => {
       console.error("Error deleting user avatar:", error);
     }
 
+    // Invoke roleAssignUserService to revoke all roles
+    req.body = { userId: parseInt(id) , isRes: true };
+    await revokeRoleUserAllService(req, res);
+
+    // Remove bookings of user
+    await prisma.meetingRoomBooking.deleteMany({
+      where: {
+        userId: parseInt(id),
+      },
+    });
+
     await prisma.user.delete({
       where: {
         id: parseInt(id),

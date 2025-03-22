@@ -229,14 +229,15 @@ export const roleAssignUserAllService = async (req: any, res: any) => {
 };
 
 export const revokeRoleUserAllService = async (req: any, res: any) => {
-  const { userId } = req.body;
+  const { userId , isRes } = req.body;
+  console.log(req.body);
   if (!userId) {
     return res.status(400).json({ message: "User id is required" });
   }
-
+  const _userId = typeof userId === "string" ? parseInt(userId) : userId;
   const userExist = await prisma.user.findFirst({
     where: {
-      id: userId,
+      id:_userId
     },
   });
 
@@ -250,5 +251,10 @@ export const revokeRoleUserAllService = async (req: any, res: any) => {
     },
   });
 
+
+  if(isRes == true)
+  {
+    return;
+  }
   return res.status(200).json({ message: "All roles revoked from user" });
 };
