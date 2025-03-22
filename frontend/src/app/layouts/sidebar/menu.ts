@@ -35,12 +35,7 @@ export const MENU: MenuItem[] = [
     icon: 'ri-profile-line',
     link: '/admin',
     subItems: [
-      {
-        id: 6,
-        label: 'MENUITEMS.ADMIN.LIST.REPORT',
-        link: '/admin/report',
-        parentId: 6
-      },
+
       {
         id: 7,
         label: 'MENUITEMS.ADMIN.LIST.USER',
@@ -63,7 +58,13 @@ export const MENU: MenuItem[] = [
         label: 'MENUITEMS.ADMIN.LIST.NEW',
         link: '/admin/new',
         parentId: 6
-      }
+      },
+      {
+        id: 11,
+        label: 'MENUITEMS.ADMIN.LIST.SUMMARY-REPORT',
+        link: '/admin/report',
+        parentId: 6
+      },
     ]
   },
   {
