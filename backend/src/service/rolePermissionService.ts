@@ -233,20 +233,9 @@ export const generateDefaultPermissionsService = async () => {
     },
     {
       name: "meetingRoom delete",
-    },{
+    },
+    {
       name: "meetingRoom read",
-    },
-    {
-      name: "bookingRoom create",
-    },
-    {
-      name: "bookingRoom update",
-    },
-    {
-      name: "bookingRoom delete",
-    },
-    {
-      name: "bookingRoom read",
     },
     {
       name: "bookingMultipleRoom create",
@@ -308,6 +297,8 @@ export const generateDefaultPermissionsService = async () => {
       };
     });
 
+    // console.log(permissions);
+    // console.log(rolePermissions);
     // Check if permission already assigned to role
     for (const perm of rolePermissions) {
       // Check if permission already assigned to role
