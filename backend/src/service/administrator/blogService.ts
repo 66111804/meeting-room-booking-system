@@ -45,9 +45,10 @@ export const getBlogService = async (req: any, res: any) => {
 }
 
 export const createBlogService = async (req: any, res: any) => {
-    const { title, content, contentHtml, published, tag } = req.body;
+    let { title, content, contentHtml, published, tag } = req.body;
     const file = req.file;
     const imageUrl = file ? file.filename : "";
+    published = typeof published === "string" ? parseInt(published) : published;
     const blog = await prisma.post.create({
         data: {
             title,
