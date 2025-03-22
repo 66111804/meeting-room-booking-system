@@ -13,6 +13,7 @@ import {ContactUsComponent} from './contact-us/contact-us.component';
 import {NewComponent} from './administrator/new/new.component';
 import {NewCreateComponent} from './administrator/new/new-create/new-create.component';
 import {BlogComponent} from './dashboard/blog/blog.component';
+import {ReportComponent} from './administrator/report/report.component';
 
 const Routing: Routes = [
   {
@@ -47,6 +48,10 @@ const Routing: Routes = [
     path: 'admin',
     component: AdministratorComponent,
     children:[
+      {
+        path: 'report',
+        component: ReportComponent
+      },
       {
         path: 'user',
         component: UserComponent

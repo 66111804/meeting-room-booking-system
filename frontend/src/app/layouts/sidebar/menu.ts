@@ -36,6 +36,12 @@ export const MENU: MenuItem[] = [
     link: '/admin',
     subItems: [
       {
+        id: 6,
+        label: 'MENUITEMS.ADMIN.LIST.REPORT',
+        link: '/admin/report',
+        parentId: 6
+      },
+      {
         id: 7,
         label: 'MENUITEMS.ADMIN.LIST.USER',
         link: '/admin/user',
