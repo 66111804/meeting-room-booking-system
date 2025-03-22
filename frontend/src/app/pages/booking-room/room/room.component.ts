@@ -912,25 +912,41 @@ export class RoomComponent implements OnInit, AfterViewInit
   }
 
   protected readonly GlobalComponent = GlobalComponent;
-
   onTimeStartSlotSelectChange(selectedStartTime: string) {
     this.timeStartSlotSelected = selectedStartTime;
-
     this.timeEndSlotSelectList = this.timeSlots.slice(
       this.timeSlots.findIndex((slot) => slot.endTime === this.timeStartSlotSelected) + 1,
       this.timeSlots.length
     ); // Update end time options
-
     // validate time slot
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
-
     this.formBookingData.startTime = this.timeStartSlotSelected;
+    let index_start = this.timeSlots.findIndex((slot) => slot.startTime === this.timeStartSlotSelected);
+    let index_end = this.timeSlots.findIndex((slot) => slot.endTime === this.timeEndSlotSelected);
+    if(index_start > 0 && index_end > 0 && index_start >= index_end)
+    {
+      this.timeEndSlotSelected = this.timeEndSlotSelectList[0].endTime;
+    }
+    this.formBookingData.endTime = this.timeEndSlotSelected;
   }
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
     this.timeStartSlotSelectList = this.timeSlots;
+    // this.timeSlots.forEach((slot) => {
+    //   // console.log(slot);
+    //   const _timeStart = parseInt(slot.startTime)
+    //   const _timeEnd = parseInt(slot.endTime)
+    //
+    //   const _timeStartSelected = parseInt(this.timeEndSlotSelected)
+    //
+    //   console.log(
+    //     {
+    //       _timeStart,
+    //       _timeStartSelected
+    //     });
+    // })
     // this.timeStartSlotSelectList = this.timeSlots.slice(
     //   0,
     //   this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
@@ -938,6 +954,7 @@ export class RoomComponent implements OnInit, AfterViewInit
     // validate time slot
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
+
 
     this.formBookingData.endTime = this.timeEndSlotSelected;
   }
