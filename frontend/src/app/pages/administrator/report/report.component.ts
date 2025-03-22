@@ -14,7 +14,6 @@ export class ReportComponent {
   }
 
   ngOnInit() {
-    // this.fetchRoles();
   }
 
   ngAfterViewInit(): void {

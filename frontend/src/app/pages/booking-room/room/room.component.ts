@@ -832,7 +832,7 @@ export class RoomComponent implements OnInit, AfterViewInit
     }else{
       this.dateSelected = this.getMinDate();
     }
-    console.log(this.dateSelected);
+    // console.log(this.dateSelected);
   }
 
   ngOnInit() {
@@ -892,10 +892,10 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   private getMinDate(){
     let currentDate = new Date();
-    const currentHour = currentDate.getHours();
-    if(currentHour > 17){
-      currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
-    }
+    // const currentHour = currentDate.getHours();
+    // if(currentHour > 17){
+    //   currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+    // }
     return currentDate;
   }
 

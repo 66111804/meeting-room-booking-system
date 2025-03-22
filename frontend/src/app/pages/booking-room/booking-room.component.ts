@@ -105,7 +105,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
     const formattedCurrentTime = `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`;
     const currentTimeSlotIndex = this.timeSlots.findIndex((slot) => slot.startTime === formattedCurrentTime);
     if (currentTimeSlotIndex === -1) {
-      this.datePickerOptions.minDate = new Date(now.setDate(now.getDate() + 1));
+      this.datePickerOptions.minDate = new Date(now.setDate(now.getDate()));
       this.dateSelected = new Date(now.setDate(now.getDate()));
     }
 
@@ -113,10 +113,20 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   }
 
   ngOnInit() {
-    const now = new Date();
-    if(now.getHours() >= 18){
-      now.setDate(now.getDate() + 1);
-    }
+    // const now = new Date();
+    const now = new Date("2025-03-23T15:05:55.629Z");
+    // if(now.getHours() >= 18){
+    //   now.setDate(now.getDate());
+    // }
+
+    // const nowUTC = new Date('2025-03-23T05:05:55.629Z');
+
+    // สร้างเวลาท้องถิ่น +7
+    // const nowBangkok = new Date(nowUTC.getTime() + (7 * 60 * 60 * 1000));
+    //
+    // console.log('UTC:', nowUTC.toISOString());
+    // console.log('Bangkok:', nowBangkok.toISOString());
+
 
     const currentHour = now.getHours() + 1;
     const currentMinute = now.getMinutes();
@@ -208,6 +218,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
     this.fetchMeetingRooms();
   }
 
+  // noinspection DuplicatedCode
   calculateTotalHours() {
     // Calculate total hours
     const startTime = this.timeStartSlotSelected.split(':');
@@ -239,9 +250,9 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   private getMinDate(): Date {
     const currentDate = new Date();
     // if time > 17:00, set min date to next day
-    if(currentDate.getHours() >= 17){
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
+    // if(currentDate.getHours() >= 17){
+    //   currentDate.setDate(currentDate.getDate() + 1);
+    // }
     return currentDate;
   }
 

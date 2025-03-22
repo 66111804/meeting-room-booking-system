@@ -45,6 +45,9 @@ export const createOrUpdateBookingRoom = async (data: IBookingRoom , bookingId:n
     throw new Error('Start time must be before end time');
   }
 
+  // console.log(startTime);
+  // console.log(dayjs());
+  // check if start time is in the past
   if (startTime.isBefore(dayjs())) {
     throw new Error('Cannot book in the past');
   }
