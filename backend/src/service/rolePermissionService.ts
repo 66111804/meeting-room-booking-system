@@ -297,9 +297,7 @@ export const generateDefaultPermissionsService = async () => {
       };
     });
 
-    // console.log(permissions);
-    // console.log(rolePermissions);
-    // Check if permission already assigned to role
+    //  Check if permission already assigned to role
     for (const perm of rolePermissions) {
       // Check if permission already assigned to role
       const rolePermissionExist = await prisma.rolePermission.findFirst({
