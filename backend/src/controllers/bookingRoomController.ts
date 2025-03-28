@@ -67,8 +67,42 @@ export const meetingRoomList = async (req: any, res: any) => {
       status: "active",
     };
 
+    const normalizedDate = dayjs(date).format('YYYY-MM-DD');
+    const dateTimeFormat = 'YYYY-MM-DD HH:mm';
+
+    const startDayjs = dayjs(`${normalizedDate} ${timeStart}`, dateTimeFormat, true);
+    const endDayjs = dayjs(`${normalizedDate} ${timeEnd}`, dateTimeFormat, true);
+
+    if (!startDayjs.isValid() || !endDayjs.isValid()) {
+      return res.status(400).json({ message: 'Invalid date or time format' });
+    }
+
+    const searchStartDateTime = startDayjs.toDate();
+    const searchEndDateTime = endDayjs.toDate();
+
+    if (isNaN(searchStartDateTime.getTime()) || isNaN(searchEndDateTime.getTime())) {
+      return res.status(400).json({ message: 'Invalid time format.' });
+    }
     const meetingRoomsList = await prisma.meetingRoom.findMany({
-      where,
+      where:{
+        ...where,
+        NOT:
+            {
+                meetingRoomBooking: {
+                    some: {
+                      status: 'confirmed',
+                      AND:[
+                        {
+                          startTime:{lt: searchEndDateTime}
+                        },
+                        {
+                          endTime:{gt: searchStartDateTime}
+                        }
+                      ]
+                    }
+                }
+            }
+      },
       include: {
         roomHasFeatures: {
           include: {
