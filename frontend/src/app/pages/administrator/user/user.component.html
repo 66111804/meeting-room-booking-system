@@ -214,12 +214,17 @@
 <ng-template #updateUserModel let-userModel>
   <div class="modal-header bg-info-subtle p-3">
     <h5 class="modal-title" id="addMeetingRoom">
-        {{ "ADD-USER" | translate }}
+        @if(!userEdit)
+        {
+          {{ "ADD-USER" | translate }}
+        } @else {
+          {{ "EDIT-USER" | translate }}
+        }
     </h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="userModel.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body p-4">
-    <form [formGroup]="userForm">
+    <form [formGroup]="userForm" id="userForm-create" class="">
       <div class="row">
         <div class="col-lg-12">
           <div class="text-center">
@@ -265,6 +270,9 @@
           <div class="mb-3">
             <label for="employeeId" class="form-label">{{ "EMPLOYEE-ID" | translate }} <code>*</code></label>
             <input type="text" class="form-control" id="employeeId" formControlName="employeeId" placeholder="Employee ID" (input)="employeeIdChange($event)" [ngClass]="{'is-invalid': (submitted || empHasValid) && form['employeeId'].errors}">
+            <div class="invalid-feedback employeeId-invalid" id="employeeId-invalid">
+              หรัสพนักงานซ้ำ
+            </div>
           </div>
         </div>
         <div class="col-md-6">

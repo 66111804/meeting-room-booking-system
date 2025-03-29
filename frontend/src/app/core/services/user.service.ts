@@ -21,7 +21,7 @@ export class UserProfileService {
     employeeIdValidation(employeeId: string, id: number = 0) {
         // /api/admin/user/:employeeId/validate
         if (id > 0) {
-            return this.http.get<ValidateResponse>(`${GlobalComponent.API_URL}/admin/users/${id}/validate?employeeId=${employeeId}`);
+            return this.http.get<ValidateResponse>(`${GlobalComponent.API_URL}/admin/user/${id}/validate?employeeId=${employeeId}`);
         }
         return this.http.get<ValidateResponse>(`${GlobalComponent.API_URL}/admin/user-validate?employeeId=${employeeId}`);
     }

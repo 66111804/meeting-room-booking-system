@@ -249,13 +249,33 @@ export class UserComponent implements OnInit {
       this.userForm.get('employeeId')?.setErrors(null);
       return;
     }
-    this.userProfileService.employeeIdValidation(employeeId).subscribe({
+
+    // check if employeeId is empty
+
+    if(employeeId === ''){
+      this.userForm.get('employeeId')?.setErrors({invalid: true});
+
+      const employeeIdDiv = document.getElementById('employeeId-invalid');
+      if (employeeIdDiv) {
+        employeeIdDiv.innerHTML = 'กรุณากรอกรหัสพนักงาน';
+      }
+      return;
+    }
+    // check if employeeId is valid
+    const id = this.userEdit ? this.userEdit.id : 0;
+    this.userProfileService.employeeIdValidation(employeeId,id).subscribe({
       next: (res) => {
         if(res.valid){
           this.userForm.get('employeeId')?.setErrors(null);
         }else{
           this.userForm.get('employeeId')?.setErrors({invalid: true});
+          const employeeIdDiv = document.getElementById('employeeId-invalid');
+          if (employeeIdDiv)
+          {
+            employeeIdDiv.innerHTML = 'รหัสพนักงานซ้ำ!';
+          }
         }
+
         this.empHasValid = true;
       },
       error: (err) => {
@@ -330,7 +350,6 @@ export class UserComponent implements OnInit {
 
   isSuperAdmin(): boolean {
     // true if user is super admin or user is the same as selected user
-
     return this.authenticationService.getUser().user.id === 1 && this.selectUserId === 1;
   }
 

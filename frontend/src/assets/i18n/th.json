@@ -156,5 +156,6 @@
   "TAG-DESCRIPTION": "รายละเอียดแท็ก",
   "PUBLIC": "สาธารณะ",
   "PUBLISH": "เผยแพร่",
-  "INFORMATION-EDIT": "แก้ไขข้อมูลข่าวสาร"
+  "INFORMATION-EDIT": "แก้ไขข้อมูลข่าวสาร",
+  "EDIT-USER": "แก้ไขผู้ใช้งาน"
 }

@@ -3,7 +3,7 @@
 import {Component, CUSTOM_ELEMENTS_SCHEMA, OnInit} from '@angular/core';
 import {TranslatePipe} from '@ngx-translate/core';
 import {BreadcrumbsComponent} from '../../shared/breadcrumbs/breadcrumbs.component';
-import {DatePipe, NgClass, SlicePipe} from '@angular/common';
+import {DatePipe, SlicePipe} from '@angular/common';
 import {StatComponent} from '../../widget/stat/stat.component';
 import {NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -239,8 +239,7 @@ export class DashboardComponent implements OnInit {
     let threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
     let dateToCheck = new Date(date);
-    const _date = dateToCheck > threeDaysAgo;
-    console.log(dateToCheck, "is after now", _date);
-    return _date;
+    // console.log(dateToCheck, "is after now", _date);
+    return dateToCheck > threeDaysAgo;
   }
 }
