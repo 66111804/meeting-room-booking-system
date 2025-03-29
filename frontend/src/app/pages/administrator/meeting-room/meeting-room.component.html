@@ -237,7 +237,9 @@
           <div class="col-lg-6">
             <div class="mb-3">
               <label for="room" class="form-label fw-medium">{{ "ROOM" | translate }} <code>*</code></label>
-              <input type="text" class="form-control"  id="room"  name="name" [ngClass]="{'is-invalid' : roomFormControls.name.valid }" placeholder="{{ 'ROOM' | translate }}" [(ngModel)]="roomFormControls.name.data" (input)="roomFormChange()">
+              <input type="text" class="form-control"  id="room"  name="name" [ngClass]="{'is-invalid' : roomFormControls.name.valid }" placeholder="{{ 'ROOM' | translate }}" [(ngModel)]="roomFormControls.name.data" (input)="roomFormNameChange()">
+              <div class="invalid-feedback" id="roomNameError">
+              </div>
             </div>
           </div>
           <div class="col-lg-6">
@@ -278,7 +280,7 @@
           <div class="col-lg-12">
             <!-- List checkbox of features -->
             <div class="mb-3">
-              <label class="form-label fw-medium">{{ "FEATURES" | translate }}</label>
+              <label class="form-label fw-medium">อุปกรณ์ภายในห้อง</label>
               <div class="row">
                 @for (feature of features.features; track $index){
                 <div class="col-lg-6">

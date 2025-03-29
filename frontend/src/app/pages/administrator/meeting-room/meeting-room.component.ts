@@ -261,7 +261,7 @@ export class MeetingRoomComponent implements OnInit
    * Form data change
    */
   timeOut: any;
-  roomFormChange() {
+  roomFormNameChange() {
     if(this.timeOut){
       clearTimeout(this.timeOut);
     }
@@ -269,6 +269,9 @@ export class MeetingRoomComponent implements OnInit
     this.timeOut = setTimeout(() => {
       if(this.roomFormControls.name.data.length > 0){
         this.featureValidateName(this.roomFormControls.name.data);
+      }else {
+        this.roomFormControls.name.valid = false;
+        this.roomFormError = false;
       }
     }, 500);
   }
@@ -279,6 +282,13 @@ export class MeetingRoomComponent implements OnInit
       next: (response) => {
         this.roomFormControls.name.valid = response.valid;
         this.roomFormError = response.valid;
+
+        const roomNameErrorDiv = document.getElementById('roomNameError');
+        if (roomNameErrorDiv) {
+          if (this.roomFormControls.name.valid) {
+            roomNameErrorDiv.innerHTML = "ชื่อห้องประชุมซ้ำ";
+          }
+        }
       },
       error: (error) => {
         console.log(error);
