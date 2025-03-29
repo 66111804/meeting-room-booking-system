@@ -275,7 +275,6 @@ export class UserComponent implements OnInit {
             employeeIdDiv.innerHTML = 'รหัสพนักงานซ้ำ!';
           }
         }
-
         this.empHasValid = true;
       },
       error: (err) => {

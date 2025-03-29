@@ -1,7 +1,7 @@
 
 <div class="card-body">
   <div class="d-flex justify-content-between align-items-center">
-    <h5 class="text-muted text-uppercase fw-semibold mb-3 mt-3">{{ 'FEATURES' | translate }}</h5>
+    <h5 class="text-muted text-uppercase fw-semibold mb-3 mt-3">อุปกรณ์ภายในห้อง</h5>
 
     <!-- Add button -->
     <div class="d-flex justify-content-end">
@@ -48,15 +48,15 @@
   <!-- AddFeatureModal -->
   <ng-template #addFeature let-modal>
     <div class="modal-header bg-info-subtle p-3">
-      <h5 class="modal-title" id="addFeature">{{ 'ADD-FEATURE' | translate }}</h5>
+      <h5 class="modal-title" id="addFeature">เพิ่มอุปกรณ์ภายในห้อง</h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
     </div>
 
     <div class="modal-body p-4">
       <form [formGroup]="featureForm">
         <div class="mb-3">
-          <label for="featureName" class="form-label fw-medium">{{ 'FEATURE-NAME' | translate }}</label>
-          <input type="text" class="form-control" (input)="nameChangeCreateChange($event)" id="featureName" [ngClass]="{'is-invalid' : featureForm.get('name')?.errors}" formControlName="name" placeholder="{{ 'FEATURE-NAME' | translate }}">
+          <label for="featureName" class="form-label fw-medium">{{ 'NAME' | translate }}</label>
+          <input type="text" class="form-control" (input)="nameChangeCreateChange($event)" id="featureName" [ngClass]="{'is-invalid' : featureForm.get('name')?.errors}" formControlName="name" placeholder="{{ 'NAME' | translate }}">
 
 
         </div>
@@ -80,8 +80,8 @@
     <div class="modal-body p-4">
       <form [formGroup]="featureForm">
         <div class="mb-3">
-          <label for="featureName" class="form-label fw-medium">{{ 'FEATURE-NAME' | translate }}</label>
-          <input type="text" class="form-control" (input)="nameChangeCreateChange($event)" id="featureName-edit" [ngClass]="{'is-invalid' : featureForm.get('name')?.errors}" formControlName="name" placeholder="{{ 'FEATURE-NAME' | translate }}">
+          <label for="featureName" class="form-label fw-medium">{{ 'NAME' | translate }}</label>
+          <input type="text" class="form-control" (input)="nameChangeCreateChange($event)" id="featureName-edit" [ngClass]="{'is-invalid' : featureForm.get('name')?.errors}" formControlName="name" placeholder="{{ 'NAME' | translate }}">
         </div>
       </form>
     </div>

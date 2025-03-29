@@ -94,7 +94,6 @@ export class MeetingRoomComponent implements OnInit
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe((value) => {
-      console.log(value);
       if(value.length > 0)
       {
         this.roomMeetingService.validateName(value).subscribe({
@@ -111,6 +110,7 @@ export class MeetingRoomComponent implements OnInit
 
       }
     });
+
     this.fetchMeetingRooms();
 
     this.searchSubject.pipe(
@@ -257,11 +257,34 @@ export class MeetingRoomComponent implements OnInit
     this.modalService.dismissAll();
   }
 
+  /**
+   * Form data change
+   */
+  timeOut: any;
   roomFormChange() {
-    console.log('Form change');
-    if(this.roomFormControls.name.data.length > 0){
-      this.nameSubject.next(this.roomFormControls.name.data);
+    if(this.timeOut){
+      clearTimeout(this.timeOut);
     }
+
+    this.timeOut = setTimeout(() => {
+      if(this.roomFormControls.name.data.length > 0){
+        this.featureValidateName(this.roomFormControls.name.data);
+      }
+    }, 500);
+  }
+
+  featureValidateName(name: string){
+    const id = this.meetingRoomEdit ? this.meetingRoomEdit.id : 0;
+    this.roomMeetingService.validateName(name,id).subscribe({
+      next: (response) => {
+        this.roomFormControls.name.valid = response.valid;
+        this.roomFormError = response.valid;
+      },
+      error: (error) => {
+        console.log(error);
+        this.roomFormError = true;
+      }
+    });
   }
 
   /**
