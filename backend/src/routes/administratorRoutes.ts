@@ -88,13 +88,9 @@ router.delete('/meeting-room/:id/delete', async (req, res) => {
     await deleteMeetingRoom(req, res);
 });
 
-router.get('/meeting-room-validate', async (req, res) => {
-    await isValidateMeetingRoom(req, res);
-});
+router.get('/meeting-room-validate', isValidateMeetingRoom);
 
-router.get('/meeting-room/:id/validate', async (req, res) => {
-    await isValidateMeetingRoomWithId(req, res);
-});
+router.get('/meeting-room/:id/validate', isValidateMeetingRoomWithId);
 
 router.get('/meeting-room/:id/feature', async (req, res) => {
     await getRoomFeatures(req, res);

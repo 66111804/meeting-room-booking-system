@@ -201,8 +201,6 @@ export const createMeetingRoomBooking = async (req: any, res: any) => {
   try {
     const data:IBookingRoom = req.body;
     data.userId = req.user.id;
-    // return res.status(200).json(data);
-
     const booking = await createOrUpdateBookingRoom(data);
     return res.status(201).json(booking);
   }catch (error:any) {
@@ -244,7 +242,7 @@ export const IsValidateBookingRoom = async (req: any, res: any) => {
 // ------------------------ My Booking ------------------------ //
 export const getMyBooking = async (req: any, res: any) => {
   try {
-    const { userId } = req.user;
+    const userId = req.user.id;
     let { page, limit, searchTerm } = req.query;
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
@@ -311,9 +309,16 @@ export const getBookingById = async (req: any, res: any) => {
         message: "Booking ID is required"
       });
     }
-    console.log({id, userId});
+    // console.log({id, userId});
 
-    const booking = await bookingById(parseInt(id));
+    const booking = await bookingById(parseInt(id), userId);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found"
+      });
+    }
     return res.status(200).json({
       success: true,
       booking,

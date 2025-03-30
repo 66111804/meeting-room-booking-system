@@ -64,15 +64,16 @@
                 <div class="mb-3">
                   <label for="timeStart" class="form-label">เวลาเริ่ม <code>*</code></label>
 <!--                  <input type="text" class="form-control" id="timeStart" name="timeStart" disabled [value]="timeStartSlotSelected">-->
+                    <!-- Option -->
+                    <select class="form-select" id="timeStart" for="timeStart" (change)="onSelectTimeStartChange($event)" [disabled]="isEdit">
+                      @for(timeSlot of timeStartSlotSelectList; track $index){
+                        <option [value]="timeSlot.startTime" [selected]="timeSlot.startTime == timeStartSlotSelected">
+                          {{ timeSlot.startTime }}
+                        </option>
+                      }
+                    </select>
 
-                  <!-- Option -->
-                  <select class="form-select" id="timeStart" for="timeStart" (change)="onSelectTimeStartChange($event)">
-                    @for(timeSlot of timeStartSlotSelectList; track $index){
-                      <option [value]="timeSlot.startTime" [selected]="timeSlot.startTime == timeStartSlotSelected">
-                        {{ timeSlot.startTime }}
-                      </option>
-                    }
-                  </select>
+
                 </div>
               </div>
 
@@ -82,7 +83,7 @@
                   <label for="timeEnd" class="form-label">เวลาสิ้นสุด <code>*</code></label>
 <!--                  <input type="text" class="form-control" id="timeEnd" name="timeEnd" disabled [value]="timeEndSlotSelected">-->
                   <!-- Option -->
-                  <select class="form-select" id="timeEnd" for="timeEnd" (change)="onSelectTimeEndChange($event)">
+                  <select class="form-select" id="timeEnd" for="timeEnd" (change)="onSelectTimeEndChange($event)" [disabled]="isEdit">
                     @for(timeSlot of timeEndSlotSelectList; track $index){
                       <option [value]="timeSlot.endTime" [selected]="timeSlot.endTime == timeEndSlotSelected">
                         {{ timeSlot.endTime }}
@@ -185,10 +186,10 @@
             </div>
           </div>
 
-          <!-- Features คุณสมบัติ -->
+          <!-- Features อุปกรณ์ภายในห้อง -->
           <div class="col-xl-4">
             <div class="mt-4">
-              <h5 class="fw-semibold">คุณสมบัติ</h5>
+              <h5 class="fw-semibold">อุปกรณ์ภายในห้อง</h5>
               <ul class="list-unstyled text-muted">
                 @for (feature of roomInfo.roomHasFeatures; track $index){
                   <li><i class="ri-check-line text-success me-1"></i> {{ feature.feature.name }}</li>
@@ -258,13 +259,14 @@
 
           <div class="bg-danger me-2" style="width: 30px; height: 30px;"></div>
           <div class="me-3">
-            มีการจองแล้วไม่ว่าง
+            ไม่ว่าง
           </div>
-
-          <div class="bg-warning me-2" style="width: 30px; height: 30px;"></div>
-          <div class="me-3">
-            กำลังแก้ไข
-          </div>
+          @if(isEdit){
+            <div class="bg-warning me-2" style="width: 30px; height: 30px;"></div>
+            <div class="me-3">
+              กำลังแก้ไข
+            </div>
+          }
         </div>
       </div>
       <div class="card-body">

@@ -282,8 +282,6 @@ export const validateBookingRoom = async (data: IBookingRoomValidation) => {
 
 // ------------------------ My Booking ------------------------ //
 export const myBooking = async (userId: number, page: number, limit: number, searchTerm: string) =>{
-
-  // ({ meetingRooms:meetingRoomsList, total, totalPages, current: page });
   const myBooking = await prisma.meetingRoomBooking.findMany({
     where:{
       userId,
@@ -436,15 +434,20 @@ export const isOwnerOfBooking = async (userId: number, bookingId: number) => {
  * Get booking by id
  * @param bookingId
  */
-export const bookingById = async (bookingId: number) =>
+export const bookingById = async (bookingId: number,userId: number ) =>
 {
   const info = await prisma.meetingRoomBooking.findUnique({
-    where: { id: bookingId },
+    where: {
+      id: bookingId,
+      userId: userId
+    },
     include: {
       User: true,
       MeetingRoom: true
     }
   });
-
+  if (!info) {
+      return null;
+  }
   return info;
 };

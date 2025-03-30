@@ -876,7 +876,6 @@ export class RoomComponent implements OnInit, AfterViewInit
           console.error('Error:', error);
         }
       });
-
   }
   calculateTotalHours() {
     const startTime = this.timeStartSlotSelected.split(':');
@@ -907,6 +906,9 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   onDateSelectChange(date: any)
   {
+    if(this.isEdit){
+      return;
+    }
     this.dateSelected = new Date(date.dateString);
     this.fetchTimeSlot();
   }

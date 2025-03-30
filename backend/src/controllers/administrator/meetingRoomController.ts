@@ -310,8 +310,10 @@ export const isValidateMeetingRoomWithId = async (req: any, res: any) => {
     }
     const meetingRoom = await prisma.meetingRoom.findFirst({
       where: {
-        id: parseInt(id),
         name: name,
+        NOT: {
+            id: parseInt(id),
+        }
       },
     });
     return res.status(200).json({ valid: !!meetingRoom });
