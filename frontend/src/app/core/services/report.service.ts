@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {GlobalComponent} from '../../global-component';
 
-
+// ------------- Top Booking -------------
 export interface ITopBooking {
   booking: ITopBookingData[]
   total: number
@@ -19,6 +19,20 @@ export interface ITopBookingData {
   totalBookings: number
 }
 
+// ------------- Top Department Booking -------------
+export interface ITopDepartmentBooking {
+  data: ITopDepartmentBookingData[]
+  total: number
+  totalPages: number
+  current: number
+}
+
+export interface ITopDepartmentBookingData {
+  department: string
+  totalBookings: number
+}
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,4 +44,9 @@ export class ReportService {
   getTopBooks(searchTerm: string, page: number, pageSize: number,startDate: string, endDate: string, sort: string = 'desc') {
       return this.http.get<ITopBooking>(`${GlobalComponent.API_URL}/admin/report/top-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}`);
   }
+  getTopDepartmentBooks(searchTerm: string, page: number, pageSize: number,startDate: string, endDate: string, sort: string = 'desc')
+  {
+      return this.http.get<ITopDepartmentBooking>(`${GlobalComponent.API_URL}/admin/report/top-department-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}`);
+  }
+
 }

@@ -11,12 +11,12 @@ import {
 } from '@angular/core';
 import {GlobalComponent} from '../../../../global-component';
 import {FlatPickrOutputOptions} from 'angularx-flatpickr/lib/flatpickr.directive';
-import {ITopBooking, ReportService} from '../../../../core/services/report.service';
-import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {Chart} from 'chart.js';
+import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
+import {ITopDepartmentBooking, ReportService} from '../../../../core/services/report.service';
 
 @Component({
-  selector: 'app-top-booking',
+  selector: 'app-top-department-booking',
   standalone: true,
   imports: [
     NgbDropdown,
@@ -24,10 +24,10 @@ import {Chart} from 'chart.js';
     NgbDropdownToggle,
     NgbPagination
   ],
-  templateUrl: './top-booking.component.html',
-  styleUrl: './top-booking.component.scss'
+  templateUrl: './top-department-booking.component.html',
+  styleUrl: './top-department-booking.component.scss'
 })
-export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnChanges
+export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnChanges
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
 
@@ -36,18 +36,35 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 
   serverUrl= GlobalComponent.SERVE_URL;
   page = 1;
-  pageSize = 5;
+  pageSize = 10;
   searchTerm: string = '';
   sort: string = 'desc';
-  reportTopBooksResponse:ITopBooking =
-    {
-      booking: [],
-      total: 0,
-      totalPages: 0,
-      current: 0
-    };
+  topDepartmentBooking:ITopDepartmentBooking = {
+    data: [],
+    total: 0,
+    totalPages: 0,
+    current: 0,
+  }
 
-  constructor(private reportService:ReportService) {
+  constructor(private reportService: ReportService) {
+    document.getElementById('elmLoader')?.classList.remove('d-none');
+  }
+
+  ngOnInit(): void {
+    this.fetchTopDepartmentBooking();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      document.getElementById('elmLoader')?.classList.add('d-none');
+    }, 500);
+    this.createChart();
+  }
+
+  ngOnDestroy(): void {
+    if (this.chart) {
+      this.chart.destroy();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void{
@@ -58,59 +75,39 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 
   handleDateChange(date: FlatPickrOutputOptions) {
     // console.log('Date changed in child:', date);
-    this.fetchTopBooks();
+    this.fetchTopDepartmentBooking();
   }
 
-  ngOnInit() {
-
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      document.getElementById('elmLoader')?.classList.add('d-none');
-      this.fetchTopBooks();
-    }, 500);
-  }
-
-  ngOnDestroy(): void {
-    document.getElementById('elmLoader')?.classList.add('d-none');
-  }
-
-  fetchTopBooks() {
+  fetchTopDepartmentBooking(){
     if(this.dateSelected.selectedDates.length < 2) {
       console.log('Please select a date range');
       return;
     }
 
     const startDate = this.dateSelected.selectedDates[0].toISOString();
-
     const endDate = this.dateSelected.selectedDates[1].toISOString()
 
-    this.reportService.getTopBooks(this.searchTerm, this.page, this.pageSize, startDate,endDate,this.sort).subscribe(
+    this.reportService.getTopDepartmentBooks(this.searchTerm, this.page, this.pageSize, startDate,endDate,this.sort).subscribe(
       {
-        next: (res) => {
-          // console.log(res);
-          this.reportTopBooksResponse = res;
-          const data = res.booking;
-          const labels = data.map(item => item.name);
-          const values = data.map(item => item.totalBookings);
-          if(this.chart) {
+        next: (data) => {
+          console.log(data);
+          this.topDepartmentBooking = data;
 
+          if(this.chart){
+            const labels = data.data.map((item) => item.department);
+            const values = data.data.map((item) => item.totalBookings);
             const suggestedMax = this.getSuggestedMax(values);
-
             const backgroundColors = [
               '#42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
             ];
 
-            const dataset = {
-              label: 'จำนวนการจอง',
+            const dataSet = {
+              label: 'ยอดการใช้งาน',
               data: values,
               backgroundColor: backgroundColors.slice(0, values.length)
-            };
-
-
+            }
             this.chart.data.labels = labels;
-            this.chart.data.datasets[0] = dataset;
+            this.chart.data.datasets[0] = dataSet;
             this.chart.options.scales = {
               y: {
                 beginAtZero: true,
@@ -121,16 +118,29 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
                 }
               }
             };
+
             this.chart.update();
-          }else {
-            this.createChart();
+
           }
         },
         error: (error) => {
-          console.error('Error fetching top books:', error);
+          console.log(error);
+          this.topDepartmentBooking = {
+            data: [],
+            total: 0,
+            totalPages: 0,
+            current: 0,
+          }
         }
-      }
-    );
+      });
+  }
+  sortBy(sort: string) {
+    this.sort = sort;
+    this.fetchTopDepartmentBooking();
+  }
+
+  changePage(){
+    this.fetchTopDepartmentBooking();
   }
 
   createChart(): void {
@@ -139,7 +149,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
       data: {
         labels: [],
         datasets: [{
-          label: 'จำนวนการจอง',
+          label: 'ยอดการใช้งาน',
           data: [],
           backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
         }]
@@ -149,7 +159,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
         plugins: {
           title: {
             display: true,
-            text: 'รายงานการจองห้องประชุม'
+            text: 'รายงานการใช้งานตามแผนก',
           }
         }
       }
@@ -161,15 +171,4 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     return Math.ceil(max * 1.1); // Increase the max value by 10%
   }
 
-  changePage()
-  {
-    this.fetchTopBooks();
-  }
-
-  sortBy(sort: string) {
-    this.sort = sort;
-    this.fetchTopBooks();
-  }
-
 }
-
