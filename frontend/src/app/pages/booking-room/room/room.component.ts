@@ -962,7 +962,7 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   fetchTimeSlot() {
     // YYYY-MM-DD
-    const date = this.dateSelected.toISOString().split('T')[0];
+    const date = this.dateSelected.toISOString();
     this.slotTimeService.getTimeSlot(date, this.roomId).subscribe({
       next: (response) => {
         this.timeSlotsAvailable = response;
