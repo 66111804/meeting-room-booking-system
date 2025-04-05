@@ -123,7 +123,6 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
 
   }
 
-  // 09 Apr, 2025 date format
   formatDate(date: Date): string {
     const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
     return date.toLocaleDateString('en-GB', options);
@@ -158,7 +157,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   ngAfterViewInit() {
     setTimeout(() => {
       document.getElementById('elmLoader')?.classList.add('d-none');
-      this.chageStartTimeSlotSelected();
+      this.changeStartTimeSlotSelected();
     }, 500);
     // this.fetchMeetingRooms();
   }
@@ -239,13 +238,13 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   onDateSelectChange(date: FlatPickrOutputOptions) {
     this.dateSelectedFlatPickr = date;
     this.dateSelected = date.selectedDates[0];
-    this.chageStartTimeSlotSelected();
+    this.changeStartTimeSlotSelected();
 
     // timeStartSlotSelected
     this.fetchMeetingRooms();
   }
 
-  chageStartTimeSlotSelected() {
+  changeStartTimeSlotSelected() {
     const currentDate = new Date();
     // console.log(`${currentDate.getHours()}:${currentDate.getMinutes()}`);
 

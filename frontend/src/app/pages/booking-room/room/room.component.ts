@@ -22,6 +22,7 @@ import {BookingRoomService} from '../../../core/services/booking-room.service';
 import {ToastrService} from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import {format} from 'date-fns';
+import {FlatPickrOutputOptions} from 'angularx-flatpickr/lib/flatpickr.directive';
 
 
 // noinspection DuplicatedCode
@@ -84,6 +85,7 @@ export class RoomComponent implements OnInit, AfterViewInit
     meetingRoomId: 0,
   }
   events: any[] = [];
+  dateSelectedFlatPickr!: FlatPickrOutputOptions;
 
   constructor(private route: ActivatedRoute,
               private roomMeetingService:RoomMeetingService,
@@ -832,7 +834,17 @@ export class RoomComponent implements OnInit, AfterViewInit
     }else{
       this.dateSelected = this.getMinDate();
     }
-    // console.log(this.dateSelected);
+
+    this.dateSelectedFlatPickr =
+      {
+        selectedDates: [this.dateSelected],
+        dateString: this.formatDate(this.dateSelected),
+        instance: null
+      };
+  }
+  formatDate(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('en-GB', options);
   }
 
   ngOnInit() {
@@ -860,6 +872,10 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   ngAfterViewInit() {
 
+    setTimeout(() => {
+      document.getElementById('elmLoader')?.classList.add('d-none');
+      this.changeStartTimeSlotSelected();
+    }, 500);
   }
 
   convertTime(dateTimeStr: string): string {
@@ -891,10 +907,10 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   private getMinDate(){
     let currentDate = new Date();
-    // const currentHour = currentDate.getHours();
-    // if(currentHour > 17){
-    //   currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
-    // }
+    const currentHour = currentDate.getHours();
+    if(currentHour > 17){
+      currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+    }
     return currentDate;
   }
 
@@ -904,13 +920,14 @@ export class RoomComponent implements OnInit, AfterViewInit
     return currentDate;
   }
 
-  onDateSelectChange(date: any)
+  onDateSelectChange(date: FlatPickrOutputOptions)
   {
     if(this.isEdit){
       return;
     }
-    this.dateSelected = new Date(date.dateString);
+    this.dateSelected = date.selectedDates[0];
     this.fetchTimeSlot();
+    this.changeStartTimeSlotSelected();
   }
 
   protected readonly GlobalComponent = GlobalComponent;
@@ -935,28 +952,10 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
-    this.timeStartSlotSelectList = this.timeSlots;
-    // this.timeSlots.forEach((slot) => {
-    //   // console.log(slot);
-    //   const _timeStart = parseInt(slot.startTime)
-    //   const _timeEnd = parseInt(slot.endTime)
-    //
-    //   const _timeStartSelected = parseInt(this.timeEndSlotSelected)
-    //
-    //   console.log(
-    //     {
-    //       _timeStart,
-    //       _timeStartSelected
-    //     });
-    // })
-    // this.timeStartSlotSelectList = this.timeSlots.slice(
-    //   0,
-    //   this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
-    // ); // Update start time options
+    // this.timeStartSlotSelectList = this.timeSlots;
     // validate time slot
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
-
 
     this.formBookingData.endTime = this.timeEndSlotSelected;
   }
@@ -1094,6 +1093,47 @@ export class RoomComponent implements OnInit, AfterViewInit
     }
   }
 
+
+  changeStartTimeSlotSelected() {
+    const currentDate = new Date();
+    console.log(`${currentDate.getHours()}:${currentDate.getMinutes()}`);
+
+    const currentDateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+    const selectedDateStr = `${this.dateSelected.getFullYear()}-${this.dateSelected.getMonth() + 1}-${this.dateSelected.getDate()}`;
+
+    console.log(selectedDateStr, currentDateStr);
+    if(currentDateStr === selectedDateStr)
+    {
+      const currentHour = currentDate.getHours() + 1;
+      const currentMinute = currentDate.getMinutes();
+      this.timeStartSlotSelectList = this.timeSlots.slice(
+        this.timeSlots.findIndex((slot) => slot.startTime === `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`),
+        this.timeSlots.length
+      ); // Update start time options
+
+      if(currentHour >= 17){
+        this.timeStartSlotSelected = "";
+        this.timeStartSlotSelectList = [];
+      }else {
+
+        this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
+        if(this.timeStartSlotSelectList.length > 0){
+          this.timeStartSlotSelected = this.timeStartSlotSelectList[0].endTime;
+        }else {
+          this.timeStartSlotSelected = "";
+        }
+      }
+    }else{
+      console.log("timeSlots :",this.timeSlots);
+      if(this.timeSlots.length > 0){
+        this.timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
+        this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
+      }
+    }
+    console.log("timeStartSlotSelectList : ",this.timeStartSlotSelectList);
+    this.calculateTotalHours(); // Recalculate hours
+    this.cdr.detectChanges();
+  }
 
   /**
    * ---------------------------- Schedule ----------------------------

@@ -66,7 +66,8 @@
 <!--                  <input type="text" class="form-control" id="timeStart" name="timeStart" disabled [value]="timeStartSlotSelected">-->
                     <!-- Option -->
                     <select class="form-select" id="timeStart" for="timeStart" (change)="onSelectTimeStartChange($event)" [disabled]="isEdit">
-                      @for(timeSlot of timeStartSlotSelectList; track $index){
+                      @for(timeSlot of timeStartSlotSelectList; track $index)
+                      {
                         <option [value]="timeSlot.startTime" [selected]="timeSlot.startTime == timeStartSlotSelected">
                           {{ timeSlot.startTime }}
                         </option>
@@ -240,7 +241,7 @@
       </div>
       <div class="card-body">
         <div class="mt-1">
-          <input class="form-control flatpickr-input mb-2" type="text" mwlFlatpickr [altInput]="true" [options]="datePickerOptions" [convertModelValue]="true" [inline]="true" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
+          <input class="form-control flatpickr-input mb-2" type="text" mwlFlatpickr [altInput]="true" [options]="datePickerOptions" [convertModelValue]="true" [inline]="true" (flatpickrChange)="onDateSelectChange($event)" dateFormat="d M, Y" [defaultValue]="dateSelectedFlatPickr.dateString">
         </div>
       </div><!--end card-body-->
     </div><!--end card-->
