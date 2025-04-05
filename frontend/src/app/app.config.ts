@@ -23,6 +23,7 @@ import {provideClientHydration} from '@angular/platform-browser';
 import {provideEffects} from '@ngrx/effects';
 import {AuthenticationEffects} from './store/Authentication/authentication.effects';
 import {CKEditorModule} from 'ckeditor4-angular';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export function HttpLoaderFactory(http:HttpClient){
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -64,7 +65,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptorsFromDi()),
     provideFlatpickrDefaults(),
-    provideClientHydration(),
+    provideClientHydration(), provideAnimationsAsync(),
   ],
 };
 
