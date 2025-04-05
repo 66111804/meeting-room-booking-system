@@ -14,6 +14,7 @@ export interface RoomFeaturesResponse
 export interface Feature {
   id: number
   name: string
+  quantity: number
   selected?: boolean
   createdAt: string
   updatedAt: string

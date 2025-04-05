@@ -117,6 +117,7 @@ model MeetingRoomFeatures {
   meetingRoomId Int
   feature       Features    @relation(fields: [featureId], references: [id])
   featureId     Int
+  quantity      Int         @default(1) // total number of features in the meeting room
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -124,7 +125,6 @@ model MeetingRoomFeatures {
 }
 
 // Meeting Room Booking model
-
 model MeetingRoomBooking {
   id            Int      @id @default(autoincrement())
   userId        Int // user who booked the meeting room

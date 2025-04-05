@@ -4,7 +4,7 @@ import {GlobalComponent} from '../../global-component';
 import {ValidateResponse} from '../../shared/utils/date-utils';
 
 
-export interface RoomForm {
+export interface IRoomForm {
   name: {
     data: string,
     valid: boolean
@@ -30,6 +30,7 @@ export interface RoomForm {
     valid: boolean
   };
 }
+
 
 export interface MeetingRoomResponse {
   meetingRooms: MeetingRoom[]
@@ -74,6 +75,7 @@ export interface RoomHasFeature {
 export interface Feature {
   id: number
   name: string
+  quantity: number
   createdAt: string
   updatedAt: string
 }
@@ -116,7 +118,7 @@ export class RoomMeetingService {
    * @param datForm
    * @param id
    */
-  updateRoom(datForm: RoomForm,id:number = 0) {
+  updateRoom(datForm: IRoomForm,id:number = 0) {
     let formData = new FormData();
     formData.append('name', datForm.name.data);
     formData.append('capacity',  datForm.capacity.data);
@@ -126,9 +128,11 @@ export class RoomMeetingService {
       formData.append('image', this.imageFile);
     }
 
-    datForm.features.data.forEach((feature) => {
-      formData.append('features[]', feature);
+    datForm.features.data.forEach((feature:Feature) => {
+      formData.append('features[]', "[" + feature.id + "," + feature.quantity + "]");
     });
+
+    console.log(datForm);
 
     if (id > 0) {
       return this.http.put(`${GlobalComponent.API_URL}/admin/meeting-room/${id}/update`, formData);

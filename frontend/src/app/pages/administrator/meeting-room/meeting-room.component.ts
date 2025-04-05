@@ -5,14 +5,14 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
 import {FeaturesComponent} from './features/features.component';
 import {CommonModule} from '@angular/common';
-import {RoomFeaturesResponse, RoomFeaturesService} from '../../../core/services/room-features.service';
+import {Feature, RoomFeaturesResponse, RoomFeaturesService} from '../../../core/services/room-features.service';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 
 
 import {
   MeetingRoom,
   MeetingRoomResponse,
-  RoomForm,
+  IRoomForm,
   RoomMeetingService
 } from '../../../core/services/room-meeting.service';
 import {GlobalComponent} from '../../../global-component';
@@ -47,7 +47,7 @@ export class MeetingRoomComponent implements OnInit
   serverUrl = GlobalComponent.SERVE_URL;
   features: RoomFeaturesResponse;
 
-  roomFormControls:RoomForm = {
+  roomFormControls:IRoomForm = {
     name: {data: '', valid: false},
     capacity: {data: '', valid: false},
     description: {data: '', valid: false},
@@ -226,7 +226,9 @@ export class MeetingRoomComponent implements OnInit
     this.checkFormErrors();
 
     if(!this.roomFormError){
+
       if(this.meetingRoomEdit){
+
         this.roomMeetingService.updateRoom(this.roomFormControls,this.meetingRoomEdit.id).subscribe({
           next: (response) => {
             this.fetchMeetingRooms();
@@ -300,14 +302,22 @@ export class MeetingRoomComponent implements OnInit
   /**
    * Feature change
    */
-  featureChange(event: any) {
+  featureChange(event: any, feature: Feature) {
     const status = event.target.checked;
     const featureId = event.target.value;
     if(status){
-      this.roomFormControls.features.data.push(featureId);
+      // add feature to array
+      const data = {
+        id: feature.id,
+        quantity: feature.quantity
+      }
+      this.roomFormControls.features.data.push(data);
     }else {
-      this.roomFormControls.features.data = this.roomFormControls.features.data.filter((id) => id !== featureId);
+      // remove feature from array
+      this.roomFormControls.features.data = this.roomFormControls.features.data.filter((id:Feature) => id.id !== featureId);
     }
+
+    console.log(this.roomFormControls.features);
   }
   meetingRoomEdit: MeetingRoom | undefined;
   imagePreviewSrc: string = 'assets/images/dummy-image-square.jpg';
@@ -378,8 +388,46 @@ export class MeetingRoomComponent implements OnInit
     this.roomFormControls.status.data = event.target.value == 'active'? 'inactive' : 'active';
   }
 
-  onEditorChange(event: any){
-    const editorData = event.editor.getData();
-    this.roomFormControls.description.data = editorData;
+  // onEditorChange(event: any){
+  //   const editorData = event.editor.getData();
+  //   this.roomFormControls.description.data = editorData;
+  // }
+
+
+  /**
+   * Increase quantity
+   * @param feature
+   */
+  increaseQuantity(feature: Feature)
+  {
+    // Quantity++
+    feature.quantity ++;
+    if(feature.quantity >= 100) {
+      feature.quantity = 1;
+    }
+    // add this.roomFormControls.features
+    const findIndex = this.roomFormControls.features.data.findIndex((item: Feature) => item.id === feature.id);
+    if(findIndex !== -1){
+      this.roomFormControls.features.data[findIndex].quantity = feature.quantity;
+    }
+    console.log(this.roomFormControls.features)
+  }
+  /**
+   * Decrease quantity
+   * @param feature
+   */
+  decreaseQuantity(feature: Feature)
+  {
+    // Quantity--
+    feature.quantity --;
+    if(feature.quantity <= 0) {
+      feature.quantity = 100;
+    }
+    // add this.roomFormControls.features
+    const findIndex = this.roomFormControls.features.data.findIndex((item: Feature) => item.id === feature.id);
+    if(findIndex !== -1){
+      this.roomFormControls.features.data[findIndex].quantity = feature.quantity;
+    }
+    console.log(this.roomFormControls.features)
   }
 }

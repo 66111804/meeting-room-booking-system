@@ -1124,13 +1124,13 @@ export class RoomComponent implements OnInit, AfterViewInit
         }
       }
     }else{
-      console.log("timeSlots :",this.timeSlots);
+      // console.log("timeSlots :",this.timeSlots);
       if(this.timeSlots.length > 0){
         this.timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
         this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
       }
     }
-    console.log("timeStartSlotSelectList : ",this.timeStartSlotSelectList);
+    // console.log("timeStartSlotSelectList : ",this.timeStartSlotSelectList);
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
   }

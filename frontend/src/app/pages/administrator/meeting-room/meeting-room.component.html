@@ -285,9 +285,21 @@
               <div class="row">
                 @for (feature of features.features; track $index){
                 <div class="col-lg-6">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="feature{{feature.id}}" (change)="featureChange($event)" value="{{feature.id}}" [checked]="feature.selected">
-                    <label class="form-check label" for="feature{{feature.id}}">{{ feature.name }}</label>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="feature{{feature.id}}" (change)="featureChange($event,feature)" value="{{feature.id}}" [checked]="feature.selected">
+                        <label class="form-check label" for="feature{{feature.id}}">{{ feature.name }}</label>
+                      </div>
+
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="input-step">
+                        <button type="button" (click)="decreaseQuantity(feature)"class="minus">–</button>
+                        <input type="number" class="product-quantity"  min="0" max="100" readonly value="{{feature.quantity}}">
+                        <button type="button" (click)="increaseQuantity(feature)" class="plus" >+</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 }

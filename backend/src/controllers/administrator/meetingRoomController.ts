@@ -102,9 +102,10 @@ export const createMeetingRoom = async (req: any, res: any) => {
       {
         "name": "Meeting Room 1",
         "description": "This is a meeting room",
-        "features": [1, 2, 3] // feature ids
+        "features": ['[22,2]',..] // feature [id, quantity]
       }
      */
+    console.log(features, capacity, status);
 
     if (!name || !description || !features) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -117,6 +118,11 @@ export const createMeetingRoom = async (req: any, res: any) => {
       fileName = image.filename;
     }
 
+    // const featuresIds = features.map((feature: any) => {
+    //   feature = JSON.parse(feature);
+    //   return feature;
+    // })
+
     const meetingRoom = await prisma.meetingRoom.create({
       data: {
         name,
@@ -125,9 +131,13 @@ export const createMeetingRoom = async (req: any, res: any) => {
         capacity: capacity ? parseInt(capacity) : 0,
         status: status || 'active',
         roomHasFeatures: {
-          create: features.map((featureId: number) => ({
-            featureId: parseInt(featureId.toString(), 10),
-          })),
+          create: features.map((feature: any) => {
+            feature = JSON.parse(feature);
+            return {
+              featureId: parseInt(feature[0].toString()),
+              quantity: parseInt(feature[1].toString()),
+            };
+          }),
         },
       },
     });
@@ -158,13 +168,18 @@ export const updateMeetingRoom = async (req: any, res: any) => {
       {
         "name": "Meeting Room 1",
         "description": "This is a meeting room",
-        "features": [1, 2, 3] // feature ids
+        "features": ['[22,10]',...] // feature ids
       }
      */
 
     if (!name || !description || !features) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+
+    // const featuresIds = features.map((feature: any) => {
+    //     feature = JSON.parse(feature);
+    //     return feature;
+    // })
 
     const meetingRoom = await prisma.meetingRoom.findFirst({
       where: {
@@ -208,9 +223,13 @@ export const updateMeetingRoom = async (req: any, res: any) => {
         status: status || 'active',
         roomHasFeatures: {
           deleteMany: {},
-          create: features.map((featureId: number) => ({
-            featureId: parseInt(featureId.toString(), 10),
-          })),
+          create: features.map((feature: any) => {
+            feature = JSON.parse(feature);
+            return {
+              featureId: parseInt(feature[0].toString()),
+              quantity: parseInt(feature[1].toString()),
+            };
+          }),
         },
       },
     });
@@ -356,17 +375,21 @@ export const getRoomFeatures = async (req: any, res: any) => {
       },
       select: {
         featureId: true,
+        quantity: true,
       }
     });
 
-    const selectedFeatureIds = new Set(roomFeatures.map((rf) => rf.featureId));
+    const enrichedFeatures = features.map((feature) => {
+      const matchedRoomFeature = roomFeatures.find(rf => rf.featureId === feature.id);
 
-    const enrichedFeatures = features.map((feature) => ({
-      ...feature,
-      createdAt: feature.createdAt.toISOString(), // Convert Date to string
-      updatedAt: feature.updatedAt.toISOString(), // Convert Date to string
-      selected: selectedFeatureIds.has(feature.id), // Add selected property
-    }));
+      return {
+        ...feature,
+        createdAt: feature.createdAt.toISOString(),
+        updatedAt: feature.updatedAt.toISOString(),
+        selected: !!matchedRoomFeature,
+        quantity: matchedRoomFeature?.quantity || 1, // default เป็น 0 ถ้าไม่มีใน roomFeatures
+      };
+    });
 
     const total = await prisma.features.count({ where });
     const totalPages = Math.ceil(total / limit);
@@ -412,10 +435,19 @@ export const getFeatures = async (req: any, res: any) => {
       },
     });
 
+    // features add quantity
+    const enrichedFeatures = features.map((feature) => ({
+      ...feature,
+      createdAt: feature.createdAt.toISOString(),
+      updatedAt: feature.updatedAt.toISOString(),
+      quantity: 1,
+    }));
+
+
     const total = await prisma.features.count({ where });
     const totalPages = Math.ceil(total / limit);
 
-    return res.status(200).json({ features, total, totalPages, current: page });
+    return res.status(200).json({ features:enrichedFeatures, total, totalPages, current: page });
   } catch (error:any) {
     return res.status(500).json({ message: error.message });
   }
