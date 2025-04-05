@@ -90,9 +90,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     this.reportService.getTopDepartmentBooks(this.searchTerm, this.page, this.pageSize, startDate,endDate,this.sort).subscribe(
       {
         next: (data) => {
-          console.log(data);
           this.topDepartmentBooking = data;
-
           if(this.chart){
             const labels = data.data.map((item) => item.department);
             const values = data.data.map((item) => item.totalBookings);

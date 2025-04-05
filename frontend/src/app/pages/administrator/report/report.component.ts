@@ -21,6 +21,7 @@ import {ChartConfiguration, Chart, registerables} from 'chart.js'
 import {BaseChartDirective} from 'ng2-charts';
 import {TopBookingComponent} from './top-booking/top-booking.component';
 import {TopDepartmentBookingComponent} from './top-department-booking/top-department-booking.component';
+import {HourlyBookingComponent} from './hourly-booking/hourly-booking.component';
 
 Chart.register(...registerables);
 
@@ -38,6 +39,7 @@ Chart.register(...registerables);
     NgbPagination,
     TopBookingComponent,
     TopDepartmentBookingComponent,
+    HourlyBookingComponent,
   ],
   providers:[provideNativeDateAdapter()],
   templateUrl: './report.component.html',

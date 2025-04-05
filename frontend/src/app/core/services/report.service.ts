@@ -32,7 +32,18 @@ export interface ITopDepartmentBookingData {
   totalBookings: number
 }
 
+// ------------- Hourly Booking -------------
+export interface IHourlyBooking {
+  data: IHourlyBookingData[]
+  total: number
+  totalPages: number
+  current: number
+}
 
+export interface IHourlyBookingData {
+  hour: string
+  totalBookings: number
+}
 
 @Injectable({
   providedIn: 'root'
@@ -49,4 +60,9 @@ export class ReportService {
       return this.http.get<ITopDepartmentBooking>(`${GlobalComponent.API_URL}/admin/report/top-department-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}`);
   }
 
+  getHourlyBooking(startDate: string, endDate: string)
+  {
+      return this.http.get<IHourlyBooking>(`${GlobalComponent.API_URL}/admin/report/hourly-booking?startDate=${startDate}&endDate=${endDate}`);
+  }
 }
+

@@ -2,18 +2,18 @@
   <div class="col-xl-4 " >
     <div class="card card-height-100">
       <div class="card-header align-items-center d-flex">
-        <h4 class="card-title mb-0 flex-grow-1">แผนที่ใช้งานห้องประชุม</h4>
+        <h4 class="card-title mb-0 flex-grow-1">เวลาการใข้งานห้องประชุม</h4>
         <div class="flex-shrink-0">
-          <div class="dropdown card-header-dropdown" ngbDropdown>
-            <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-              <span class="text-muted">เรียง
-                <i class="mdi mdi-chevron-down ms-1"></i></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-              <a class="dropdown-item" href="javascript: void(0);" (click)="sortBy('desc')">มากไปน้อย</a>
-              <a class="dropdown-item" href="javascript: void(0);" (click)="sortBy('asc')">น้อยไปมาก</a>
-            </div>
-          </div>
+<!--          <div class="dropdown card-header-dropdown" ngbDropdown>-->
+<!--            <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>-->
+<!--              <span class="text-muted">เรียง-->
+<!--                <i class="mdi mdi-chevron-down ms-1"></i></span>-->
+<!--            </a>-->
+<!--            <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>-->
+<!--              <a class="dropdown-item" href="javascript: void(0);" (click)="sortBy('desc')">มากไปน้อย</a>-->
+<!--              <a class="dropdown-item" href="javascript: void(0);" (click)="sortBy('asc')">น้อยไปมาก</a>-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
       </div><!-- end card header -->
 
@@ -21,11 +21,11 @@
         <div class="table-responsive table-card ">
           <table class="table table-hover table-centered align-middle table-nowrap mb-0">
             <tbody>
-              @for (_report of topDepartmentBooking.data; track $index) {
+              @for (_report of reportHourlyBookingTable.data; track $index) {
                 <tr>
                   <td>
                     <h5 class="fs-14 my-1 fw-medium">
-                      {{_report.department}}
+                      {{_report.hour}}
                     </h5>
                   </td>
 
@@ -49,13 +49,13 @@
       <div class="card-footer pt-0">
         <div class="align-items-center mt-4 pt-0 justify-content-between d-flex ">
           <div class="col-sm">
-            <div class="text-muted">Showing {{ (page - 1) * pageSize + 1 }} to {{ (page - 1) * pageSize + topDepartmentBooking.data.length }} of {{ topDepartmentBooking.total }} entries</div>
+            <div class="text-muted">Showing {{ (page - 1) * pageSize + 1 }} to {{ (page - 1) * pageSize + reportHourlyBookingTable.data.length }} of {{ reportHourlyBookingTable.total }} entries</div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex justify-content-end mt-3">
-              @if (topDepartmentBooking.total > pageSize) {
+              @if (reportHourlyBookingTable.total > pageSize) {
                 <!-- Pagination -->
-                <ngb-pagination [collectionSize]="topDepartmentBooking.total"
+                <ngb-pagination [collectionSize]="reportHourlyBookingTable.total"
                                 [(page)]="page"
                                 [pageSize]="pageSize"
                                 (pageChange)="changePage()"
@@ -73,7 +73,7 @@
   <div class="col-xl-8 ">
     <div class="card">
       <div class="card-header align-items-center d-flex">
-        <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงแผนที่ใช้งานห้องประชุม</h4>
+        <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงการใช้งานห้องประชุม</h4>
       </div>
       <div class="card-body pb-5">
         <div class="mb-n3">
