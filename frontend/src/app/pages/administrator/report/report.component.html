@@ -43,12 +43,12 @@
         <div class="flex-shrink-0">
           <div class="dropdown card-header-dropdown" ngbDropdown>
             <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-              <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
+              <span class="text-muted">เรียง
+                <i class="mdi mdi-chevron-down ms-1"></i></span>
             </a>
             <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-              <a class="dropdown-item" href="javascript: void(0);">Download Report</a>
-              <a class="dropdown-item" href="javascript: void(0);">Export</a>
-              <a class="dropdown-item" href="javascript: void(0);">Import</a>
+              <a class="dropdown-item" href="javascript: void(0);" (click)="sortBy('desc')">มากไปน้อย</a>
+              <a class="dropdown-item" href="javascript: void(0);" (click)="sortBy('asc')">น้อยไปมาก</a>
             </div>
           </div>
         </div>
@@ -115,4 +115,17 @@
       </div> <!-- .card-body-->
     </div> <!-- .card-->
   </div> <!-- .col-->
+
+  <div class="col-xl-8 h-100">
+    <div class="card">
+      <div class="card-header align-items-center d-flex">
+        <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงการใช้งานห้องประชุม</h4>
+      </div>
+      <div class="card-body pb-5">
+        <div class="mb-n3">
+          <canvas #chartCanvas></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

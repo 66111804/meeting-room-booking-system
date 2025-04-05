@@ -43,6 +43,7 @@
             ],
             "scripts": [
               "node_modules/@lordicon/element/release/lordicon.js",
+              "node_modules/apexcharts/dist/apexcharts.min.js"
             ],
             "allowedCommonJsDependencies": [
               "ev-emitter/ev-emitter",
