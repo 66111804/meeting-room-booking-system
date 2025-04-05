@@ -186,8 +186,7 @@ export class MyBookingComponent implements OnInit
     const minutes = seconds * 60;
     const diff = (currentDate.getTime() - selectedDate.getTime()) / (minutes);
     const diffHours = Math.ceil(diff);
-    console.log(currentDate.toDateString() === selectedDate.toDateString() && diffHours > -2);
-    return currentDate.toDateString() === selectedDate.toDateString() && diffHours > -2;
+    return currentDate.toDateString() === selectedDate.toDateString() && diffHours > -2; // After 2 hours return true
   }
 
   showTime(startTime: string, endTime: string): string {
