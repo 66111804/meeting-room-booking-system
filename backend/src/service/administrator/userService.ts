@@ -68,7 +68,6 @@ export const getUsersService = async (req: any, res: any) => {
   return res.status(200).json({ users:formattedUsers, total, totalPages,current:page });
 };
 
-
 export const getUserService = async (req: any, res: any) => {
   const { id } = req.params;
   const user = await prisma.user.findUnique({

@@ -32,6 +32,11 @@ import {
     permissionAssign, revokePermission, updateRole
 } from "../controllers/administrator/rolePermissionController";
 import {createBlog, deleteBlog, getBlog, getBlogs, updateBlog} from "../controllers/administrator/blogController";
+import {
+    getHourlyBookingReport,
+    getTopBooks,
+    getTopDepartmentBooks
+} from "../controllers/administrator/reportController";
 
 const router = Router();
 
@@ -148,5 +153,11 @@ router.get('/blog/:id/info', getBlog);
 router.post('/blog/:id/update', upload.single('image'), updateBlog);
 router.delete('/blog/:id/delete', deleteBlog);
 
+
+// ----------- Report ------------
+router.get('/report/top-booking', getTopBooks);
+router.get('/report/top-department-booking', getTopDepartmentBooks);
+// getHourlyBookingReport
+router.get('/report/hourly-booking', getHourlyBookingReport);
 
 export default router;
