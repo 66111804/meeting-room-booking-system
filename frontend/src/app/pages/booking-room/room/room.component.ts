@@ -1043,7 +1043,6 @@ export class RoomComponent implements OnInit, AfterViewInit
       return;
     }
 
-
     if(this.isEdit){
       this.bookingRoomService.createOrUpdateBookingRoom(formData, this.bookingId).subscribe({
         next: (response) => {
@@ -1096,12 +1095,12 @@ export class RoomComponent implements OnInit, AfterViewInit
 
   changeStartTimeSlotSelected() {
     const currentDate = new Date();
-    console.log(`${currentDate.getHours()}:${currentDate.getMinutes()}`);
+    // console.log(`${currentDate.getHours()}:${currentDate.getMinutes()}`);
 
     const currentDateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
     const selectedDateStr = `${this.dateSelected.getFullYear()}-${this.dateSelected.getMonth() + 1}-${this.dateSelected.getDate()}`;
 
-    console.log(selectedDateStr, currentDateStr);
+    // console.log(selectedDateStr, currentDateStr);
     if(currentDateStr === selectedDateStr)
     {
       const currentHour = currentDate.getHours() + 1;

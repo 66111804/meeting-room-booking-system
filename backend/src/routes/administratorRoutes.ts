@@ -85,9 +85,7 @@ router.post('/meeting-room-create', upload.single('image') ,async (req, res) => 
     await createMeetingRoom(req, res);
 });
 
-router.put('/meeting-room/:id/update', upload.single('image'), async (req, res) => {
-    await updateMeetingRoom(req, res);
-});
+router.put('/meeting-room/:id/update', upload.single('image'),updateMeetingRoom);
 
 router.delete('/meeting-room/:id/delete', async (req, res) => {
     await deleteMeetingRoom(req, res);

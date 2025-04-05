@@ -22,7 +22,7 @@ export interface IRoomForm {
     valid: boolean
   };
   features: {
-    data: any[],
+    data: Feature[],
     valid: boolean
   };
   image: {
@@ -67,6 +67,7 @@ export interface RoomHasFeature {
   id: number
   meetingRoomId: number
   featureId: number
+  quantity: number
   createdAt: string
   updatedAt: string
   feature: Feature
@@ -76,8 +77,9 @@ export interface Feature {
   id: number
   name: string
   quantity: number
-  createdAt: string
-  updatedAt: string
+  selected?: boolean
+  createdAt?: string
+  updatedAt?: string
 }
 
 
@@ -129,10 +131,16 @@ export class RoomMeetingService {
     }
 
     datForm.features.data.forEach((feature:Feature) => {
+      console.log(feature);
+      const featureId = feature.id;
+      const featureQuantity = feature.quantity;
+      const featureData = JSON.stringify({"id":feature.id, "quantity":feature.quantity});
+      console.log(featureData);
       formData.append('features[]', "[" + feature.id + "," + feature.quantity + "]");
     });
 
     console.log(datForm);
+    console.log(formData.get('features[]'));
 
     if (id > 0) {
       return this.http.put(`${GlobalComponent.API_URL}/admin/meeting-room/${id}/update`, formData);

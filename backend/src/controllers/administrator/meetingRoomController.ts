@@ -105,7 +105,7 @@ export const createMeetingRoom = async (req: any, res: any) => {
         "features": ['[22,2]',..] // feature [id, quantity]
       }
      */
-    console.log(features, capacity, status);
+    // console.log(features, capacity, status);
 
     if (!name || !description || !features) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -117,11 +117,6 @@ export const createMeetingRoom = async (req: any, res: any) => {
     if(image){
       fileName = image.filename;
     }
-
-    // const featuresIds = features.map((feature: any) => {
-    //   feature = JSON.parse(feature);
-    //   return feature;
-    // })
 
     const meetingRoom = await prisma.meetingRoom.create({
       data: {
@@ -236,6 +231,7 @@ export const updateMeetingRoom = async (req: any, res: any) => {
 
     return res.status(200).json(updatedMeetingRoom);
   } catch (error:any) {
+    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };

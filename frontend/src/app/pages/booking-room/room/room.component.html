@@ -193,7 +193,7 @@
               <h5 class="fw-semibold">อุปกรณ์ภายในห้อง</h5>
               <ul class="list-unstyled text-muted">
                 @for (feature of roomInfo.roomHasFeatures; track $index){
-                  <li><i class="ri-check-line text-success me-1"></i> {{ feature.feature.name }}</li>
+                  <li><i class="ri-check-line text-success me-1"></i> {{ feature.feature.name }} x {{ feature.quantity }}</li>
                 }
               </ul>
             </div>

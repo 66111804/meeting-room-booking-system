@@ -1,5 +1,5 @@
 import {Component, CUSTOM_ELEMENTS_SCHEMA, model, OnInit} from '@angular/core';
-import {Feature, RoomFeaturesResponse, RoomFeaturesService} from '../../../../core/services/room-features.service';
+import { RoomFeaturesResponse, RoomFeaturesService} from '../../../../core/services/room-features.service';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgbModal, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -12,6 +12,7 @@ import {
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 import {IMAGE_CONFIG, NgClass, NgOptimizedImage} from '@angular/common';
 import Swal from 'sweetalert2';
+import {Feature} from '../../../../core/services/room-meeting.service';
 
 @Component({
   selector: 'app-features',

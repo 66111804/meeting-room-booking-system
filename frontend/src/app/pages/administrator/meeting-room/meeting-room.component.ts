@@ -5,7 +5,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
 import {FeaturesComponent} from './features/features.component';
 import {CommonModule} from '@angular/common';
-import {Feature, RoomFeaturesResponse, RoomFeaturesService} from '../../../core/services/room-features.service';
+import {RoomFeaturesResponse, RoomFeaturesService} from '../../../core/services/room-features.service';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 
 
@@ -13,7 +13,8 @@ import {
   MeetingRoom,
   MeetingRoomResponse,
   IRoomForm,
-  RoomMeetingService
+  RoomMeetingService,
+  Feature
 } from '../../../core/services/room-meeting.service';
 import {GlobalComponent} from '../../../global-component';
 import Swal from 'sweetalert2';
@@ -309,6 +310,7 @@ export class MeetingRoomComponent implements OnInit
       // add feature to array
       const data = {
         id: feature.id,
+        name: feature.name,
         quantity: feature.quantity
       }
       this.roomFormControls.features.data.push(data);
@@ -337,7 +339,14 @@ export class MeetingRoomComponent implements OnInit
     this.roomFeaturesService.getFeatureWithRoom(1,50,'',room.id).subscribe({
       next: (response) => {
         this.features = response;
-        this.roomFormControls.features.data = room.roomHasFeatures.map((feature) => feature.featureId);
+        // this.roomFormControls.features.data = room.roomHasFeatures.map((feature) => feature.featureId);
+        this.roomFormControls.features.data = room.roomHasFeatures.map((feature) => {
+          return {
+            id: feature.featureId,
+            name: feature.feature.name,
+            quantity: feature.quantity
+          }
+        });
       },
       error: (error) => {
         console.log(error);

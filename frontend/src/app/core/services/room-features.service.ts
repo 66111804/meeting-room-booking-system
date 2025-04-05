@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {GlobalComponent} from '../../global-component';
 import {ValidateResponse} from '../../shared/utils/date-utils';
+import {Feature} from './room-meeting.service';
 
 export interface RoomFeaturesResponse
 {
@@ -11,14 +12,6 @@ export interface RoomFeaturesResponse
   current: number
 }
 
-export interface Feature {
-  id: number
-  name: string
-  quantity: number
-  selected?: boolean
-  createdAt: string
-  updatedAt: string
-}
 
 
 
