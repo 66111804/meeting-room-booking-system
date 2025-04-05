@@ -26,7 +26,7 @@
             <div>
               <!-- วันที่ -->
 <!--              [(ngModel)]="dateSelected"-->
-              <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" dateFormat="d M, Y" (flatpickrChange)="onDateSelectChange($event)" [defaultValue]="dateSelectedFlatPickr.dateString">
+              <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="{{dateSelectedFlatPickr.dateString}}" dateFormat="d M, Y" (flatpickrChange)="onDateSelectChange($event)" [defaultValue]="dateSelectedFlatPickr.dateString">
             </div>
               <label for="inputDate" class="form-label mt-2">วันที่</label>
           </div>

@@ -241,7 +241,7 @@
       </div>
       <div class="card-body">
         <div class="mt-1">
-          <input class="form-control flatpickr-input mb-2" type="text" mwlFlatpickr [altInput]="true" [options]="datePickerOptions" [convertModelValue]="true" [inline]="true" (flatpickrChange)="onDateSelectChange($event)" dateFormat="d M, Y" [defaultValue]="dateSelectedFlatPickr.dateString">
+          <input class="form-control flatpickr-input mb-2" type="text" mwlFlatpickr [altInput]="true" [options]="datePickerOptions" [convertModelValue]="true" [inline]="true" (flatpickrChange)="onDateSelectChange($event)" dateFormat="d M, Y" [defaultValue]="dateSelectedFlatPickr.dateString" placeholder="{{dateSelectedFlatPickr.dateString}}">
         </div>
       </div><!--end card-body-->
     </div><!--end card-->

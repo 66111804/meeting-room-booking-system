@@ -51,7 +51,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   datePickerOptions: FlatpickrDefaultsInterface = {
     minDate: this.getMinDate(),
     maxDate: this.getMaxDate(),
-    dateFormat: 'Y-m-d',
+    dateFormat: 'd M, Y'
   };
 
   timeStartSlotSelected = '08:00';
@@ -60,7 +60,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   timeEndSlotSelectList = this.timeSlots.slice(1);
   totalHours = 0;
 
-  dateSelected!:Date;
+  dateSelected:Date = this.getMinDate();
 
   page:number = 1;
   limit:number = 12; // col-xxl-3 = 11, col-xl-4 = 9, col-lg-6 = 6
@@ -77,7 +77,11 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   }
   isSelectMultipleRoom: boolean = false;
   selectedMultipleRooms: MeetingRoom[] = [];
-  dateSelectedFlatPickr!: FlatPickrOutputOptions;
+  dateSelectedFlatPickr: FlatPickrOutputOptions = {
+    selectedDates: [this.dateSelected],
+    dateString: this.formatDate(this.dateSelected),
+    instance: null
+  }
   searchSubject: Subject<string> = new Subject<string>();
   protected readonly GlobalComponent = GlobalComponent;
   constructor(private roomMeetingService: RoomMeetingService,
@@ -91,16 +95,6 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
       { label: 'Dashboard' },
       { label: 'Booking Room', active: true }
     ];
-
-    this.dateSelected = this.getMinDate();
-
-    this.dateSelectedFlatPickr =
-    {
-      selectedDates: [this.dateSelected],
-      dateString: this.formatDate(this.dateSelected),
-      instance: null
-    };
-
 
     this.meetingRooms = {
       meetingRooms: [],
@@ -120,7 +114,14 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
       this.dateSelected = new Date(now.setDate(now.getDate()));
     }
 
+    this.dateSelectedFlatPickr =
+      {
+        selectedDates: [this.dateSelected],
+        dateString: this.formatDate(this.dateSelected),
+        instance: null
+      };
 
+    console.log(this.dateSelectedFlatPickr);
   }
 
   formatDate(date: Date): string {
@@ -150,6 +151,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
       this.fetchMeetingRooms();
     });
     this.dateSelected = this.getMinDate();
+
 
     this.fetchTimeSlot();
   }
@@ -263,12 +265,15 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
         this.timeStartSlotSelected = "";
         this.timeStartSlotSelectList = [];
       }else {
-
-        this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
-        if(this.timeStartSlotSelectList.length > 0){
-          this.timeStartSlotSelected = this.timeStartSlotSelectList[0].endTime;
-        }else {
-          this.timeStartSlotSelected = "";
+        const houreStr = String(currentHour).padStart(2, '0');
+        const minuteStr = currentMinute < 30 ? '00' : '30';
+        const formattedCurrentTime = `${houreStr}:${minuteStr}`;
+        let currentTimeSlotIndex = this.timeSlots.findIndex((slot) => slot.startTime === formattedCurrentTime);
+        currentTimeSlotIndex = currentTimeSlotIndex === -1 ? 0 : currentTimeSlotIndex;
+        this.timeStartSlotSelectList = this.timeSlots.slice(currentTimeSlotIndex, this.timeSlots.length);
+        // Update start time options
+        if(this.timeStartSlotSelectList.length > 0) {
+          this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
         }
       }
     }else{

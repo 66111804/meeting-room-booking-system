@@ -53,7 +53,7 @@ export class RoomComponent implements OnInit, AfterViewInit
   datePickerOptions: FlatpickrDefaultsInterface = {
     minDate: this.getMinDate(),
     maxDate: this.getMaxDate(),
-    dateFormat: 'Y-m-d',
+    dateFormat: 'd M, Y',
   };
 
   roomInfo: MeetingRoom = {
@@ -1114,12 +1114,15 @@ export class RoomComponent implements OnInit, AfterViewInit
         this.timeStartSlotSelected = "";
         this.timeStartSlotSelectList = [];
       }else {
-
-        this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
-        if(this.timeStartSlotSelectList.length > 0){
-          this.timeStartSlotSelected = this.timeStartSlotSelectList[0].endTime;
-        }else {
-          this.timeStartSlotSelected = "";
+        const houreStr = String(currentHour).padStart(2, '0');
+        const minuteStr = currentMinute < 30 ? '00' : '30';
+        const formattedCurrentTime = `${houreStr}:${minuteStr}`;
+        let currentTimeSlotIndex = this.timeSlots.findIndex((slot) => slot.startTime === formattedCurrentTime);
+        currentTimeSlotIndex = currentTimeSlotIndex === -1 ? 0 : currentTimeSlotIndex;
+        this.timeStartSlotSelectList = this.timeSlots.slice(currentTimeSlotIndex, this.timeSlots.length);
+        // Update start time options
+        if(this.timeStartSlotSelectList.length > 0) {
+          this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
         }
       }
     }else{
