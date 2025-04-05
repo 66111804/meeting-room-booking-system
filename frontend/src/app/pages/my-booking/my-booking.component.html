@@ -54,7 +54,8 @@
               <td>{{ bookings.MeetingRoom.name }}</td>
               <td>{{ bookings.MeetingRoom.capacity }}</td>
               <td>{{ bookings.startTime | date: 'dd/MMM/yyyy' }}</td>
-              <td>{{ bookings.startTime | date: 'hh:mm' }} ~ {{ bookings.endTime | date: 'hh:mm' }}</td>
+              <td>
+                {{showTime(bookings.startTime, bookings.endTime)}}
               <td>
                 <!-- สถานะ การใช้งาน 1. จองแล้ว 2. กำลังใช้งาน[success] 3. ยกเลิก[warning] -->
                 @if(bookings.status == 'confirmed' && !isCurrentDate(bookings.startTime)){
@@ -62,12 +63,8 @@
                 } @else if(bookings.status == 'cancelled'){
                 <span class="badge fw-medium bg-danger-subtle text-danger">{{ bookings.status }}</span>
                 } @else if(isFutureDate(bookings.startTime)) {
-                  @if(isCurrentDate(bookings.startTime)){
+
                   <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }}</span>
-                  } @else
-                  {
-                    <span class="badge fw-medium bg-primary-subtle text-primary">{{ bookings.status }}</span>
-                  }
                 } @else
                 {
                   <!-- ใช้งานแล้ว -->
