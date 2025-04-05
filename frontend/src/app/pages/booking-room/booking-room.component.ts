@@ -23,6 +23,7 @@ import {ToastrService} from 'ngx-toastr';
 import {Router, RouterLink} from '@angular/router';
 import {ITimeSlotResponse, SlotTimeService, TimeSlot} from '../../core/services/slot-time.service';
 import {isPermissionMatched} from '../../shared/utils/role-permisssion';
+import {FlatPickrOutputOptions} from 'angularx-flatpickr/lib/flatpickr.directive';
 
 
 @Component({
@@ -76,7 +77,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   }
   isSelectMultipleRoom: boolean = false;
   selectedMultipleRooms: MeetingRoom[] = [];
-
+  dateSelectedFlatPickr!: FlatPickrOutputOptions;
   searchSubject: Subject<string> = new Subject<string>();
   protected readonly GlobalComponent = GlobalComponent;
   constructor(private roomMeetingService: RoomMeetingService,
@@ -90,7 +91,17 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
       { label: 'Dashboard' },
       { label: 'Booking Room', active: true }
     ];
+
     this.dateSelected = this.getMinDate();
+
+    this.dateSelectedFlatPickr =
+    {
+      selectedDates: [this.dateSelected],
+      dateString: this.formatDate(this.dateSelected),
+      instance: null
+    };
+
+
     this.meetingRooms = {
       meetingRooms: [],
       total: 0,
@@ -112,25 +123,15 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
 
   }
 
+  // 09 Apr, 2025 date format
+  formatDate(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('en-GB', options);
+  }
   ngOnInit() {
-    // const now = new Date();
-    const now = new Date("2025-03-23T15:05:55.629Z");
-    // if(now.getHours() >= 18){
-    //   now.setDate(now.getDate());
-    // }
-
-    // const nowUTC = new Date('2025-03-23T05:05:55.629Z');
-
-    // สร้างเวลาท้องถิ่น +7
-    // const nowBangkok = new Date(nowUTC.getTime() + (7 * 60 * 60 * 1000));
-    //
-    // console.log('UTC:', nowUTC.toISOString());
-    // console.log('Bangkok:', nowBangkok.toISOString());
-
-
+    const now = new Date();
     const currentHour = now.getHours() + 1;
     const currentMinute = now.getMinutes();
-
     // Find the nearest time slot for the current time
     const formattedCurrentTime = `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`;
 
@@ -149,6 +150,7 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
       this.page = 1;
       this.fetchMeetingRooms();
     });
+    this.dateSelected = this.getMinDate();
 
     this.fetchTimeSlot();
   }
@@ -156,9 +158,9 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   ngAfterViewInit() {
     setTimeout(() => {
       document.getElementById('elmLoader')?.classList.add('d-none');
-
+      this.chageStartTimeSlotSelected();
     }, 500);
-    this.fetchMeetingRooms();
+    // this.fetchMeetingRooms();
   }
 
   fetchMeetingRooms() {
@@ -176,7 +178,6 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
 
   onTimeStartSlotSelectChange(selectedStartTime: string) {
     this.timeStartSlotSelected = selectedStartTime;
-
     this.timeEndSlotSelectList = this.timeSlots.slice(
       this.timeSlots.findIndex((slot) => slot.endTime === this.timeStartSlotSelected) + 1,
       this.timeSlots.length
@@ -198,19 +199,12 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
     {
       this.timeEndSlotSelected = this.timeEndSlotSelectList[0].endTime;
     }
-
     this.fetchMeetingRooms();
   }
 
   onTimeEndSlotSelectChange(selectedEndTime: string) {
     this.timeEndSlotSelected = selectedEndTime;
     this.timeStartSlotSelectList = this.timeSlots;
-
-    // this.timeStartSlotSelectList = this.timeSlots.slice(
-    //   0,
-    //   this.timeSlots.findIndex((slot) => slot.startTime === this.timeEndSlotSelected)
-    // ); // Update start time options
-
     // validate time slot
     this.calculateTotalHours(); // Recalculate hours
     this.cdr.detectChanges();
@@ -242,12 +236,49 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
     this.totalHours = totalHours + totalMinutes / 60;
   }
 
-  onDateSelectChange(date: any) {
+  onDateSelectChange(date: FlatPickrOutputOptions) {
+    this.dateSelectedFlatPickr = date;
     this.dateSelected = date.selectedDates[0];
-    this.fetchMeetingRooms();
+    this.chageStartTimeSlotSelected();
 
+    // timeStartSlotSelected
+    this.fetchMeetingRooms();
   }
 
+  chageStartTimeSlotSelected() {
+    const currentDate = new Date();
+    // console.log(`${currentDate.getHours()}:${currentDate.getMinutes()}`);
+
+    const currentDateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+    const selectedDateStr = `${this.dateSelected.getFullYear()}-${this.dateSelected.getMonth() + 1}-${this.dateSelected.getDate()}`;
+    if(currentDateStr === selectedDateStr)
+    {
+      const currentHour = currentDate.getHours() + 1;
+      const currentMinute = currentDate.getMinutes();
+      this.timeStartSlotSelectList = this.timeSlots.slice(
+        this.timeSlots.findIndex((slot) => slot.startTime === `${String(currentHour).padStart(2, '0')}:${currentMinute < 30 ? '00' : '30'}`),
+        this.timeSlots.length
+      ); // Update start time options
+
+      if(currentHour >= 17){
+        this.timeStartSlotSelected = "";
+        this.timeStartSlotSelectList = [];
+      }else {
+
+        this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
+        if(this.timeStartSlotSelectList.length > 0){
+          this.timeStartSlotSelected = this.timeStartSlotSelectList[0].endTime;
+        }else {
+          this.timeStartSlotSelected = "";
+        }
+      }
+    }else{
+      this.timeStartSlotSelectList = this.timeSlots.slice(0, this.timeSlots.length - 1);
+      this.timeStartSlotSelected = this.timeStartSlotSelectList[0].startTime;
+    }
+    this.calculateTotalHours(); // Recalculate hours
+    this.cdr.detectChanges();
+  }
 
   changePage() {
     this.roomSelected = undefined;
@@ -257,9 +288,9 @@ export class BookingRoomComponent implements OnInit, AfterViewInit
   private getMinDate(): Date {
     const currentDate = new Date();
     // if time > 17:00, set min date to next day
-    // if(currentDate.getHours() >= 17){
-    //   currentDate.setDate(currentDate.getDate() + 1);
-    // }
+    if(currentDate.getHours() >= 17){
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
     return currentDate;
   }
 

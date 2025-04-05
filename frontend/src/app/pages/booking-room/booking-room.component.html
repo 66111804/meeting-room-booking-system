@@ -25,7 +25,8 @@
           <div class="col-xxl-3 col-sm-6">
             <div>
               <!-- วันที่ -->
-              <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" (flatpickrChange)="onDateSelectChange($event)" [(ngModel)]="dateSelected">
+<!--              [(ngModel)]="dateSelected"-->
+              <input class="form-control flatpickr-input" type="text" mwlFlatpickr [options]="datePickerOptions" [altInput]="true" [convertModelValue]="true" placeholder="Select Date" dateFormat="d M, Y" (flatpickrChange)="onDateSelectChange($event)" [defaultValue]="dateSelectedFlatPickr.dateString">
             </div>
               <label for="inputDate" class="form-label mt-2">วันที่</label>
           </div>
@@ -171,7 +172,6 @@
     </div>
   </div>
 </div>
-
   <!-- BookingMultipleRoomModal -->
   <ng-template #bookingMultipleRoomModal let-bookingMultipleModal>
     <div class="modal-header bg-info-subtle p-3">
