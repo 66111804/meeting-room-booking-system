@@ -252,14 +252,24 @@
           <div class="col-lg-12">
             <div class="mb-3">
               <label for="statusInfo" class="form-label fw-medium">{{ "STATUS" | translate }} <code>*</code></label>
-              <mat-radio-group id="statusInfo" class="justify-content-start d-flex align-items-center " aria-label="Select Status" name="status" >
-                <mat-radio-button value="active" class="mt-1" (change)="statusChange($event)"  [checked]="roomFormControls.status.data == 'active'">
-                  {{ "ACTIVE" | translate }}
-                </mat-radio-button>
-                <mat-radio-button value="inactive" class="mt-1" (change)="statusChange($event)" [checked]="roomFormControls.status.data == 'inactive'">
-                  {{ "INACTIVE" | translate }}
-                </mat-radio-button>
-              </mat-radio-group>
+<!--              <mat-radio-group id="statusInfo" class="justify-content-start d-flex align-items-center " aria-label="Select Status" name="status" >-->
+<!--                <mat-radio-button value="active" class="mt-1" (change)="statusChange($event)"  [checked]="roomFormControls.status.data == 'active'">-->
+<!--                  {{ "ACTIVE" | translate }}-->
+<!--                </mat-radio-button>-->
+<!--                <mat-radio-button value="inactive" class="mt-1" (change)="statusChange($event)" [checked]="roomFormControls.status.data == 'inactive'">-->
+<!--                  {{ "INACTIVE" | translate }}-->
+<!--                </mat-radio-button>-->
+<!--              </mat-radio-group>-->
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="statusInfo" (change)="statusChange($event)" value="{{roomFormControls.status.data}}" [checked]="roomFormControls.status.data == 'active'" >
+                <label class="form-check label" for="statusInfo">
+                  @if(roomFormControls.status.data == 'active'){
+                    {{ "ACTIVE" | translate }}
+                  } @else {
+                    {{ "INACTIVE" | translate }}
+                  }
+                </label>
+              </div>
             </div>
           </div>
           <div class="col-lg-12">

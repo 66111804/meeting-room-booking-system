@@ -375,13 +375,11 @@ export class MeetingRoomComponent implements OnInit
   }
 
   statusChange(event: any) {
-    this.roomFormControls.status.data = event.value;
+    this.roomFormControls.status.data = event.target.value == 'active'? 'inactive' : 'active';
   }
 
   onEditorChange(event: any){
     const editorData = event.editor.getData();
-    // console.log('Editor data:', editorData);
     this.roomFormControls.description.data = editorData;
-    // console.log(this.editorData);
   }
 }
