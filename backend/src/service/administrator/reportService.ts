@@ -328,7 +328,7 @@ export const getHourlyBookingReportService = async (req: any, res: any) => {
             endTime: true
         }
     });
-
+    // noinspection DuplicatedCode
     const intervalData: Record<string, number> = {};
     for (let hour = 8; hour < 18; hour++) {
         for (let min of [0, 30]) {
@@ -365,6 +365,7 @@ export const getHourlyBookingReportService = async (req: any, res: any) => {
 
 export const getHourlyBookingReportByRoomNameService = async (req: any, res: any) => {
     const { startDate, endDate, roomName } = req.query;
+    // noinspection DuplicatedCode
     if (!startDate || !endDate || !roomName) {
         return res.status(400).json({ message: 'required startDate, endDate and roomName' });
     }
@@ -396,8 +397,6 @@ export const getHourlyBookingReportByRoomNameService = async (req: any, res: any
             endTime: true
         }
     });
-
-    // console.log('bookings', bookings);
 
     // noinspection DuplicatedCode
     const intervalData: Record<string, number> = {};
