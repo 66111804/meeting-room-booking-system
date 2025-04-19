@@ -103,7 +103,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     this.reportService.getTopBooks(this.searchTerm, 1, 1000, startDate,endDate,this.sort,this.roomSelected).subscribe(
       {
         next: (res) => {
-          console.log(res);
+          // console.log(res);
           if(this.roomSelected === ''){
             this.reportTopBooksResponse = res;
           }

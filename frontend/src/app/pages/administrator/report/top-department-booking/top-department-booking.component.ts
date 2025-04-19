@@ -30,11 +30,11 @@ import {ITopDepartmentBooking, ReportService} from '../../../../core/services/re
 export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnChanges
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
+  @Input() roomSelected: string = '';
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 
-  serverUrl= GlobalComponent.SERVE_URL;
   page = 1;
   pageSize = 5;
   searchTerm: string = '';
@@ -52,6 +52,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     totalPages: 0,
     current: 0,
   };
+
 
   constructor(private reportService: ReportService) {
     document.getElementById('elmLoader')?.classList.remove('d-none');
@@ -82,10 +83,14 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     if (changes['dateSelected']) {
       this.handleDateChange(changes['dateSelected'].currentValue);
     }
+    console.log(changes['roomSelected'].currentValue)
+    if( changes['roomSelected']) {
+      this.roomSelected = changes['roomSelected'].currentValue;
+      this.fetchTopDepartmentBooking();
+    }
   }
 
   handleDateChange(date: FlatPickrOutputOptions) {
-    // console.log('Date changed in child:', date);
     this.fetchTopDepartmentBooking();
   }
 
@@ -98,7 +103,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     const startDate = this.dateSelected.selectedDates[0].toISOString();
     const endDate = this.dateSelected.selectedDates[1].toISOString()
 
-    this.reportService.getTopDepartmentBooks(this.searchTerm, 1,1000, startDate,endDate,this.sort).subscribe(
+    this.reportService.getTopDepartmentBooks(this.searchTerm, 1,1000, startDate,endDate,this.sort, this.roomSelected).subscribe(
       {
         next: (data) => {
           this.topDepartmentBooking = data;
@@ -126,9 +131,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
                 }
               }
             };
-
             this.chart.update();
-
           }
         },
         error: (error) => {

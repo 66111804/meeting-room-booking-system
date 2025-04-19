@@ -107,12 +107,6 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
         instance: null
       }
 
-      console.log(
-        this._dateSelectEnd,
-        this._dateSelectStart,
-      )
-
-
   }
 
   ngAfterViewInit(): void {
@@ -165,7 +159,7 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
   }
 
   onRoomSelectChange(room: any) {
-    // this.roomSelected = room;
+    this.roomSelected = room;
     console.log("roomSelected", room);
   }
 

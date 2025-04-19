@@ -216,6 +216,98 @@ export const getTopDepartmentBookingReportService = async (req: any, res: any) =
 
 }
 
+export const getTopDepartmentBookingReportByRoomNameService = async (req: any, res: any) => {
+    const { startDate, endDate, roomName, sort = 'desc' } = req.query;
+    let { page = 1, limit = 10 } = req.query;
+
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    if (!startDate || !endDate || !roomName) {
+        return res.status(400).json({ message: 'required startDate, endDate and roomName' });
+    }
+
+    const rooms = await prisma.meetingRoom.findMany({
+        where: {
+            name: {
+                contains: roomName,
+            }
+        },
+        select: {
+            id: true
+        }
+    });
+
+    const roomIds = rooms.map(room => room.id);
+    if (roomIds.length === 0) {
+        return res.status(404).json({ message: 'No meeting rooms matched roomName' });
+    }
+
+    const grouped = await prisma.meetingRoomBooking.groupBy({
+        by: ['userId'],
+        where: {
+            meetingRoomId: {
+                in: roomIds
+            },
+            startTime: {
+                gte: new Date(startDate),
+                lte: new Date(endDate)
+            }
+        },
+        _count: {
+            _all: true
+        }
+    });
+    const userBookingCountMap: Record<number, number> = {};
+    for (const booking of grouped) {
+        userBookingCountMap[booking.userId] = (userBookingCountMap[booking.userId] || 0) + booking._count._all;
+    }
+
+    const userIds = Object.keys(userBookingCountMap).map(id => parseInt(id));
+    const users = await prisma.user.findMany({
+        where: {
+            id: { in: userIds }
+        },
+        select: {
+            id: true,
+            name: true,
+            department: true
+        }
+    });
+
+    const departmentMap: Record<string, number> = {};
+    for (const user of users) {
+        const department = user.department || 'Unknown';
+        departmentMap[department] = (departmentMap[department] || 0) + userBookingCountMap[user.id];
+    }
+
+    // convert to array
+    let result = Object.entries(departmentMap).map(([department, totalBookings]) => ({
+        department,
+        totalBookings
+    }));
+
+    // sort
+    result = result.sort((a, b) => {
+        return sort === 'asc'
+            ? a.totalBookings - b.totalBookings
+            : b.totalBookings - a.totalBookings;
+    });
+
+    // pagination
+    const total = result.length;
+    const totalPages = Math.ceil(total / limit);
+    const paginatedResult = result.slice((page - 1) * limit, page * limit);
+
+    return res.json({
+        data: paginatedResult,
+        total,
+        totalPages,
+        current: page
+    });
+}
+
+// hourly booking report
 export const getHourlyBookingReportService = async (req: any, res: any) => {
     const { startDate, endDate } = req.query;
     if (!startDate || !endDate) {
