@@ -52,8 +52,14 @@ export class ReportService {
 
   constructor(private http: HttpClient) { }
 
-  getTopBooks(searchTerm: string, page: number, pageSize: number,startDate: string, endDate: string, sort: string = 'desc') {
-      return this.http.get<ITopBooking>(`${GlobalComponent.API_URL}/admin/report/top-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}`);
+  getTopBooks(searchTerm: string, page: number, pageSize: number,startDate: string, endDate: string,sort: string = 'desc', roomName:string = '') {
+    let URL = `${GlobalComponent.API_URL}/admin/report/top-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}&roomName=${roomName}`;
+    if(roomName === '') {
+      URL = `${GlobalComponent.API_URL}/admin/report/top-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}`;
+      // return this.http.get<ITopBooking>(URL);
+    }
+
+    return this.http.get<ITopBooking>(URL);
   }
   getTopDepartmentBooks(searchTerm: string, page: number, pageSize: number,startDate: string, endDate: string, sort: string = 'desc')
   {

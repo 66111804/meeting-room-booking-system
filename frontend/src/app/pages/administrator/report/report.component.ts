@@ -55,6 +55,8 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 
+  roomSelected: string = '';
+
   constructor(private reportService:ReportService) {
     document.getElementById('elmLoader')?.classList.remove('d-none');
     this.breadCrumbItems = [
@@ -160,6 +162,11 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
 
       console.log(this.dateSelected);
     }
+  }
+
+  onRoomSelectChange(room: any) {
+    // this.roomSelected = room;
+    console.log("roomSelected", room);
   }
 
 }

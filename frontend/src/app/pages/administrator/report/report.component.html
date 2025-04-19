@@ -42,6 +42,6 @@
   </div>
 </div>
 
-<app-top-booking [dateSelected]="dateSelected"></app-top-booking>
+<app-top-booking [dateSelected]="dateSelected" (roomUpdate)="onRoomSelectChange($event)"></app-top-booking>
 <app-top-department-booking [dateSelected]="dateSelected"></app-top-department-booking>
 <app-hourly-booking [dateSelected]="dateSelected"></app-hourly-booking>

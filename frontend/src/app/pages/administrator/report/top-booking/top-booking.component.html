@@ -23,7 +23,7 @@
             <tbody>
               @for (_report of reportTopBooksResponseTable.booking; track $index) {
                 <tr>
-                  <td>
+                  <td (click)="onRoomSelectedChange(_report.name)">
                     <div class="d-flex align-items-center">
                       <div class="flex-shrink-0 me-2">
                         @if (_report.imageUrl) {
@@ -80,12 +80,21 @@
   </div> <!-- .col-->
   <div class="col-xl-8">
     <div class="card">
-      <div class="card-header align-items-center d-flex">
+      <div class="card-header align-items-center d-flex justify-content-between">
         <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงการใช้งานห้องประชุม</h4>
+        @if(roomSelected !== ''){
+          <div>
+            <button class="btn btn-primary" (click)="onRoomSelectedChange()">
+              <!-- ฺBack to List -->
+              <i class="ri-arrow-left-line me-1"></i>กลับไปยังรายงาน
+            </button>
+          </div>
+        }
       </div>
       <div class="card-body pb-5">
         <div class="mb-n3">
           <canvas #chartCanvas></canvas>
+          <canvas #chartCanvasRoom></canvas>
         </div>
       </div>
     </div>

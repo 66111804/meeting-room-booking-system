@@ -2,6 +2,7 @@ import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
 import dayjs from "../../shared/dayjs";
+import {eachDayOfInterval, format, parseISO} from "date-fns";
 
 
 
@@ -69,6 +70,75 @@ export const getTopBookingReportService = async (req: any, res: any) => {
         total,
         totalPages,
         current: page,
+    });
+}
+export const getTopBookingReportByRoomNameService = async (req: any, res: any) => {
+    const { startDate, endDate, sort = 'desc', roomName} = req.query;
+    let { page = 1, limit = 1000000 } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    if (!startDate || !endDate || !roomName) {
+        return res.status(400).json({ message: 'required startDate, endDate and roomName' });
+    }
+
+    const room = await prisma.meetingRoom.findFirst({
+        where: {
+            name: {
+                contains: roomName,
+            }
+        },
+        select: { id: true }
+    });
+
+    if (!room) {
+        return res.status(404).json({ message: 'Room not found' });
+    }
+
+    const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+            meetingRoomId: room.id,
+            status: 'confirmed',
+            startTime: {
+                gte: new Date(startDate),
+                lte: new Date(endDate)
+            }
+        },
+        select: {
+            startTime: true
+        }
+    });
+    const grouped: Record<string, number> = {};
+    bookings.forEach((booking) => {
+        const label = format(new Date(booking.startTime), 'dd-MMM'); // ex: 12-Mar
+        grouped[label] = (grouped[label] || 0) + 1;
+    });
+
+    const fullDates = eachDayOfInterval({
+        start: parseISO(startDate),
+        end: parseISO(endDate)
+    });
+    const result = fullDates.map((date) => {
+        const label = format(date, 'dd-MMM');
+        return {
+            name:label,
+            totalBookings: grouped[label] || 0
+        };
+    });
+
+    if (sort === 'desc') {
+        result.reverse();
+    }
+
+    const total = result.length;
+    const totalPages = 1;
+    const paginated = 1;
+
+    return res.json({
+        booking: result,
+        total,
+        totalPages,
+        current: page
     });
 }
 

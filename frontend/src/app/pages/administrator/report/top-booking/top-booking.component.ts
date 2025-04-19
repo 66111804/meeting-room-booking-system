@@ -1,11 +1,11 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
-  Input,
+  ElementRef, EventEmitter,
+  Input, model,
   OnChanges,
   OnDestroy,
-  OnInit,
+  OnInit, Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -33,6 +33,8 @@ Chart.register(...registerables, ChartDataLabels);
 export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnChanges
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
+  @Output() roomUpdate = new EventEmitter<string>();
+  roomSelected: string = '';
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
@@ -49,6 +51,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
       totalPages: 0,
       current: 0
     };
+
 
   reportTopBooksResponseTable:ITopBooking =
     {
@@ -97,11 +100,13 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 
     const endDate = this.dateSelected.selectedDates[1].toISOString()
 
-    this.reportService.getTopBooks(this.searchTerm, 1, 1000, startDate,endDate,this.sort).subscribe(
+    this.reportService.getTopBooks(this.searchTerm, 1, 1000, startDate,endDate,this.sort,this.roomSelected).subscribe(
       {
         next: (res) => {
-          // console.log(res);
-          this.reportTopBooksResponse = res;
+          console.log(res);
+          if(this.roomSelected === ''){
+            this.reportTopBooksResponse = res;
+          }
           this.updateTable();
           const data = res.booking;
           const labels = data.map(item => item.name);
@@ -113,7 +118,8 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
             ];
             //'42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
             const dataset = {
-              label: 'จำนวนการจอง',
+              // label: 'จำนวนการจอง',
+              label: this.roomSelected === '' ? 'ยอดการใช้งาน' : 'ห้อง '+this.roomSelected,
               data: values,
               backgroundColor: backgroundColors.slice(0, values.length)
             };
@@ -130,6 +136,13 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
                 }
               }
             };
+
+            // change chart title
+            if(this.chart.options.plugins && this.chart.options.plugins.title && this.chart.options.plugins.title.text)
+            {
+              this.chart.options.plugins.title.text = this.roomSelected === '' ? 'รายงานการจองห้องประชุม' : 'รายงานการจองห้อง '+this.roomSelected;
+            }
+
             this.chart.update();
           }else {
             this.createChart();
@@ -201,5 +214,10 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     this.fetchTopBooks();
   }
 
+  onRoomSelectedChange(room: string = '') {
+    this.roomSelected = room;
+    this.roomUpdate.emit(this.roomSelected);
+    this.fetchTopBooks();
+  }
 }
 
