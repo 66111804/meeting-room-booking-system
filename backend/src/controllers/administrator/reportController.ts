@@ -2,7 +2,9 @@ import {
     getHourlyBookingReportService,
     getTopBookingReportService,
     getTopDepartmentBookingReportService,
-    getTopBookingReportByRoomNameService, getTopDepartmentBookingReportByRoomNameService
+    getTopBookingReportByRoomNameService,
+    getTopDepartmentBookingReportByRoomNameService,
+    getHourlyBookingReportByRoomNameService
 } from "../../service/administrator/reportService";
 
 
@@ -35,7 +37,13 @@ export const getTopDepartmentBooks = async (req: any, res: any) => {
 
 export const getHourlyBookingReport = async (req: any, res: any) => {
     try {
-        return await getHourlyBookingReportService(req, res);
+        const {roomName = ''} = req.query;
+        if(roomName === '') {
+            return await getHourlyBookingReportService(req, res);
+        }
+        else{
+            return await getHourlyBookingReportByRoomNameService(req, res);
+        }
     } catch (e: any) {
         return res.status(500).json({ message: e.message });
     }

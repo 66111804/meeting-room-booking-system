@@ -258,6 +258,7 @@ export const getTopDepartmentBookingReportByRoomNameService = async (req: any, r
             _all: true
         }
     });
+    // noinspection DuplicatedCode
     const userBookingCountMap: Record<number, number> = {};
     for (const booking of grouped) {
         userBookingCountMap[booking.userId] = (userBookingCountMap[booking.userId] || 0) + booking._count._all;
@@ -360,4 +361,81 @@ export const getHourlyBookingReportService = async (req: any, res: any) => {
     }));
     // sort by hour
     return res.json({ data: result ,total: 0, totalPages: 0, current: 0 });
+}
+
+export const getHourlyBookingReportByRoomNameService = async (req: any, res: any) => {
+    const { startDate, endDate, roomName } = req.query;
+    if (!startDate || !endDate || !roomName) {
+        return res.status(400).json({ message: 'required startDate, endDate and roomName' });
+    }
+
+    const room = await prisma.meetingRoom.findFirst({
+        where: {
+            name: {
+                contains: roomName,
+            }
+        },
+        select: { id: true }
+    });
+
+    if (!room) {
+        return res.status(404).json({ message: 'Room not found' });
+    }
+
+    const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+            meetingRoomId: room.id,
+            status: 'confirmed',
+            startTime: {
+                gte: new Date(startDate),
+                lte: new Date(endDate)
+            }
+        },
+        select: {
+            startTime: true,
+            endTime: true
+        }
+    });
+
+    // console.log('bookings', bookings);
+
+    // noinspection DuplicatedCode
+    const intervalData: Record<string, number> = {};
+    for (let hour = 8; hour < 18; hour++) {
+        for (let min of [0, 30]) {
+            const label = `${hour.toString().padStart(2, '0')}:${min === 0 ? '00' : '30'}`;
+            intervalData[label] = 0;
+        }
+    }
+
+    bookings.forEach((b) => {
+        let start = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
+        const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
+        while (start.isBefore(end)) {
+            const hour = start.hour();
+            const minute = start.minute();
+            // เฉพาะช่วง 08:00 - 17:30 เท่านั้น
+            if (
+                (hour > 7 && hour < 17) || (hour === 17 && minute <= 30)
+            ) {
+                const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
+                if (intervalData[label] !== undefined) {
+                    intervalData[label]++;
+                }
+            }
+            start = start.add(30, 'minute');
+        }
+    });
+
+    const result = Object.entries(intervalData).map(([hour, totalBookings]) => ({
+        hour,
+        totalBookings
+    }));
+
+    return res.json({
+        data: result,
+        total: result.length,
+        totalPages: 1,
+        current: 1
+    });
 }

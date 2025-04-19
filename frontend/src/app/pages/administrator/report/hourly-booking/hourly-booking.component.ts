@@ -30,6 +30,7 @@ import {IHourlyBooking, ReportService} from '../../../../core/services/report.se
 export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnChanges
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
+  @Input() roomSelected: string = '';
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
@@ -60,10 +61,14 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
     if (changes['dateSelected']) {
       this.handleDateChange(changes['dateSelected'].currentValue);
     }
+
+    if (changes['roomSelected']) {
+      this.roomSelected = changes['roomSelected'].currentValue;
+      this.fetchHourlyBooking();
+    }
   }
 
   handleDateChange(date: FlatPickrOutputOptions) {
-    // console.log('Date changed in child:', date);
     this.fetchHourlyBooking();
   }
 
@@ -72,9 +77,9 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.fetchHourlyBooking()
+      this.createChart();
+      this.fetchHourlyBooking();
     }, 500);
-    this.createChart();
   }
 
   ngOnDestroy(): void {
@@ -90,7 +95,7 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
     const startDate = this.dateSelected.selectedDates[0].toISOString();
     const endDate = this.dateSelected.selectedDates[1].toISOString();
 
-    this.reportService.getHourlyBooking(startDate, endDate).subscribe(
+    this.reportService.getHourlyBooking(startDate, endDate,this.roomSelected).subscribe(
       {
         next: (res) => {
           // console.log(res);

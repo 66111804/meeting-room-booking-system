@@ -70,9 +70,15 @@ export class ReportService {
     return this.http.get<ITopDepartmentBooking>(URL);
   }
 
-  getHourlyBooking(startDate: string, endDate: string)
+  getHourlyBooking(startDate: string, endDate: string,roomName:string = '')
   {
-      return this.http.get<IHourlyBooking>(`${GlobalComponent.API_URL}/admin/report/hourly-booking?startDate=${startDate}&endDate=${endDate}`);
+      // return this.http.get<IHourlyBooking>(`${GlobalComponent.API_URL}/admin/report/hourly-booking?startDate=${startDate}&endDate=${endDate}`);
+
+    let URL = `${GlobalComponent.API_URL}/admin/report/hourly-booking?startDate=${startDate}&endDate=${endDate}`;
+    if(roomName !== '') {
+      URL = `${GlobalComponent.API_URL}/admin/report/hourly-booking?startDate=${startDate}&endDate=${endDate}&roomName=${roomName}`;
+    }
+    return this.http.get<IHourlyBooking>(URL);
   }
 }
 
