@@ -21,7 +21,7 @@
         <div class="table-responsive table-card ">
           <table class="table table-hover table-centered align-middle table-nowrap mb-0">
             <tbody>
-              @for (_report of topDepartmentBooking.data; track $index) {
+              @for (_report of topDepartmentBookingTable.data; track $index) {
                 <tr>
                   <td>
                     <h5 class="fs-14 my-1 fw-medium">
@@ -49,13 +49,13 @@
       <div class="card-footer pt-0">
         <div class="align-items-center mt-4 pt-0 justify-content-between d-flex ">
           <div class="col-sm">
-            <div class="text-muted">Showing {{ (page - 1) * pageSize + 1 }} to {{ (page - 1) * pageSize + topDepartmentBooking.data.length }} of {{ topDepartmentBooking.total }} entries</div>
+            <div class="text-muted">Showing {{ (page - 1) * pageSize + 1 }} to {{ (page - 1) * pageSize + topDepartmentBookingTable.data.length }} of {{ topDepartmentBookingTable.total }} entries</div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex justify-content-end mt-3">
-              @if (topDepartmentBooking.total > pageSize) {
+              @if (topDepartmentBookingTable.total > pageSize) {
                 <!-- Pagination -->
-                <ngb-pagination [collectionSize]="topDepartmentBooking.total"
+                <ngb-pagination [collectionSize]="topDepartmentBookingTable.total"
                                 [(page)]="page"
                                 [pageSize]="pageSize"
                                 (pageChange)="changePage()"
@@ -70,7 +70,7 @@
       </div>
     </div> <!-- .card-->
   </div> <!-- .col-->
-  <div class="col-xl-8 ">
+  <div class="col-xl-8">
     <div class="card">
       <div class="card-header align-items-center d-flex">
         <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงแผนที่ใช้งานห้องประชุม</h4>

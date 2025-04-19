@@ -36,7 +36,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
 
   serverUrl= GlobalComponent.SERVE_URL;
   page = 1;
-  pageSize = 10;
+  pageSize = 5;
   searchTerm: string = '';
   sort: string = 'desc';
   topDepartmentBooking:ITopDepartmentBooking = {
@@ -46,19 +46,30 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     current: 0,
   }
 
+  topDepartmentBookingTable: ITopDepartmentBooking= {
+    data: [],
+    total: 0,
+    totalPages: 0,
+    current: 0,
+  };
+
   constructor(private reportService: ReportService) {
     document.getElementById('elmLoader')?.classList.remove('d-none');
   }
-
+  backgroundColors = [
+    '#42A5F5'
+  ];
+  // '#42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
   ngOnInit(): void {
-    this.fetchTopDepartmentBooking();
+
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       document.getElementById('elmLoader')?.classList.add('d-none');
+      this.createChart();
+      this.fetchTopDepartmentBooking();
     }, 500);
-    this.createChart();
   }
 
   ngOnDestroy(): void {
@@ -87,22 +98,21 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     const startDate = this.dateSelected.selectedDates[0].toISOString();
     const endDate = this.dateSelected.selectedDates[1].toISOString()
 
-    this.reportService.getTopDepartmentBooks(this.searchTerm, this.page, this.pageSize, startDate,endDate,this.sort).subscribe(
+    this.reportService.getTopDepartmentBooks(this.searchTerm, 1,1000, startDate,endDate,this.sort).subscribe(
       {
         next: (data) => {
           this.topDepartmentBooking = data;
-          if(this.chart){
+          this.updateTable();
+          if(this.chart)
+          {
             const labels = data.data.map((item) => item.department);
             const values = data.data.map((item) => item.totalBookings);
             const suggestedMax = this.getSuggestedMax(values);
-            const backgroundColors = [
-              '#42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
-            ];
 
             const dataSet = {
               label: 'ยอดการใช้งาน',
               data: values,
-              backgroundColor: backgroundColors.slice(0, values.length)
+              backgroundColor: this.backgroundColors.slice(0, values.length)
             }
             this.chart.data.labels = labels;
             this.chart.data.datasets[0] = dataSet;
@@ -142,6 +152,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
   }
 
   createChart(): void {
+
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'bar',
       data: {
@@ -149,7 +160,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
         datasets: [{
           label: 'ยอดการใช้งาน',
           data: [],
-          backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726']
+          backgroundColor: this.backgroundColors.slice(0, this.topDepartmentBooking.data.length)
         }]
       },
       options: {
@@ -158,6 +169,15 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
           title: {
             display: true,
             text: 'รายงานการใช้งานตามแผนก',
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#000',
+            font: {
+              weight: 'lighter'
+            },
+            formatter: (val: number) => val + ' ครั้ง'
           }
         }
       }
@@ -169,4 +189,14 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     return Math.ceil(max * 1.1); // Increase the max value by 10%
   }
 
+  updateTable() {
+    const totalData = this.topDepartmentBooking.data.length;
+    const totalPage = Math.ceil(totalData / this.pageSize);
+    const startIndex = (this.page - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.topDepartmentBookingTable.data = this.topDepartmentBooking.data.slice(startIndex, endIndex);
+    this.topDepartmentBookingTable.total = totalData;
+    this.topDepartmentBookingTable.totalPages = totalPage;
+    this.topDepartmentBookingTable.current = this.page;
+  }
 }

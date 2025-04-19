@@ -13,7 +13,10 @@ import {GlobalComponent} from '../../../../global-component';
 import {FlatPickrOutputOptions} from 'angularx-flatpickr/lib/flatpickr.directive';
 import {ITopBooking, ReportService} from '../../../../core/services/report.service';
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {Chart} from 'chart.js';
+import {Chart,registerables} from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+Chart.register(...registerables, ChartDataLabels);
 
 @Component({
   selector: 'app-top-booking',
@@ -40,6 +43,14 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
   searchTerm: string = '';
   sort: string = 'desc';
   reportTopBooksResponse:ITopBooking =
+    {
+      booking: [],
+      total: 0,
+      totalPages: 0,
+      current: 0
+    };
+
+  reportTopBooksResponseTable:ITopBooking =
     {
       booking: [],
       total: 0,
@@ -86,28 +97,26 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 
     const endDate = this.dateSelected.selectedDates[1].toISOString()
 
-    this.reportService.getTopBooks(this.searchTerm, this.page, this.pageSize, startDate,endDate,this.sort).subscribe(
+    this.reportService.getTopBooks(this.searchTerm, 1, 1000, startDate,endDate,this.sort).subscribe(
       {
         next: (res) => {
           // console.log(res);
           this.reportTopBooksResponse = res;
+          this.updateTable();
           const data = res.booking;
           const labels = data.map(item => item.name);
           const values = data.map(item => item.totalBookings);
           if(this.chart) {
-
             const suggestedMax = this.getSuggestedMax(values);
-
             const backgroundColors = [
-              '#42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
+              '#66BB6A'
             ];
-
+            //'42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
             const dataset = {
               label: 'จำนวนการจอง',
               data: values,
               backgroundColor: backgroundColors.slice(0, values.length)
             };
-
 
             this.chart.data.labels = labels;
             this.chart.data.datasets[0] = dataset;
@@ -132,7 +141,19 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
       }
     );
   }
+  updateTable()
+  {
+    const totalData = this.reportTopBooksResponse.booking.length;
+    const totalPage = Math.ceil(totalData / this.pageSize);
+    const startIndex = (this.page - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
 
+    this.reportTopBooksResponseTable.booking = this.reportTopBooksResponse.booking.slice(startIndex, endIndex);
+    this.reportTopBooksResponseTable.total = totalData;
+    this.reportTopBooksResponseTable.totalPages = totalPage;
+    this.reportTopBooksResponseTable.current = this.page;
+
+  }
   createChart(): void {
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'bar',
@@ -150,6 +171,15 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
           title: {
             display: true,
             text: 'รายงานการจองห้องประชุม'
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#000',
+            font: {
+              weight: 'lighter'
+            },
+            formatter: (val: number) => val + ' ครั้ง'
           }
         }
       }

@@ -93,7 +93,7 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
     this.reportService.getHourlyBooking(startDate, endDate).subscribe(
       {
         next: (res) => {
-          console.log(res);
+          // console.log(res);
           this.reportHourlyBookingResponse = res;
           this.updateTable();
           if(this.chart){
@@ -159,6 +159,15 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
           tooltip: {
             mode: 'index',
             intersect: false
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#000',
+            font: {
+              weight: 'lighter'
+            },
+            formatter: (val: number) => val + ' ครั้ง'
           }
         },
         scales: {
