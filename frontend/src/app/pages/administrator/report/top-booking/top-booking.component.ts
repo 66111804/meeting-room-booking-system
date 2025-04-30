@@ -38,6 +38,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
+  chartColors = ['#42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A', '#FFB74D', '#8D6E63', '#BDBDBD'];
 
   serverUrl= GlobalComponent.SERVE_URL;
   page = 1;
@@ -70,9 +71,12 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     }
   }
 
+  IsAfterViewInit: boolean = false;
   handleDateChange(date: FlatPickrOutputOptions) {
     // console.log('Date changed in child:', date);
-    this.fetchTopBooks();
+    if (this.IsAfterViewInit) {
+      this.fetchTopBooks();
+    }
   }
 
   ngOnInit() {
@@ -82,78 +86,110 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
   ngAfterViewInit(): void {
     setTimeout(() => {
       document.getElementById('elmLoader')?.classList.add('d-none');
+      this.createChart();
       this.fetchTopBooks();
+      this.IsAfterViewInit = true;
     }, 500);
   }
 
   ngOnDestroy(): void {
     document.getElementById('elmLoader')?.classList.add('d-none');
   }
+  isChartLoading: boolean = false;
 
   fetchTopBooks() {
-    if(this.dateSelected.selectedDates.length < 2) {
+    if (this.dateSelected.selectedDates.length < 2) {
       console.log('Please select a date range');
       return;
     }
 
     const startDate = this.dateSelected.selectedDates[0].toISOString();
-
-    const endDate = this.dateSelected.selectedDates[1].toISOString()
-
-    this.reportService.getTopBooks(this.searchTerm, 1, 1000, startDate,endDate,this.sort,this.roomSelected).subscribe(
-      {
+    const endDate = this.dateSelected.selectedDates[1].toISOString();
+    this.isChartLoading = true;
+    if (this.roomsSelected.length === 0) {
+      this.reportService.getTopBooks(this.searchTerm, 1, 1000, startDate, endDate, this.sort).subscribe({
         next: (res) => {
-          // console.log(res);
-          if(this.roomSelected === ''){
-            this.reportTopBooksResponse = res;
-          }
+          this.reportTopBooksResponse = res;
           this.updateTable();
-          const data = res.booking;
+          this.isChartLoading = false;
+          const data = res.booking ?? [];
           const labels = data.map(item => item.name);
           const values = data.map(item => item.totalBookings);
-          if(this.chart) {
-            const suggestedMax = this.getSuggestedMax(values);
-            const backgroundColors = [
-              '#66BB6A'
-            ];
-            //'42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
-            const dataset = {
-              // label: 'จำนวนการจอง',
-              label: this.roomSelected === '' ? 'ยอดการใช้งาน' : 'ห้อง '+this.roomSelected,
-              data: values,
-              backgroundColor: backgroundColors.slice(0, values.length)
-            };
-
-            this.chart.data.labels = labels;
-            this.chart.data.datasets[0] = dataset;
-            this.chart.options.scales = {
-              y: {
-                beginAtZero: true,
-                suggestedMax: suggestedMax,
-                ticks: {
-                  stepSize: 1,
-                  precision: 0
-                }
-              }
-            };
-
-            // change chart title
-            if(this.chart.options.plugins && this.chart.options.plugins.title && this.chart.options.plugins.title.text)
-            {
-              this.chart.options.plugins.title.text = this.roomSelected === '' ? 'รายงานการจองห้องประชุม' : 'รายงานการจองห้อง '+this.roomSelected;
-            }
-
-            this.chart.update();
-          }else {
+          this.updateSingleDatasetChart(labels, values);
+        },
+        error: (err) => {
+          console.error('Error fetching all bookings:', err);
+          this.isChartLoading = false;
+        }
+      });
+    } else {
+      this.isChartLoading = true;
+      this.reportService.getTopBooksByRooms(this.roomsSelected, startDate, endDate).subscribe({
+        next: (res) => {
+          const { labels, datasets } = res;
+          this.isChartLoading = false;
+          if (!res || !res.labels || !res.datasets) {
+            console.warn('Invalid response for multi-room:', res);
+            return;
+          }
+          if (!this.chart) {
             this.createChart();
           }
+
+          this.chart.data.labels = labels;
+          this.chart.data.datasets = datasets.map((d, i) => ({
+            label: d.label,
+            data: d.data,
+            backgroundColor: this.chartColors[i % this.chartColors.length]
+          }));
+
+          this.chart.options.plugins!.title!.text = 'รายงานการจองเปรียบเทียบหลายห้อง';
+          this.chart.update();
+
         },
-        error: (error) => {
-          console.error('Error fetching top books:', error);
+        error: (err) => {
+          console.error('Error fetching multi-room bookings:', err)
+          this.isChartLoading = false;
         }
-      }
-    );
+      });
+    }
   }
+
+  updateSingleDatasetChart(labels: string[], values: number[]) {
+    const suggestedMax = this.getSuggestedMax(values);
+    const backgroundColors = ['#66BB6A'];
+
+    const dataset = {
+      label: this.roomSelected === '' ? 'ยอดการใช้งาน' : 'ห้อง ' + this.roomSelected,
+      data: values,
+      backgroundColor: backgroundColors.slice(0, values.length)
+    };
+
+    if (this.chart) {
+      this.chart.data.labels = labels;
+      this.chart.data.datasets = [dataset];
+      this.chart.options.scales = {
+        y: {
+          beginAtZero: true,
+          suggestedMax: suggestedMax,
+          ticks: {
+            stepSize: 1,
+            precision: 0
+          }
+        }
+      };
+
+      if (this.chart.options.plugins?.title) {
+        const roomNames = this.roomsSelected.map((room) => room).join(', ');
+        this.chart.options.plugins.title.text =
+          this.roomSelected === '' ? 'รายงานการจองห้องประชุม' : 'รายงานการจองห้อง ' + roomNames;
+      }
+
+      this.chart.update();
+    }
+  }
+
+
   updateTable()
   {
     const totalData = this.reportTopBooksResponse.booking.length;
@@ -214,9 +250,25 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     this.fetchTopBooks();
   }
 
+  roomsSelected:string[] = [];
   onRoomSelectedChange(room: string = '') {
     this.roomSelected = room;
     this.roomUpdate.emit(this.roomSelected);
+
+    if(room !== '') {
+      if (!this.roomsSelected.includes(room)) {
+        this.roomsSelected.push(room);
+      }else
+      {
+        const index = this.roomsSelected.indexOf(room);
+        if (index > -1) {
+          this.roomsSelected.splice(index, 1);
+        }
+      }
+    }else {
+      this.roomsSelected = [];
+    }
+    // console.log(this.roomsSelected);
     this.fetchTopBooks();
   }
 }

@@ -60,7 +60,6 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
   backgroundColors = [
     '#42A5F5'
   ];
-  // '#42A5F5', '#66BB6A', '#FFA726', '#26C6DA', '#7E57C2', '#FF7043', '#26A69A'
   ngOnInit(): void {
 
   }
@@ -83,7 +82,6 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     if (changes['dateSelected']) {
       this.handleDateChange(changes['dateSelected'].currentValue);
     }
-    console.log(changes['roomSelected'].currentValue)
     if( changes['roomSelected']) {
       this.roomSelected = changes['roomSelected'].currentValue;
       this.fetchTopDepartmentBooking();

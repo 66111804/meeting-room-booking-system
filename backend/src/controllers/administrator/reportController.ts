@@ -4,20 +4,33 @@ import {
     getTopDepartmentBookingReportService,
     getTopBookingReportByRoomNameService,
     getTopDepartmentBookingReportByRoomNameService,
-    getHourlyBookingReportByRoomNameService
+    getHourlyBookingReportByRoomNameService, getTopBookingReportByRoomNamesService
 } from "../../service/administrator/reportService";
 
 
 export const getTopBooks = async (req: any, res: any) => {
     try {
-        const {roomName = ''} = req.query;
+        // asd,456,...
+        let roomNames = req.query.roomNames;
 
-        if(roomName === '') {
-            return await getTopBookingReportService(req, res);
-        }else {
-            return await getTopBookingReportByRoomNameService(req, res);
+        // convert string to array
+        if (typeof roomNames === 'string') {
+            roomNames = roomNames.split(',');
+            console.log(roomNames);
         }
+
+        if (!roomNames || (Array.isArray(roomNames) && roomNames.length === 0)) {
+            return await getTopBookingReportService(req, res);
+        }
+        if (typeof roomNames === 'string') {
+            req.query.roomNames = [roomNames];
+        }
+
+        // console.log(typeof req.query);
+
+        return await getTopBookingReportByRoomNamesService(req, res);
     } catch (e: any) {
+        console.error("Error fetching top books:", e);
         return res.status(500).json({ message: e.message });
     }
 }

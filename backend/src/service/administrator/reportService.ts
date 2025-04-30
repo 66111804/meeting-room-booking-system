@@ -72,6 +72,7 @@ export const getTopBookingReportService = async (req: any, res: any) => {
         current: page,
     });
 }
+
 export const getTopBookingReportByRoomNameService = async (req: any, res: any) => {
     const { startDate, endDate, sort = 'desc', roomName} = req.query;
     let { page = 1, limit = 1000000 } = req.query;
@@ -141,6 +142,89 @@ export const getTopBookingReportByRoomNameService = async (req: any, res: any) =
         current: page
     });
 }
+
+export const getTopBookingReportByRoomNamesService = async (req: any, res: any) => {
+    const { startDate, endDate, sort = 'desc' } = req.query;
+    let roomNames: any = req.query.roomNames;
+
+    if (!startDate || !endDate || !roomNames || roomNames.length === 0) {
+        return res.status(400).json({ message: 'required startDate, endDate and roomNames[]' });
+    }
+    if(roomNames.includes(',')) {
+        // convert string to array
+        roomNames = roomNames.split(',');
+    }else
+    {
+        // convert string to array
+        roomNames = [roomNames];
+    }
+    const arrNames:string[] = roomNames;
+
+    const rooms = await prisma.meetingRoom.findMany({
+        where: {
+            name: {
+                in: roomNames
+            }
+        },
+        select: {
+            id: true,
+            name: true
+        }
+    });
+
+    const roomMap = Object.fromEntries(rooms.map(r => [r.id, r.name]));
+    const roomIds = rooms.map(r => r.id);
+
+    const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+            meetingRoomId: { in: roomIds },
+            status: 'confirmed',
+            startTime: {
+                gte: new Date(startDate),
+                lte: new Date(endDate)
+            }
+        },
+        select: {
+            meetingRoomId: true,
+            startTime: true
+        }
+    });
+
+    const fullDates = eachDayOfInterval({
+        start: parseISO(startDate),
+        end: parseISO(endDate)
+    });
+
+    const dateLabels = fullDates.map(d => format(d, 'dd-MMM'));
+
+    // สร้างโครง data: { [roomName]: { [label]: count } }
+    const groupedData: Record<string, Record<string, number>> = {};
+    for (const roomName of roomNames) {
+        groupedData[roomName] = {};
+        for (const label of dateLabels) {
+            groupedData[roomName][label] = 0;
+        }
+    }
+
+    for (const b of bookings) {
+        const label = format(new Date(b.startTime), 'dd-MMM');
+        const roomName = roomMap[b.meetingRoomId];
+        if (roomName) {
+            groupedData[roomName][label]++;
+        }
+    }
+
+    // แปลงเป็น datasets
+    const datasets = arrNames.map(room => ({
+        label: room,
+        data: dateLabels.map(label => groupedData[room][label] || 0)
+    }));
+
+    return res.json({
+        labels: dateLabels,
+        datasets
+    });
+};
 
 export const getTopDepartmentBookingReportService = async (req: any, res: any) => {
     const { startDate, endDate, sort = 'desc'} = req.query;
