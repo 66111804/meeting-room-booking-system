@@ -228,7 +228,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
             font: {
               weight: 'lighter'
             },
-            formatter: (val: number) => val + ' ครั้ง'
+            formatter: (val: number) => val.toString()
           }
         }
       }
