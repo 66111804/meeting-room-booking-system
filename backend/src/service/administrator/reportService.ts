@@ -112,7 +112,7 @@ export const getTopBookingReportByRoomNameService = async (req: any, res: any) =
     });
     const grouped: Record<string, number> = {};
     bookings.forEach((booking) => {
-        const label = format(new Date(booking.startTime), 'dd-MMM'); // ex: 12-Mar
+        const label = format(new Date(booking.startTime), 'dd-MMM-yy'); // ex: 12-Mar
         grouped[label] = (grouped[label] || 0) + 1;
     });
 
@@ -121,7 +121,7 @@ export const getTopBookingReportByRoomNameService = async (req: any, res: any) =
         end: parseISO(endDate)
     });
     const result = fullDates.map((date) => {
-        const label = format(date, 'dd-MMM');
+        const label = format(date, 'dd-MMM-yy');
         return {
             name:label,
             totalBookings: grouped[label] || 0
@@ -196,7 +196,7 @@ export const getTopBookingReportByRoomNamesService = async (req: any, res: any) 
         end: parseISO(endDate)
     });
 
-    const dateLabels = fullDates.map(d => format(d, 'dd-MMM'));
+    const dateLabels = fullDates.map(d => format(d, 'dd-MMM-yy')); // ex: 12-Mar-23
 
     // สร้างโครง data: { [roomName]: { [label]: count } }
     const groupedData: Record<string, Record<string, number>> = {};
@@ -208,16 +208,16 @@ export const getTopBookingReportByRoomNamesService = async (req: any, res: any) 
     }
 
     for (const b of bookings) {
-        const label = format(new Date(b.startTime), 'dd-MMM');
+        const label = format(new Date(b.startTime), 'dd-MMM-yy');
         const roomName = roomMap[b.meetingRoomId];
         if (roomName) {
             groupedData[roomName][label]++;
         }
     }
 
-    // แปลงเป็น datasets
+    // แปลงเป็น datasets [{ label: id,roomName, data: [count] }]
     const datasets = arrNames.map(room => ({
-        label: room,
+        label: room+'['+(rooms.find(r => r.name === room)?.id || '') + ']',
         data: dateLabels.map(label => groupedData[room][label] || 0)
     }));
 
