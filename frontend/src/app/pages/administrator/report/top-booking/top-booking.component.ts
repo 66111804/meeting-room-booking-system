@@ -253,7 +253,6 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
   roomsSelected:string[] = [];
   onRoomSelectedChange(room: string = '') {
     this.roomSelected = room;
-    this.roomUpdate.emit(this.roomSelected);
 
     if(room !== '') {
       if (!this.roomsSelected.includes(room)) {
@@ -264,12 +263,20 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
         if (index > -1) {
           this.roomsSelected.splice(index, 1);
         }
+
+        if (this.roomsSelected.length === 0) {
+          this.roomSelected = '';
+        } else {
+          this.roomSelected = this.roomsSelected[this.roomsSelected.length - 1];
+        }
       }
     }else {
       this.roomsSelected = [];
+      this.roomSelected = '';
     }
-    // console.log(this.roomsSelected);
     this.fetchTopBooks();
+    this.roomUpdate.emit(this.roomSelected);
+
   }
 }
 

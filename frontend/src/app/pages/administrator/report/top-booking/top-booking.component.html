@@ -40,7 +40,7 @@
                       </div>
                       <div>
                         <h5 class="fs-14 my-1 fw-medium">
-                          <a href="javascript:void(0);" class="{{ roomSelected === _report.name ? 'text-primary text-decoration-underline' : 'text-reset ' }}" >
+                          <a href="javascript:void(0);" [class]="roomSelected === _report.name ? 'text-primary text-decoration-underline' : 'text-reset '" >
                           {{ _report.name }}</a>
                         </h5>
                         <span class="text-muted">{{_report.description.substring(0, 20)}} @if(_report.description.length > 20) { ... }</span>

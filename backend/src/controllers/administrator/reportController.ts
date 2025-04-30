@@ -16,7 +16,6 @@ export const getTopBooks = async (req: any, res: any) => {
         // convert string to array
         if (typeof roomNames === 'string') {
             roomNames = roomNames.split(',');
-            console.log(roomNames);
         }
 
         if (!roomNames || (Array.isArray(roomNames) && roomNames.length === 0)) {

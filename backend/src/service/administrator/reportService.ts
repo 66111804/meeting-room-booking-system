@@ -21,6 +21,7 @@ export const getTopBookingReportService = async (req: any, res: any) => {
     const grouped = await prisma.meetingRoomBooking.groupBy({
         by: ['meetingRoomId'],
         where: {
+            status: 'confirmed',
             startTime: {
                 gte: new Date(startDate),
                 lte: new Date(endDate),
@@ -240,6 +241,7 @@ export const getTopDepartmentBookingReportService = async (req: any, res: any) =
     const grouped = await prisma.meetingRoomBooking.groupBy({
         by: ['userId'],
         where: {
+            status: 'confirmed',
             startTime: {
                 gte: new Date(startDate),
                 lte: new Date(endDate)
@@ -330,6 +332,7 @@ export const getTopDepartmentBookingReportByRoomNameService = async (req: any, r
     const grouped = await prisma.meetingRoomBooking.groupBy({
         by: ['userId'],
         where: {
+            status: 'confirmed',
             meetingRoomId: {
                 in: roomIds
             },
