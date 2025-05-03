@@ -609,6 +609,136 @@ export const getHourlyBookingReportService = async (req: any, res: any) => {
      */
 }
 
+export const getHourlyBookingReportByRoomNamesService = async (req: any, res: any) => {
+    const { startDate, endDate } = req.query;
+    let roomNames: any = req.query.roomNames;
+
+    if (!startDate || !endDate || !roomNames || roomNames.length === 0) {
+        return res.status(400).json({ message: 'required startDate, endDate and roomNames[]' });
+    }
+
+    if (roomNames.includes(',')) {
+        roomNames = roomNames.split(',');
+    } else {
+        roomNames = [roomNames];
+    }
+
+    const rooms = await prisma.meetingRoom.findMany({
+        where: { name: { in: roomNames } },
+        select: { id: true, name: true }
+    });
+
+    const roomIdNameMap = Object.fromEntries(rooms.map(r => [r.id, r.name]));
+
+    const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+            meetingRoomId: { in: rooms.map(r => r.id) },
+            status: 'confirmed',
+            startTime: { gte: new Date(startDate), lte: new Date(endDate) }
+        },
+        select: {
+            meetingRoomId: true,
+            startTime: true,
+            endTime: true
+        }
+    });
+
+    // เตรียม labels: '08:00' ถึง '17:30'
+    const timeSlots: string[] = [];
+    for (let hour = 8; hour <= 17; hour++) {
+        for (let min of [0, 30]) {
+            timeSlots.push(`${hour.toString().padStart(2, '0')}:${min === 0 ? '00' : '30'}`);
+        }
+    }
+
+    // เตรียม intervalData แยกตามห้อง
+    const roomDataMap: Record<string, Record<string, number>> = {};
+    for (const room of rooms) {
+        roomDataMap[room.name] = {};
+        for (const slot of timeSlots) {
+            roomDataMap[room.name][slot] = 0;
+        }
+    }
+
+    const totalDataMap: Record<string, number> = {};
+    for (const slot of timeSlots) {
+        totalDataMap[slot] = 0;
+    }
+
+    // นับการจองแบบแยกห้อง
+    for (const b of bookings) {
+        const roomName = roomIdNameMap[b.meetingRoomId];
+        let current = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
+        const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
+
+        while (current.isBefore(end)) {
+            const hour = current.hour();
+            const minute = current.minute();
+            if ((hour > 7 && hour < 17) || (hour === 17 && minute <= 30)) {
+                const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
+                if (roomDataMap[roomName][label] !== undefined) {
+                    roomDataMap[roomName][label]++;
+                    totalDataMap[label]++;
+                }
+            }
+            current = current.add(30, 'minute');
+        }
+    }
+
+    const datasets = Object.entries(roomDataMap).map(([roomName, slotMap]) => ({
+        label: roomName,
+        data: timeSlots.map(t => slotMap[t])
+    }));
+    const totalDataset = {
+        label: 'ALL Rooms',
+        data: timeSlots.map(t => totalDataMap[t])
+    };
+
+    return res.json({
+        labels: timeSlots,
+        datasets: [totalDataset, ...datasets]
+    });
+};
+
+
+export const getInfoByRoomIdAndDateBooking = async (req: any, res: any) => {
+    // roomId, date(dd-MM-yyyy)
+    const { roomId, date } = req.query;
+    if (!roomId || !date) {
+        return res.status(400).json({ message: 'required roomId and date' });
+    }
+
+    const parsedDate = parse(date, 'dd-MM-yyyy', new Date());
+    const nextDay = addDays(parsedDate, 1);
+
+    const bookings = await prisma.meetingRoomBooking.findMany({
+        where: {
+            meetingRoomId: Number(roomId),
+            startTime: {
+                gte: parsedDate,
+                lt: nextDay
+            }
+        },
+        select: {
+            id: true,
+            startTime: true,
+            endTime: true,
+            status: true,
+            userId: true,
+            meetingRoomId: true,
+            User: {
+                select: {
+                    name: true,
+                    department: true
+                }
+            }
+        }
+    });
+
+    return res.json({ bookings });
+
+}
+
 export const getHourlyBookingReportByRoomNameService = async (req: any, res: any) => {
     const { startDate, endDate, roomName } = req.query;
     // noinspection DuplicatedCode
@@ -705,151 +835,4 @@ export const getHourlyBookingReportByRoomNameService = async (req: any, res: any
         ]
        }
      */
-}
-
-export const getHourlyBookingReportByRoomNamesService = async (req: any, res: any) => {
-    const { startDate, endDate } = req.query;
-    let roomNames: any = req.query.roomNames;
-
-    if (!startDate || !endDate || !roomNames || roomNames.length === 0) {
-        return res.status(400).json({ message: 'required startDate, endDate and roomNames[]' });
-    }
-    if(roomNames.includes(',')) {
-        // convert string to array
-        roomNames = roomNames.split(',');
-    }else
-    {
-        // convert string to array
-        roomNames = [roomNames];
-    }
-    const arrNames:string[] = roomNames;
-
-    const rooms = await prisma.meetingRoom.findMany({
-        where: {
-            name: {
-                in: roomNames
-            }
-        },
-        select: {
-            id: true,
-            name: true
-        }
-    });
-
-    const roomIds = rooms.map(room => room.id);
-
-    const bookings = await prisma.meetingRoomBooking.findMany({
-        where: {
-            meetingRoomId: { in: roomIds },
-            status: 'confirmed',
-            startTime: {
-                gte: new Date(startDate),
-                lte: new Date(endDate)
-            }
-        },
-        select: {
-            meetingRoomId: true,
-            startTime: true,
-            endTime: true
-        }
-    });
-
-    // noinspection DuplicatedCode
-    const intervalData: Record<string, number> = {};
-    for (let hour = 8; hour < 18; hour++) {
-        for (let min of [0, 30]) {
-            const label = `${hour.toString().padStart(2, '0')}:${min === 0 ? '00' : '30'}`;
-            intervalData[label] = 0;
-        }
-    }
-
-    bookings.forEach((b) => {
-        let start = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
-        const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
-        while (start.isBefore(end)) {
-            const hour = start.hour();
-            const minute = start.minute();
-            // เฉพาะช่วง 08:00 - 17:30 เท่านั้น
-            if (
-                (hour > 7 && hour < 17) || (hour === 17 && minute <= 30)
-            ) {
-                const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
-                if (intervalData[label] !== undefined) {
-                    intervalData[label]++;
-                }
-            }
-            start = start.add(30, 'minute');
-        }
-    });
-
-
-    const result = Object.entries(intervalData).map(([hour, totalBookings]) => ({
-        hour,
-        totalBookings
-    }));
-
-    // sort by hour
-    result.sort((a, b) => {
-        const [aHour, aMinute] = a.hour.split(':').map(Number);
-        const [bHour, bMinute] = b.hour.split(':').map(Number);
-        return aHour - bHour || aMinute - bMinute;
-    });
-
-    const datasets = arrNames.map(room => ({
-        label: room,
-        data: result.map(item => item.totalBookings)
-    }));
-
-    return res.json({
-        labels: result.map(item => item.hour),
-        datasets
-    });
-
-    /* Example response
-    {
-        labels: ['08:00', '08:30', ...],
-        datasets: [
-            { label: 'Room A', data: [2, 3, ...] },
-            { label: 'Room B', data: [1, 4, ...] },
-            ...
-        ]
-       }
-     */
-}
-export const getInfoByRoomIdAndDateBooking = async (req: any, res: any) => {
-    // roomId, date(dd-MM-yyyy)
-    const { roomId, date } = req.query;
-    if (!roomId || !date) {
-        return res.status(400).json({ message: 'required roomId and date' });
-    }
-
-    const parsedDate = parse(date, 'dd-MM-yyyy', new Date());
-    const nextDay = addDays(parsedDate, 1);
-
-    const bookings = await prisma.meetingRoomBooking.findMany({
-        where: {
-            meetingRoomId: Number(roomId),
-            startTime: {
-                gte: parsedDate,
-                lt: nextDay
-            }
-        },
-        select: {
-            id: true,
-            startTime: true,
-            endTime: true,
-            status: true,
-            userId: true,
-            meetingRoomId: true,
-            User: {
-                select: {
-                    name: true,
-                    department: true
-                }
-            }
-        }
-    });
-
-    return res.json({ bookings });
-
 }

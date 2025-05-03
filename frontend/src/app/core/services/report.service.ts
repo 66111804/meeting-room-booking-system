@@ -42,17 +42,28 @@ export interface IMultiRoomTopBooking {
   datasets: IChartDataset[]; // { label: "ห้อง A", data: [2, 3] }
 }
 // ------------- Hourly Booking -------------
+// export interface IHourlyBooking {
+//   data: IHourlyBookingData[]
+//   total: number
+//   totalPages: number
+//   current: number
+// }
+//
+// export interface IHourlyBookingData {
+//   hour: string
+//   totalBookings: number
+// }
+
 export interface IHourlyBooking {
-  data: IHourlyBookingData[]
-  total: number
-  totalPages: number
-  current: number
+  labels: string[]
+  datasets: IHourlyBookingData[]
 }
 
 export interface IHourlyBookingData {
-  hour: string
-  totalBookings: number
+  label: string
+  data: number[]
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -104,6 +115,14 @@ export class ReportService {
       URL = `${GlobalComponent.API_URL}/admin/report/hourly-booking?startDate=${startDate}&endDate=${endDate}&roomName=${roomName}`;
     }
     return this.http.get<IHourlyBooking>(URL);
+  }
+  getHourlyBookingByRooms(roomNames:string[]= [],startDate: string, endDate: string) {
+    let params = new HttpParams()
+      .set('startDate', startDate)
+      .set('endDate', endDate)
+      .set('roomNames', roomNames.join(','));
+    const url = `${GlobalComponent.API_URL}/admin/report/hourly-booking`;
+    return this.http.get<IHourlyBooking>(url, {params});
   }
 }
 

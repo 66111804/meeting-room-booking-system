@@ -11,17 +11,18 @@
         <div class="table-responsive table-card ">
           <table class="table table-hover table-centered align-middle table-nowrap mb-0">
             <tbody>
-              @for (_report of reportHourlyBookingTable.data; track $index) {
+              @for (_report of reportHourlyBookingTable.datasets; track $index) {
                 <tr>
                   <td>
                     <h5 class="fs-14 my-1 fw-medium">
-                      {{_report.hour}} - @if($index < reportHourlyBookingTable.data.length -1) {
-                      {{ reportHourlyBookingTable.data[$index + 1].hour }} } @if($index == reportHourlyBookingTable.data.length -1) { 18:00 }
+                      {{_report.label}} -
+<!--                      @if($index < reportHourlyBookingTable.data.length -1) {-->
+<!--                      {{ reportHourlyBookingTable.data[$index + 1].hour }} } @if($index == reportHourlyBookingTable.data.length -1) { 18:00 }-->
                     </h5>
                   </td>
                   <td>
                     <h5 class="fs-14 mb-0">
-                      {{_report.totalBookings}}
+<!--                      {{_report.totalBookings}}-->
                       <i class="ri-bar-chart-fill text-success fs-16 align-middle mx-2"></i>
                     </h5>
                   </td>
@@ -39,21 +40,21 @@
       <div class="card-footer pt-0">
         <div class="align-items-center mt-4 pt-0 justify-content-between d-flex ">
           <div class="col-sm">
-            <div class="text-muted">Showing {{ (page - 1) * pageSize + 1 }} to {{ (page - 1) * pageSize + reportHourlyBookingTable.data.length }} of {{ reportHourlyBookingTable.total }} entries</div>
+            <div class="text-muted">Showing {{ (page - 1) * pageSize + 1 }} to {{ (page - 1) * pageSize + reportHourlyBookingTable.labels.length }} of {{ reportHourlyBookingTable.labels.length }} entries</div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex justify-content-end mt-3">
-              @if (reportHourlyBookingTable.total > pageSize) {
-                <!-- Pagination -->
-                <ngb-pagination [collectionSize]="reportHourlyBookingTable.total"
-                                [(page)]="page"
-                                [pageSize]="pageSize"
-                                (pageChange)="changePage()"
-                                [maxSize]="2"
-                                [boundaryLinks]="true">
-                </ngb-pagination>
-                <!-- End Pagination -->
-              }
+<!--              @if (reportHourlyBookingTable.total > pageSize) {-->
+<!--                &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--                <ngb-pagination [collectionSize]="reportHourlyBookingTable.total"-->
+<!--                                [(page)]="page"-->
+<!--                                [pageSize]="pageSize"-->
+<!--                                (pageChange)="changePage()"-->
+<!--                                [maxSize]="2"-->
+<!--                                [boundaryLinks]="true">-->
+<!--                </ngb-pagination>-->
+<!--                &lt;!&ndash; End Pagination &ndash;&gt;-->
+<!--              }-->
             </div>
           </div>
         </div>
