@@ -148,7 +148,7 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
         instance: null
       };
 
-      console.log(this.dateSelected);
+      // console.log(this.dateSelected);
     }
   }
 
