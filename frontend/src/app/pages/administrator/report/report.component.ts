@@ -159,7 +159,7 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
 
   onRoomsSelectedChange(rooms: any) {
     this.roomsSelected = rooms;
-    console.log("roomsSelected:", rooms);
+    // console.log("roomsSelected:", rooms);
   }
 
 }

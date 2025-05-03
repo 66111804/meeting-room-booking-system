@@ -2,7 +2,7 @@
   <div class="col-xl-4 " >
     <div class="card card-height-100">
       <div class="card-header align-items-center d-flex">
-        <h4 class="card-title mb-0 flex-grow-1">เวลาการใข้งานห้อง{{ roomSelected !== '' ? ' '+roomSelected:'ประชุม' }} ({{dateSelected.dateString}})</h4>
+        <h4 class="card-title mb-0 flex-grow-1">เวลาการใข้งานทุกห้อง ({{dateSelected.dateString}})</h4>
         <div class="flex-shrink-0">
         </div>
       </div><!-- end card header -->
@@ -11,27 +11,53 @@
         <div class="table-responsive table-card ">
           <table class="table table-hover table-centered align-middle table-nowrap mb-0">
             <tbody>
-              @for (_report of reportHourlyBookingTable.datasets; track $index) {
-                <tr>
-                  <td>
-                    <h5 class="fs-14 my-1 fw-medium">
-                      {{_report.label}} -
-<!--                      @if($index < reportHourlyBookingTable.data.length -1) {-->
-<!--                      {{ reportHourlyBookingTable.data[$index + 1].hour }} } @if($index == reportHourlyBookingTable.data.length -1) { 18:00 }-->
-                    </h5>
-                  </td>
-                  <td>
-                    <h5 class="fs-14 mb-0">
-<!--                      {{_report.totalBookings}}-->
-                      <i class="ri-bar-chart-fill text-success fs-16 align-middle mx-2"></i>
-                    </h5>
-                  </td>
-                </tr>
-              } @empty {
-                <tr>
-                  <td colspan="3" class="text-center">No data available</td>
-                </tr>
+            <!-- All Rooms -->
+<!--              @for (_report of reportHourlyBookingTable.datasets; track $index) {-->
+<!--                <tr>-->
+<!--                  <td>-->
+<!--                    <h5 class="fs-14 my-1 fw-medium">-->
+<!--                      {{_report.label}} - -->
+<!--&lt;!&ndash;                      @if($index < reportHourlyBookingTable.data.length -1) {&ndash;&gt;-->
+<!--&lt;!&ndash;                      {{ reportHourlyBookingTable.data[$index + 1].hour }} } @if($index == reportHourlyBookingTable.data.length -1) { 18:00 }&ndash;&gt;-->
+<!--                    </h5>-->
+<!--                  </td>-->
+<!--                  <td>-->
+<!--                    <h5 class="fs-14 mb-0">-->
+<!--&lt;!&ndash;                      {{_report.totalBookings}}&ndash;&gt;-->
+<!--                      <i class="ri-bar-chart-fill text-success fs-16 align-middle mx-2"></i>-->
+<!--                    </h5>-->
+<!--                  </td>-->
+<!--                </tr>-->
+<!--              } @empty {-->
+<!--                <tr>-->
+<!--                  <td colspan="3" class="text-center">No data available</td>-->
+<!--                </tr>-->
+<!--              }-->
+
+              @for(_report of reportHourlyBookingTable.datasets; track $index)
+              {
+                @if (_report.label === 'All Rooms') {
+                  @for ( i of reportHourlyBookingTable.labels; track $index) {
+                    <tr>
+                      <td>
+                        <h5 class="fs-14 my-1 fw-medium">
+                          <!--  {{ _report.label }} -->
+                          {{ i }} -@if($index == reportHourlyBookingTable.labels.length -1) { 18:00 } @else {
+                             {{ reportHourlyBookingTable.labels[$index + 1] }}
+                           }
+                        </h5>
+                      </td>
+                      <td>
+                        <h5 class="fs-14 mb-0">
+                          {{ _report.data[$index] }} ครั้ง
+                          <i class="ri-bar-chart-fill text-success fs-16 align-middle mx-2"></i>
+                        </h5>
+                      </td>
+                    </tr>
+                  }
+                }
               }
+
             </tbody>
           </table>
         </div>

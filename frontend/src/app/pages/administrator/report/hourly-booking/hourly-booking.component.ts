@@ -230,6 +230,8 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
   }
 
   updateTable() {
+    this.reportHourlyBookingTable = this.reportHourlyBookingResponse;
+
     // const totalData = this.reportHourlyBookingResponse.data.length;
     // const totalPage = Math.ceil(totalData / this.pageSize);
     // const startIndex = (this.page - 1) * this.pageSize;

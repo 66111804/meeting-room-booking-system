@@ -690,7 +690,7 @@ export const getHourlyBookingReportByRoomNamesService = async (req: any, res: an
         data: timeSlots.map(t => slotMap[t])
     }));
     const totalDataset = {
-        label: 'ALL Rooms',
+        label: 'All Rooms',
         data: timeSlots.map(t => totalDataMap[t])
     };
 
