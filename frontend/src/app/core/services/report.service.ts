@@ -30,6 +30,7 @@ export interface ITopDepartmentBooking {
 export interface ITopDepartmentBookingData {
   department: string
   totalBookings: number
+  roomNames: string
 }
 export interface IChartDataset {
   label: string;
@@ -75,9 +76,6 @@ export class ReportService {
     return this.http.get<IMultiRoomTopBooking>(url, {params});
   }
 
-
-
-
   getTopDepartmentBooks(searchTerm: string, page: number, pageSize: number,startDate: string, endDate: string, sort: string = 'desc', roomName:string = '')
   {
     let URL = `${GlobalComponent.API_URL}/admin/report/top-department-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}&roomName=${roomName}`;
@@ -85,6 +83,16 @@ export class ReportService {
       URL = `${GlobalComponent.API_URL}/admin/report/top-department-booking?page=${page}&limit=${pageSize}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sort=${sort}`;
     }
     return this.http.get<ITopDepartmentBooking>(URL);
+  }
+
+  getTopDepartmentBooksByRooms(roomNames:string[]= [],startDate: string, endDate: string,sort: string = 'desc') {
+    let params = new HttpParams()
+      .set('startDate', startDate)
+      .set('endDate', endDate)
+      .set('sort', sort)
+      .set('roomNames', roomNames.join(','));
+    const url = `${GlobalComponent.API_URL}/admin/report/top-department-booking-rooms`;
+    return this.http.get<ITopDepartmentBooking>(url, {params});
   }
 
   getHourlyBooking(startDate: string, endDate: string,roomName:string = '')

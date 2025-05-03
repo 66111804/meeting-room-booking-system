@@ -3,6 +3,22 @@
     <div class="card card-height-100">
       <div class="card-header align-items-center d-flex">
         <h4 class="card-title mb-0 flex-grow-1">ยอดการใช้งานห้องประชุม</h4>
+        <!-- Select all -->
+        <div class=" flex-shrink-0 me-2">
+          @if(reportTopBooksResponseTable.booking.length > 0){
+<!--            <button class="btn btn-primary" (click)="onRoomSelectALL(this)">-->
+<!--              &lt;!&ndash; Select all &ndash;&gt;-->
+<!--              <i class="ri-check-double-line me-1"></i>เลือกทั้งหมด-->
+<!--            </button>-->
+          <div class="form-check form-check-primary ">
+            <input type="checkbox" class="form-check-input mb-0" id="customCheck1" (click)="onRoomSelectALL()" [checked]="roomsSelected.length === reportTopBooksResponseTable.booking.length">
+            <label class="form-check label p-0 mb-0 mt-1" for="customCheck1">
+              <span class="text-muted">เลือกทั้งหมด</span>
+            </label>
+          </div>
+          }
+        </div>
+
         <div class="flex-shrink-0">
           <div class="dropdown card-header-dropdown" ngbDropdown>
             <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
@@ -101,7 +117,7 @@
         }
       </div>
       <div class="card-body pb-5">
-        <div class="mb-n3">
+        <div class="mb-n3" style="width: 100%; height: auto; min-height: 300px;">
             <div class="text-center  position-absolute top-50 start-50 loading-chart {{ isChartLoading ? 'd-block' : 'd-none' }}">
               <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>

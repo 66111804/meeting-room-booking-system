@@ -9,19 +9,17 @@ import {
 } from '@angular/core';
 import {BreadcrumbsComponent} from '../../../shared/breadcrumbs/breadcrumbs.component';
 import {FeatherModule} from 'angular-feather';
-import {RouterLink} from '@angular/router';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {FlatpickrDirective} from 'angularx-flatpickr';
 import {FormsModule} from '@angular/forms';
 import {FlatPickrOutputOptions} from 'angularx-flatpickr/lib/flatpickr.directive';
-import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {ITopBooking, ReportService} from '../../../core/services/report.service';
+import {ReportService} from '../../../core/services/report.service';
 import {GlobalComponent} from '../../../global-component';
-import {ChartConfiguration, Chart, registerables} from 'chart.js'
-import {BaseChartDirective} from 'ng2-charts';
+import {Chart, registerables} from 'chart.js'
 import {TopBookingComponent} from './top-booking/top-booking.component';
 import {TopDepartmentBookingComponent} from './top-department-booking/top-department-booking.component';
 import {HourlyBookingComponent} from './hourly-booking/hourly-booking.component';
+import {StatComponent} from '../../../widget/stat/stat.component';
 
 Chart.register(...registerables);
 
@@ -33,13 +31,10 @@ Chart.register(...registerables);
     FeatherModule,
     FlatpickrDirective,
     FormsModule,
-    NgbDropdown,
-    NgbDropdownMenu,
-    NgbDropdownToggle,
-    NgbPagination,
     TopBookingComponent,
     TopDepartmentBookingComponent,
     HourlyBookingComponent,
+    StatComponent,
   ],
   providers:[provideNativeDateAdapter()],
   templateUrl: './report.component.html',
@@ -52,11 +47,10 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
 {
   breadCrumbItems!: Array<{}>;
   dateSelected!: FlatPickrOutputOptions;
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 
   roomSelected: string = '';
-
+  roomsSelected: string[] = [];
   constructor(private reportService:ReportService) {
     document.getElementById('elmLoader')?.classList.remove('d-none');
     this.breadCrumbItems = [
@@ -161,6 +155,11 @@ export class ReportComponent implements OnInit,AfterViewInit, OnDestroy
   onRoomSelectChange(room: any) {
     this.roomSelected = room;
     // console.log("roomSelected:", room);
+  }
+
+  onRoomsSelectedChange(rooms: any) {
+    this.roomsSelected = rooms;
+    console.log("roomsSelected:", rooms);
   }
 
 }

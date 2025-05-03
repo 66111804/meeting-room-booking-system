@@ -31,13 +31,14 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
   @Input() roomSelected: string = '';
+  @Input() roomsSelected: string[] = [];
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 
   serverUrl= GlobalComponent.SERVE_URL;
   page = 1;
-  pageSize = 10;
+  pageSize = 100;
 
   reportHourlyBookingResponse: IHourlyBooking =
     {
@@ -65,6 +66,10 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
     if (changes['roomSelected']) {
       this.roomSelected = changes['roomSelected'].currentValue;
       this.fetchHourlyBooking();
+    }
+    if (changes['roomsSelected']) {
+      this.roomsSelected = changes['roomsSelected'].currentValue;
+      console.log(this.roomsSelected);
     }
   }
 
@@ -172,7 +177,7 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
             font: {
               weight: 'lighter'
             },
-            formatter: (val: number) => val + ' ครั้ง'
+            formatter: (val: number) => val + ''
           }
         },
         scales: {
@@ -200,6 +205,7 @@ export class HourlyBookingComponent implements OnInit,AfterViewInit, OnDestroy, 
       }
     });
   }
+
   getSuggestedMax(values: number[]): number {
     const max = Math.max(...values);
     return Math.ceil(max / 10) * 10; // ปรับให้เป็นจำนวนเต็มที่ใกล้เคียงที่สุด

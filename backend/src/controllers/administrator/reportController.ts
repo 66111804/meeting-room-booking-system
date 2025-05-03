@@ -4,7 +4,9 @@ import {
     getTopDepartmentBookingReportService,
     getTopBookingReportByRoomNameService,
     getTopDepartmentBookingReportByRoomNameService,
-    getHourlyBookingReportByRoomNameService, getTopBookingReportByRoomNamesService
+    getHourlyBookingReportByRoomNameService,
+    getTopBookingReportByRoomNamesService,
+    getTopDepartmentBookingReportByRoomsNameService
 } from "../../service/administrator/reportService";
 
 
@@ -47,6 +49,29 @@ export const getTopDepartmentBooks = async (req: any, res: any) => {
     }
 }
 
+export const getTopDepartmentBooksByRoomNames = async (req: any, res: any) => {
+    try {
+        // asd,456,...
+        let roomNames = req.query.roomNames;
+
+        // convert string to array
+        if (typeof roomNames === 'string') {
+            roomNames = roomNames.split(',');
+        }
+
+        if (roomNames == '' || (Array.isArray(roomNames) && roomNames.length === 0)) {
+            return await getTopDepartmentBookingReportService(req, res);
+        }
+        if (typeof roomNames === 'string') {
+            req.query.roomNames = [roomNames];
+        }
+
+        return await getTopDepartmentBookingReportByRoomsNameService(req, res);
+    } catch (e: any) {
+        console.error("Error fetching top department books:", e);
+        return res.status(500).json({ message: e.message });
+    }
+}
 export const getHourlyBookingReport = async (req: any, res: any) => {
     try {
         const {roomName = ''} = req.query;

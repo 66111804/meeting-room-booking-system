@@ -36,12 +36,23 @@
             </div>
           </div><!-- end card-body -->
         </div><!-- end card -->
+
+        <div class="col-lg-8">
+<!--          <div class="row">-->
+<!--            @for ( stat of statData; track $index) {-->
+<!--              <div class="col-lg-4">-->
+<!--                <app-stat [title]="stat.title" [value]="stat.value" [icon]="stat.icon" [persantage]="stat.persantage" [profit]="stat.profit" [month]="stat.month"></app-stat>-->
+<!--              </div>&lt;!&ndash; end col &ndash;&gt;-->
+<!--            }-->
+<!--          </div>&lt;!&ndash; end row &ndash;&gt;-->
+
+        </div>
       </div><!-- end col -->
 
     </div>
   </div>
 </div>
 
-<app-top-booking [dateSelected]="dateSelected" (roomUpdate)="onRoomSelectChange($event)"></app-top-booking>
-<app-top-department-booking [dateSelected]="dateSelected" [roomSelected]="roomSelected"></app-top-department-booking>
-<app-hourly-booking [dateSelected]="dateSelected" [roomSelected]="roomSelected"></app-hourly-booking>
+<app-top-booking [dateSelected]="dateSelected" (roomUpdate)="onRoomSelectChange($event)" (roomsSelectedUpdate)="onRoomsSelectedChange($event)"></app-top-booking>
+<app-top-department-booking [dateSelected]="dateSelected" [roomSelected]="roomSelected" [roomsSelected]="roomsSelected"></app-top-department-booking>
+<app-hourly-booking [dateSelected]="dateSelected" [roomSelected]="roomSelected" [roomsSelected]="roomsSelected"></app-hourly-booking>

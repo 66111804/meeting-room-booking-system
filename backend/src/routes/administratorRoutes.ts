@@ -35,7 +35,7 @@ import {createBlog, deleteBlog, getBlog, getBlogs, updateBlog} from "../controll
 import {
     getHourlyBookingReport,
     getTopBooks,
-    getTopDepartmentBooks
+    getTopDepartmentBooks, getTopDepartmentBooksByRoomNames
 } from "../controllers/administrator/reportController";
 
 const router = Router();
@@ -155,6 +155,7 @@ router.delete('/blog/:id/delete', deleteBlog);
 // ----------- Report ------------
 router.get('/report/top-booking', getTopBooks);
 router.get('/report/top-department-booking', getTopDepartmentBooks);
+router.get('/report/top-department-booking-rooms', getTopDepartmentBooksByRoomNames);
 // getHourlyBookingReport
 router.get('/report/hourly-booking', getHourlyBookingReport);
 

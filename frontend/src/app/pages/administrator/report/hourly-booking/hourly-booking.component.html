@@ -15,12 +15,13 @@
                 <tr>
                   <td>
                     <h5 class="fs-14 my-1 fw-medium">
-                      {{_report.hour}}
+                      {{_report.hour}} - @if($index < reportHourlyBookingTable.data.length -1) {
+                      {{ reportHourlyBookingTable.data[$index + 1].hour }} } @if($index == reportHourlyBookingTable.data.length -1) { 18:00 }
                     </h5>
                   </td>
                   <td>
                     <h5 class="fs-14 mb-0">
-                      {{_report.totalBookings}} ครั้ง
+                      {{_report.totalBookings}}
                       <i class="ri-bar-chart-fill text-success fs-16 align-middle mx-2"></i>
                     </h5>
                   </td>
@@ -65,7 +66,7 @@
         <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงการใช้งานห้องประชุม</h4>
       </div>
       <div class="card-body pb-5">
-        <div class="mb-n3">
+        <div class="mb-n3" style="width: 100%; height: auto; min-height: 300px;">
           <canvas #chartCanvas></canvas>
         </div>
       </div>

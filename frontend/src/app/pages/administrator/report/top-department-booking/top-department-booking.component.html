@@ -2,7 +2,7 @@
   <div class="col-xl-4 " >
     <div class="card card-height-100">
       <div class="card-header align-items-center d-flex">
-        <h4 class="card-title mb-0 flex-grow-1">แผนกที่ใช้งานห้อง{{ roomSelected !== '' ? ' '+roomSelected : 'ประชุม' }}</h4>
+        <h4 class="card-title mb-0 flex-grow-1">แผนกที่ใช้งานห้อง {{ roomsSelected.join(', ') }}</h4>
         <div class="flex-shrink-0">
           <div class="dropdown card-header-dropdown" ngbDropdown>
             <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
@@ -76,7 +76,7 @@
         <h4 class="card-title mb-0 flex-grow-1">กราฟแสดงแผนที่ใช้งานห้องประชุม</h4>
       </div>
       <div class="card-body pb-5">
-        <div class="mb-n3">
+        <div class="mb-n3" style="width: 100%; height: auto; min-height: 300px;">
           <canvas #chartCanvas></canvas>
         </div>
       </div>

@@ -31,6 +31,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
   @Input() roomSelected: string = '';
+  @Input() roomsSelected: string[] = [];
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
@@ -86,6 +87,13 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
       this.roomSelected = changes['roomSelected'].currentValue;
       this.fetchTopDepartmentBooking();
     }
+
+    if (changes['roomsSelected']) {
+      this.roomsSelected = changes['roomsSelected'].currentValue;
+      // this.fetchTopDepartmentBooking();
+      // console.log(this.roomsSelected);
+
+    }
   }
 
   handleDateChange(date: FlatPickrOutputOptions) {
@@ -101,7 +109,7 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
     const startDate = this.dateSelected.selectedDates[0].toISOString();
     const endDate = this.dateSelected.selectedDates[1].toISOString()
 
-    this.reportService.getTopDepartmentBooks(this.searchTerm, 1,1000, startDate,endDate,this.sort, this.roomSelected).subscribe(
+    this.reportService.getTopDepartmentBooksByRooms(this.roomsSelected, startDate,endDate).subscribe(
       {
         next: (data) => {
           this.topDepartmentBooking = data;
@@ -153,7 +161,6 @@ export class TopDepartmentBookingComponent implements OnInit,AfterViewInit, OnDe
   }
 
   createChart(): void {
-
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'bar',
       data: {

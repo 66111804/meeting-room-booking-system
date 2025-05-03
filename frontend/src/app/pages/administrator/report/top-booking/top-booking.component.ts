@@ -13,7 +13,7 @@ import {GlobalComponent} from '../../../../global-component';
 import {FlatPickrOutputOptions} from 'angularx-flatpickr/lib/flatpickr.directive';
 import {ITopBooking, ReportService} from '../../../../core/services/report.service';
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle, NgbPagination} from '@ng-bootstrap/ng-bootstrap';
-import {Chart,registerables} from 'chart.js';
+import {ActiveElement, Chart, ChartEvent, registerables} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 Chart.register(...registerables, ChartDataLabels);
@@ -34,6 +34,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 {
   @Input() dateSelected!: FlatPickrOutputOptions;
   @Output() roomUpdate = new EventEmitter<string>();
+  @Output() roomsSelectedUpdate = new EventEmitter<string[]>();
   roomSelected: string = '';
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -138,7 +139,7 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
 
           this.chart.data.labels = labels;
           this.chart.data.datasets = datasets.map((d, i) => ({
-            label: d.label,
+            label: "ห้อง:" + d.label,
             data: d.data,
             backgroundColor: this.chartColors[i % this.chartColors.length]
           }));
@@ -230,6 +231,31 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
             },
             formatter: (val: number) => val.toString()
           }
+        },
+        onClick:(event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
+          const chartElement = elements[0];
+          const datasetIndex = chartElement.datasetIndex;
+          const index = chartElement.index;
+
+          console.log(chartElement, datasetIndex, index);
+          if (datasetIndex !== undefined && index !== undefined) {
+           let label = "";
+           const dataset = chart.data.datasets[datasetIndex];
+           if (chart.data.datasets[datasetIndex].label) {
+              label = chart.data.datasets[datasetIndex].label;
+              console.log(chart.data.datasets);
+            }
+            const value = chart.data.datasets[datasetIndex].data[index];
+            const dateLabel = chart.data.labels?.[index];
+            console.log('Label:', label, 'Value:', value, 'Date:', dateLabel);
+            if (label.includes('ยอดการใช้งาน') && dateLabel)
+            {
+              this.onRoomSelectedChange(dateLabel.toString())
+            }else {
+              // console.log("ไม่พบ ยอดการใช้งาน");
+            }
+          }
+
         }
       }
     });
@@ -276,7 +302,21 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     }
     this.fetchTopBooks();
     this.roomUpdate.emit(this.roomSelected);
+    this.roomsSelectedUpdate.emit(this.roomsSelected);
+  }
 
+  onRoomSelectALL()
+  {
+    const allRooms = this.reportTopBooksResponse.booking.map(item => item.name);
+    const isAllSelected = this.roomsSelected.length === allRooms.length;
+
+    this.roomsSelected = isAllSelected ? [] : allRooms;
+    this.roomSelected = this.roomsSelected.at(-1) || '';
+
+
+    this.fetchTopBooks();
+    this.roomUpdate.emit(this.roomSelected);
+    this.roomsSelectedUpdate.emit(this.roomsSelected);
   }
 }
 
