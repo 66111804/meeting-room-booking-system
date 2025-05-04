@@ -217,7 +217,7 @@ export const getTopBookingReportByRoomNamesService = async (req: any, res: any) 
 
     // แปลงเป็น datasets [{ label: id,roomName, data: [count] }]
     const datasets = arrNames.map(room => ({
-        label: room+'['+(rooms.find(r => r.name === room)?.id || '') + ']',
+        label: room,
         data: dateLabels.map(label => groupedData[room][label] || 0)
     }));
 

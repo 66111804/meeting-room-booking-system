@@ -313,7 +313,6 @@ export class TopBookingComponent implements OnInit,AfterViewInit, OnDestroy, OnC
     this.roomsSelected = isAllSelected ? [] : allRooms;
     this.roomSelected = this.roomsSelected.at(-1) || '';
 
-
     this.fetchTopBooks();
     this.roomUpdate.emit(this.roomSelected);
     this.roomsSelectedUpdate.emit(this.roomsSelected);
