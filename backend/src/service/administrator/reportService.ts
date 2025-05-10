@@ -552,28 +552,41 @@ export const getHourlyBookingReportService = async (req: any, res: any) => {
     });
     // noinspection DuplicatedCode
     const intervalData: Record<string, number> = {};
+    // เตรียม labels: '08:00' ถึง '17:30'
     for (let hour = 8; hour < 18; hour++) {
         for (let min of [0, 30]) {
             const label = `${hour.toString().padStart(2, '0')}:${min === 0 ? '00' : '30'}`;
             intervalData[label] = 0;
         }
     }
+
     bookings.forEach((b) => {
-        let  start = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
-        const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
-        while (start.isBefore(end)) {
-            const hour = start.hour();
-            const minute = start.minute();
-            // เฉพาะช่วง 08:00 - 17:30 เท่านั้น
-            if (
-                (hour > 7 && hour < 17) || (hour === 17 && minute <= 30)
-            ) {
-                const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
-                if (intervalData[label] !== undefined) {
-                    intervalData[label]++;
-                }
+        // let  start = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
+        // const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
+        // while (start.isBefore(end)) {
+        //     const hour = start.hour();
+        //     const minute = start.minute();
+        //     // เฉพาะช่วง 08:00 - 17:30 เท่านั้น
+        //     if (
+        //         (hour > 7 && hour < 17) || (hour === 17 && minute <= 30)
+        //     ) {
+        //         const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
+        //         if (intervalData[label] !== undefined) {
+        //             intervalData[label]++;
+        //         }
+        //     }
+        //     start = start.add(30, 'minute');
+        // }
+
+        const time = dayjs(b.startTime).tz('Asia/Bangkok');
+        const hour = time.hour();
+        const minute = time.minute();
+        if ((hour >= 8 && hour <= 17)) {
+            const flooredMinute = minute < 30 ? 0 : 30;
+            const label = `${hour.toString().padStart(2, '0')}:${flooredMinute === 0 ? '00' : '30'}`;
+            if (intervalData[label] !== undefined) {
+                intervalData[label]++;
             }
-            start = start.add(30, 'minute');
         }
     });
 
@@ -582,7 +595,6 @@ export const getHourlyBookingReportService = async (req: any, res: any) => {
         totalBookings
     }));
     // sort by hour
-
     result.sort((a, b) => {
         const [aHour, aMinute] = a.hour.split(':').map(Number);
         const [bHour, bMinute] = b.hour.split(':').map(Number);
@@ -667,21 +679,35 @@ export const getHourlyBookingReportByRoomNamesService = async (req: any, res: an
 
     // นับการจองแบบแยกห้อง
     for (const b of bookings) {
-        const roomName = roomIdNameMap[b.meetingRoomId];
-        let current = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
-        const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
+        // const roomName = roomIdNameMap[b.meetingRoomId];
+        // let current = dayjs(b.startTime).tz('Asia/Bangkok').startOf('minute');
+        // const end = dayjs(b.endTime).tz('Asia/Bangkok').startOf('minute');
 
-        while (current.isBefore(end)) {
-            const hour = current.hour();
-            const minute = current.minute();
-            if ((hour > 7 && hour < 17) || (hour === 17 && minute <= 30)) {
-                const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
-                if (roomDataMap[roomName][label] !== undefined) {
-                    roomDataMap[roomName][label]++;
-                    totalDataMap[label]++;
-                }
+        // while (current.isBefore(end)) {
+        //     const hour = current.hour();
+        //     const minute = current.minute();
+        //     if ((hour > 7 && hour < 17) || (hour === 17 && minute <= 30)) {
+        //         const label = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
+        //         if (roomDataMap[roomName][label] !== undefined) {
+        //             roomDataMap[roomName][label]++;
+        //             totalDataMap[label]++;
+        //         }
+        //     }
+        //     current = current.add(30, 'minute');
+        // }
+
+        const roomName = roomIdNameMap[b.meetingRoomId];
+        const time = dayjs(b.startTime).tz('Asia/Bangkok');
+        const hour = time.hour();
+        const minute = time.minute();
+
+        if (hour >= 8 && hour <= 17) {
+            const flooredMinute = minute < 30 ? 0 : 30;
+            const label = `${hour.toString().padStart(2, '0')}:${flooredMinute === 0 ? '00' : '30'}`;
+            if (roomDataMap[roomName][label] !== undefined) {
+                roomDataMap[roomName][label]++;
+                totalDataMap[label]++;
             }
-            current = current.add(30, 'minute');
         }
     }
 
@@ -699,7 +725,6 @@ export const getHourlyBookingReportByRoomNamesService = async (req: any, res: an
         datasets: [totalDataset, ...datasets]
     });
 };
-
 
 export const getInfoByRoomIdAndDateBooking = async (req: any, res: any) => {
     // roomId, date(dd-MM-yyyy)
