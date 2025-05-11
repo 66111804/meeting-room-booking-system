@@ -181,11 +181,12 @@ export class MyBookingComponent implements OnInit
   isCurrentDateTime(date: string): boolean {
     const currentDate = new Date();
     const selectedDate = new Date(date);
-    selectedDate.setHours(selectedDate.getHours() - 2);
+    selectedDate.setHours(selectedDate.getHours() - 1);
     const seconds = 1000;
     const minutes = seconds * 60;
     const diff = (currentDate.getTime() - selectedDate.getTime()) / (minutes);
     const diffHours = Math.ceil(diff);
+
     return currentDate.toDateString() === selectedDate.toDateString() && diffHours > -2; // After 2 hours return true
   }
 

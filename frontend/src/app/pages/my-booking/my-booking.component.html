@@ -76,7 +76,8 @@
                   @if(isFutureDate(bookings.startTime) && bookings.status == 'confirmed')
                   {
                   <!-- edit booking -->
-                    @if(!isCurrentDateTime(bookings.startTime)) {
+                    @if(!isCurrentDateTime(bookings.startTime))
+                  {
                     <!--  data-bs-toggle="modal" data-bs-target="#editBookingModal" (click)="openEditBookingModal(editBookingModal, bookings)" -->
                     <a routerLink="{{ getLink(bookings.id) }}" class="link-primary ms-2">
                       <i class="ri-pencil-line me-2"></i>{{ "EDIT" | translate }}
