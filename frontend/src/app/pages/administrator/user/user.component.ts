@@ -300,16 +300,30 @@ export class UserComponent implements OnInit {
       status: user.status,
       role: user.roles,
     });
+    this.statusState = user.status === 'active' ? true : false;
     this.selectUserId = user.id;
     this.modalService.open(content, {size: 'lg', centered: true});
   }
 
+  statusState: boolean = true;
   statusChange(event: any) {
-    // this.roomFormControls.status.data = event.value;
     this.userForm.patchValue({
       status: event.value
     });
 
+    if(!this.statusState) {
+      this.userForm.patchValue({
+        status: 'active'
+      });
+
+      this.userForm.get('status')?.setErrors(null);
+    } else {
+      this.userForm.patchValue({
+        status: 'inactive'
+      });
+      this.userForm.get('status')?.setErrors(null);
+    }
+    this.statusState = !this.statusState;
   }
 
   userShowClick(user: User)
@@ -338,7 +352,7 @@ export class UserComponent implements OnInit {
       },
       error: (err) => {
         this.toastr.error('Error deleting user');
-        console.log(err);
+        // console.log(err);
       },
       complete: () => {
         this.userDelete = null;
